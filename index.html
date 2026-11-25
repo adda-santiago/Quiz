@@ -30,7 +30,7 @@ h1,h2,h3{margin:.2em 0}
 .home .joinrow{display:flex;gap:10px;max-width:360px;margin:10px auto 0}
 .muted{color:#6b6880;font-size:.92rem}
 /* ---------- Editor ---------- */
-.editor{display:flex;flex-direction:column;height:100vh}
+.editor{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .bar{display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;box-shadow:0 2px 10px #0001;z-index:2}
 .bar .titulo{max-width:360px;font-weight:700}
 .ed-body{flex:1;display:flex;min-height:0}
@@ -49,8 +49,13 @@ h1,h2,h3{margin:.2em 0}
 .fld{display:block;margin:12px 0}
 .fld>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:5px}
 .fld.sm{display:inline-block;width:180px;margin-right:12px;vertical-align:top}
+.fila{display:flex;flex-wrap:wrap;gap:0 12px}
+.fila .fld.sm{flex:0 1 180px;width:auto;margin-right:0}
+.fila .fld.ancho{flex-basis:300px}
+.mnav,.macts{display:none}
 .chkf{display:flex;gap:8px;align-items:center;margin:12px 0;font-weight:600}
 .optrow{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.optrow input{min-width:0}
 .optrow .sh{color:#fff;width:38px;height:38px;border-radius:8px;display:grid;place-items:center;flex:none}
 .chk{background:#eee;color:#bbb}
 .chk.on{background:#26890c;color:#fff}
@@ -63,6 +68,36 @@ h1,h2,h3{margin:.2em 0}
 .pinmark{position:absolute;aspect-ratio:1;border-radius:50%;background:#e21b3c55;border:3px solid #e21b3c;transform:translate(-50%,-50%);pointer-events:none}
 .vfbtns{display:flex;gap:10px}
 .vfbtns button.on{background:#26890c;color:#fff}
+/* ---------- Editor en teléfono: lista o formulario, uno a la vez ---------- */
+@media (max-width:760px){
+  .bar{gap:6px;padding:8px 10px}
+  .bar .lbl{display:none}
+  .bar button{padding:.55em .7em}
+  .bar .titulo{flex:1;min-width:0;max-width:none}
+  .bar .sp{display:none}
+  .editor.vista-lista #form{display:none}
+  .editor.vista-form #lista{display:none}
+  #lista{width:100%;border-right:0;padding:10px 12px 24px}
+  .li{padding:12px 10px}
+  .li .acts,.li:hover .acts,.li.sel .acts{display:none}
+  .add .tipos{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .add button{margin:0;padding:.8em .6em;font-size:.92rem}
+  #form{padding:0 14px 28px;max-width:none}
+  .mnav{display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:1;background:#f3f1fa;padding:10px 0;margin-bottom:4px;border-bottom:1px solid #e6e2f3}
+  .mnav .pos{font-weight:700;color:#6b6880;min-width:56px;text-align:center}
+  .mnav button{padding:.55em .9em}
+  .macts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:22px;padding-top:14px;border-top:1px solid #e6e2f3}
+  .macts button{padding:.7em .3em;font-size:.88rem}
+  .macts .peligro{background:#fde3e7;color:#b0102b}
+  .fila .fld.sm,.fila .fld.ancho{flex:1 1 140px}
+  .fld.sm{width:100%;margin-right:0}
+  .optrow{gap:4px}
+  .optrow .sh{width:34px;height:34px}
+  .optrow button{padding:.5em .6em}
+  .vfbtns button{flex:1;padding:.9em}
+  input[type=color]{width:100%}
+  .pinprev{display:block}
+}
 /* ---------- Presentación ---------- */
 .host{min-height:100vh;display:flex;flex-direction:column;background:linear-gradient(160deg,var(--c),#1d1b2b);color:#fff}
 .host .main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:18px;width:100%}
@@ -353,17 +388,25 @@ function vistaInicio() {
 
 /* =================== EDITOR =================== */
 let edSel = 0;
+let edVista = 'lista'; // en teléfono: 'lista' o 'form' (en computador se ven ambas)
+function verVista(v) {
+  edVista = v;
+  const ed = $('.editor'); if (!ed) return;
+  ed.classList.toggle('vista-lista', v === 'lista'); ed.classList.toggle('vista-form', v === 'form');
+  if (v === 'form') $('#form').scrollTop = 0;
+  else { const s = $('#lista .li.sel'); if (s) s.scrollIntoView({ block: 'center' }); }
+}
 function etiqueta(it) { return it.tipo === 'diapositiva' ? (it.titulo || '(diapositiva sin título)') : (it.pregunta || '(pregunta sin texto)'); }
 function objActual() { return edSel === -1 ? quiz.config : quiz.items[edSel]; }
 
 function vistaEditor() {
   if (edSel >= quiz.items.length) edSel = quiz.items.length - 1;
-  app.innerHTML = `<div class="editor" style="--c:${esc(quiz.config.color)}">
-    <header class="bar"><button data-a="home">⬅ Inicio</button>
-      <input class="titulo" id="qTitulo" value="${esc(quiz.config.titulo)}">
+  app.innerHTML = `<div class="editor vista-${edVista}" style="--c:${esc(quiz.config.color)}">
+    <header class="bar"><button data-a="home" title="Inicio">⬅<span class="lbl"> Inicio</span></button>
+      <input class="titulo" id="qTitulo" value="${esc(quiz.config.titulo)}" aria-label="Título del quiz">
       <span class="sp"></span>
-      <button data-a="abrir">📂 Abrir</button><button data-a="guardar">💾 Guardar archivo</button>
-      <button class="pri" data-a="presentar">▶ Presentar</button></header>
+      <button data-a="abrir" title="Abrir archivo">📂<span class="lbl"> Abrir</span></button><button data-a="guardar" title="Guardar archivo">💾<span class="lbl"> Guardar archivo</span></button>
+      <button class="pri" data-a="presentar" title="Presentar">▶<span class="lbl"> Presentar</span></button></header>
     <div class="ed-body"><aside id="lista"></aside><main id="form"></main></div></div>`;
   $('#qTitulo').oninput = e => { quiz.config.titulo = e.target.value; guardarLocal(); };
   const form = $('#form');
@@ -382,11 +425,14 @@ function vistaEditor() {
   ACC = {
     home: vistaInicio, guardar: descargarQuiz, presentar: () => vistaPresentar(),
     abrir: () => abrirArchivo(() => { edSel = 0; vistaEditor(); }),
-    sel: el => { edSel = +el.dataset.i; renderLista(); renderForm(); },
-    add: el => { const i = edSel + 1; quiz.items.splice(i, 0, nuevoItem(el.dataset.t)); edSel = i; guardarLocal(); renderLista(); renderForm(); },
+    sel: el => { edSel = +el.dataset.i; renderLista(); renderForm(); verVista('form'); },
+    add: el => { const i = edSel + 1; quiz.items.splice(i, 0, nuevoItem(el.dataset.t)); edSel = i; guardarLocal(); renderLista(); renderForm(); verVista('form'); },
+    lista: () => verVista('lista'),
+    prev: () => { if (edSel > -1) { edSel--; renderLista(); renderForm(); $('#form').scrollTop = 0; } },
+    next: () => { if (edSel < quiz.items.length - 1) { edSel++; renderLista(); renderForm(); $('#form').scrollTop = 0; } },
     up: el => mover(+el.dataset.i, -1), down: el => mover(+el.dataset.i, 1),
     dup: el => { const i = +el.dataset.i; quiz.items.splice(i + 1, 0, JSON.parse(JSON.stringify(quiz.items[i]))); edSel = i + 1; guardarLocal(); renderLista(); renderForm(); },
-    del: el => { const i = +el.dataset.i; if (!confirm('¿Eliminar este elemento?')) return; quiz.items.splice(i, 1); edSel = Math.min(i, quiz.items.length - 1); guardarLocal(); renderLista(); renderForm(); },
+    del: el => { const i = +el.dataset.i; if (!confirm('¿Eliminar este elemento?')) return; quiz.items.splice(i, 1); edSel = Math.min(i, quiz.items.length - 1); guardarLocal(); renderLista(); renderForm(); verVista('lista'); },
     optadd: el => { objActual()[el.dataset.arr].push(''); guardarLocal(); renderForm(); },
     optdel: el => {
       const it = objActual(), i = +el.dataset.i; it[el.dataset.arr].splice(i, 1);
@@ -411,7 +457,7 @@ function renderLista() {
   $('#lista').innerHTML = `<div class="li ${edSel === -1 ? 'sel' : ''}" data-a="sel" data-i="-1">⚙️ <b>Configuración</b></div>` +
     quiz.items.map((it, i) => `<div class="li ${edSel === i ? 'sel' : ''}" data-a="sel" data-i="${i}"><span class="n">${i + 1}</span><span>${TIPOS[it.tipo].icono}</span><span class="tx">${esc(etiqueta(it))}</span>
       <span class="acts"><button data-a="up" data-i="${i}" title="Subir">↑</button><button data-a="down" data-i="${i}" title="Bajar">↓</button><button data-a="dup" data-i="${i}" title="Duplicar">⧉</button><button data-a="del" data-i="${i}" title="Eliminar">✕</button></span></div>`).join('') +
-    `<div class="add"><p>➕ Agregar después del seleccionado:</p>${Object.entries(TIPOS).map(([k, t]) => `<button data-a="add" data-t="${k}">${t.icono} ${t.nombre}</button>`).join('')}</div>`;
+    `<div class="add"><p>➕ Agregar después del seleccionado:</p><div class="tipos">${Object.entries(TIPOS).map(([k, t]) => `<button data-a="add" data-t="${k}">${t.icono} ${t.nombre}</button>`).join('')}</div></div>`;
 }
 const fTxt = (l, f, v, ph = '') => `<label class="fld"><span>${l}</span><input data-f="${f}" value="${esc(v)}" placeholder="${esc(ph)}"></label>`;
 const fArea = (l, f, v, ph = '') => `<label class="fld"><span>${l}</span><textarea data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(v)}</textarea></label>`;
@@ -434,18 +480,29 @@ function listaEditable(it, arr, conColor, conCorrecta, max) {
     (a.length < max ? `<button data-a="optadd" data-arr="${arr}">+ Agregar</button>` : '');
 }
 function renderForm() {
+  renderFormCampos();
+  const form = $('#form'); if (!objActual()) return;
+  const n = quiz.items.length, i = edSel;
+  form.insertAdjacentHTML('afterbegin', `<div class="mnav"><button data-a="lista">☰ Lista</button><span class="sp"></span>
+    <button data-a="prev" ${i <= -1 ? 'disabled' : ''} aria-label="Anterior">‹</button><span class="pos">${i === -1 ? '⚙️' : `${i + 1} / ${n}`}</span>
+    <button data-a="next" ${i >= n - 1 ? 'disabled' : ''} aria-label="Siguiente">›</button></div>`);
+  if (i >= 0) form.insertAdjacentHTML('beforeend', `<div class="macts">
+    <button data-a="up" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑ Subir</button><button data-a="down" data-i="${i}" ${i === n - 1 ? 'disabled' : ''}>↓ Bajar</button>
+    <button data-a="dup" data-i="${i}">⧉ Duplicar</button><button class="peligro" data-a="del" data-i="${i}">✕ Eliminar</button></div>`);
+}
+function renderFormCampos() {
   const form = $('#form'), it = objActual();
   if (!it) { form.innerHTML = '<p class="muted">Agrega una diapositiva o pregunta desde la lista.</p>'; return; }
   if (edSel === -1) {
     const c = quiz.config;
     form.innerHTML = `<h2>⚙️ Configuración del quiz</h2>
       ${fTxt('Título', 'titulo', c.titulo)}${fTxt('Iglesia / grupo (opcional)', 'organizacion', c.organizacion)}
-      <label class="fld sm"><span>Color principal</span><input type="color" data-f="color" value="${esc(c.color)}"></label>
-      ${fNum('Tiempo por pregunta (seg)', 'tiempo', c.tiempo)}${fNum('Puntos por respuesta correcta', 'puntos', c.puntos)}
+      <div class="fila"><label class="fld sm"><span>Color principal</span><input type="color" data-f="color" value="${esc(c.color)}"></label>
+      ${fNum('Tiempo por pregunta (seg)', 'tiempo', c.tiempo)}${fNum('Puntos por respuesta correcta', 'puntos', c.puntos)}</div>
       ${fChk('Dar más puntos a quien responde más rápido', 'bonusVelocidad', c.bonusVelocidad)}
-      <label class="fld sm" style="width:300px"><span>Mostrar ranking</span><select data-f="rankingCada" data-num>
+      <div class="fila"><label class="fld sm ancho"><span>Mostrar ranking</span><select data-f="rankingCada" data-num>
         ${[[1, 'Después de cada pregunta'], [2, 'Cada 2 preguntas'], [3, 'Cada 3 preguntas'], [5, 'Cada 5 preguntas'], [0, 'Solo al final']].map(([v, t]) => `<option value="${v}" ${+c.rankingCada === v ? 'selected' : ''}>${t}</option>`).join('')}
-      </select></label>
+      </select></label></div>
       ${fChk('Mostrar la respuesta correcta en el teléfono', 'mostrarCorrectaTelefono', c.mostrarCorrectaTelefono)}
       ${fChk('Permitir unirse después de comenzar', 'permitirTarde', c.permitirTarde)}
       <p class="hint">Todo se guarda automáticamente en este navegador. Para conservarlo o pasarlo a otro computador usa <b>💾 Guardar archivo</b>.</p>`;
@@ -468,16 +525,16 @@ function renderForm() {
         fTxt('Respuestas aceptadas (separadas por coma)', 'aceptadas', it.aceptadas, 'mundo, el mundo') + '<p class="hint">No importan mayúsculas ni tildes.</p>'; break;
     case 'ordenar': h += `<div class="fld"><span>Elementos en el ORDEN CORRECTO (se mezclan al jugar)</span>${listaEditable(it, 'elementos', false, false, 8)}</div>`; break;
     case 'numero':
-      h += `<div>${fNum('Mínimo', 'min', it.min)}${fNum('Máximo', 'max', it.max)}${fNum('Paso', 'paso', it.paso)}</div>
-        <div>${fNum('Respuesta correcta', 'correcta', it.correcta)}${fNum('Tolerancia (±)', 'tolerancia', it.tolerancia)}<label class="fld sm"><span>Unidad (opcional)</span><input data-f="unidad" value="${esc(it.unidad)}" placeholder="años, km…"></label></div>`; break;
+      h += `<div class="fila">${fNum('Mínimo', 'min', it.min)}${fNum('Máximo', 'max', it.max)}${fNum('Paso', 'paso', it.paso)}</div>
+        <div class="fila">${fNum('Respuesta correcta', 'correcta', it.correcta)}${fNum('Tolerancia (±)', 'tolerancia', it.tolerancia)}<label class="fld sm"><span>Unidad (opcional)</span><input data-f="unidad" value="${esc(it.unidad)}" placeholder="años, km…"></label></div>`; break;
     case 'pin':
-      h += imgField(it, 'Imagen (mapa, dibujo, foto)') + (it.imagen ? `<p class="hint">Haz clic en la imagen para marcar el lugar correcto.</p>
+      h += imgField(it, 'Imagen (mapa, dibujo, foto)') + (it.imagen ? `<p class="hint">Toca la imagen para marcar el lugar correcto.</p>
         <div class="pinprev" data-a="pinset"><img id="pinimg" src="${esc(it.imagen)}"><div class="pinmark" id="pinmark"></div></div>
         <label class="fld"><span>Tolerancia (tamaño del círculo)</span><input type="range" min="2" max="30" data-f="radio" data-num value="${it.radio}"></label>` : ''); break;
     case 'nube': h += '<p class="hint">Los participantes escriben una palabra o frase corta. Se muestran todas en una nube: las más repetidas, más grandes.</p>'; break;
   }
   if (it.tipo !== 'pin') h += imgField(it);
-  h += `<div>${fNum('Tiempo (seg)', 'tiempo', it.tiempo, 'Por defecto: ' + quiz.config.tiempo)}
+  h += `<div class="fila">${fNum('Tiempo (seg)', 'tiempo', it.tiempo, 'Por defecto: ' + quiz.config.tiempo)}
     ${T.sinPuntaje ? '' : `<label class="fld sm"><span>Puntaje</span><select data-f="mult" data-num>${[[1, 'Normal'], [2, 'Doble'], [0, 'Sin puntos (práctica)']].map(([v, t]) => `<option value="${v}" ${+it.mult === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>`}</div>`;
   form.innerHTML = h;
   if (it.tipo === 'pin' && it.imagen) {
