@@ -7,7 +7,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Parametrizable (configuración general + por pregunta).
 - Participantes que se unen desde el teléfono (QR + código de 5 dígitos).
 - Muchos tipos de pregunta, no solo alternativas y V/F.
-- Se publicará en GitHub Pages (el usuario ya usa crist-alarc.github.io).
+- Publicado en GitHub Pages: https://adda-santiago.github.io/Quiz/ (repo adda-santiago/Quiz, rama `main`).
 - Idioma de la interfaz y del código: español.
 
 ## Estado actual (v1)
