@@ -477,6 +477,34 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .lista-priv{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--on-s-var)}
 .eq-modo{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;color:var(--on-s-var);margin:0}
 .eq-modo button{padding:.4em .8em;font-size:.88rem}
+/* ---------- Exportar a PDF ---------- */
+.fila2 .ancho2{grid-column:1/-1}
+#impresion{position:fixed;inset:0;z-index:60;background:#3a383e;display:flex;flex-direction:column}
+.imp-barra{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:var(--s-lowest);border-bottom:1px solid var(--outline-var)}
+.imp-barra b{display:flex;align-items:center;gap:6px;color:var(--c)}
+.imp-pags{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.pag{width:1280px;height:720px;flex:none;overflow:hidden;position:relative;background:#fff;zoom:var(--zp,.6);box-shadow:0 8px 30px #0006}
+@media (max-width:900px){.pag{--zp:.27}}
+.pag *{animation:none!important;transition:none!important}
+.pag .lienzo{width:1280px;height:720px;border-radius:0;box-shadow:none}
+.pag .host{min-height:0;height:720px;display:flex;flex-direction:column}
+.pag .stage{flex:1;min-height:0;overflow:hidden;padding:18px 40px;justify-content:center}
+.pag .stage>.esc{width:100%;display:flex;flex-direction:column;align-items:center;gap:22px}
+.pag .host.con-fondo .stage{margin:14px auto;width:calc(100% - 48px)}
+.pag .cnt,.pag .barra,.pag .hq-meta .badge.cyan,.pag .lista-ord.rafaga small,.pag .col-cat small{display:none}
+.pag .pistas li.off{opacity:1}
+.pag .tiles i:nth-child(odd){opacity:0}
+.pie-resp{margin:0 24px 16px;display:flex;align-items:center;gap:10px;background:#ECFDF5;border:2px solid var(--success);color:#065F46;border-radius:var(--r-lg);padding:12px 18px;font-size:1.25rem}
+.pie-resp .ms{color:var(--success);max-width:none}
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body>*:not(#impresion){display:none!important}
+  #impresion{position:static;display:block;background:#fff}
+  .imp-barra{display:none}
+  .imp-pags{display:block;padding:0;overflow:visible}
+  .pag{zoom:1!important;box-shadow:none;break-after:page;page-break-after:always}
+}
 /* ---------- Transiciones y animaciones ---------- */
 @keyframes anFundido{from{opacity:0}}
 @keyframes anDeslizar{from{opacity:0;transform:translateX(90px)}}
@@ -862,7 +890,7 @@ function elHTML(e, ed, sel) {
     else if (e.t === 'video') {
       const id = ytId(e.url);
       if (!id) inner = ed ? '<div class="ph-img">▶️<br>Pega el link de YouTube<br>en el panel de formato</div>' : '';
-      else if (ed) inner = `<div class="yt-ph" style="background-image:url('https://img.youtube.com/vi/${id}/hqdefault.jpg')"><span class="yt-play">▶</span></div>`;
+      else if (ed || IMPRIMIENDO) inner = `<div class="yt-ph" style="background-image:url('https://img.youtube.com/vi/${id}/hqdefault.jpg')"><span class="yt-play">▶</span></div>`;
       else { const q = ['enablejsapi=1', 'rel=0', 'modestbranding=1', 'playsinline=1'].concat(+e.inicio > 0 ? ['start=' + Math.floor(+e.inicio)] : [], +e.fin > 0 ? ['end=' + Math.floor(+e.fin)] : [], e.auto ? ['autoplay=1'] : [], e.silencio ? ['mute=1'] : []);
         inner = `<iframe class="yt" data-k="${esc(e.id)}" src="https://www.youtube-nocookie.com/embed/${id}?${q.join('&')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Video de YouTube"></iframe>`; }
     }
@@ -1572,7 +1600,8 @@ function vistaInicio() {
             <div class="fila2"><button class="pri big" data-a="presentar">${ic('play_circle', 'fill')} Presentar</button><button class="big" data-a="editar">${ic('edit_note')} Editar</button></div>
             <hr class="sep"><p class="lbl-sm">Archivos y plantillas</p>
             <div class="fila2 small"><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="guardar">${ic('download')} <span>Descargar<span class="larga"> archivo</span></span></button>
-              <button data-a="nuevo">${ic('note_add')} Quiz en blanco</button><button data-a="ejemplo">${ic('star', 'fill gold')} <span><span class="larga">Cargar ejemplo</span><span class="corta">Ejemplo</span></span></button></div></div>
+              <button data-a="nuevo">${ic('note_add')} Quiz en blanco</button><button data-a="ejemplo">${ic('star', 'fill gold')} <span><span class="larga">Cargar ejemplo</span><span class="corta">Ejemplo</span></span></button>
+              <button class="ancho2" data-a="exportarPdf">${ic('picture_as_pdf')} Exportar a PDF (para estudiar o presentar)</button></div></div>
         </section>
         <section class="card jcard">
           <div class="cab"><div class="tile">${ic('qr_code_scanner')}</div><span class="badge out">Acceso jugadores</span></div>
@@ -1596,6 +1625,7 @@ function vistaInicio() {
     guardar: descargarQuiz,
     nuevo: () => cambiarQuiz({ config: { titulo: 'Quiz nuevo' }, items: [nuevoItem('diapositiva')] }).then(vistaEditor),
     ejemplo: () => cambiarQuiz(ejemploQuiz()).then(vistaInicio),
+    exportarPdf: () => abrirExportarPdf(),
     abrirQ: el => IDB.get('q:' + el.dataset.id).then(v => { if (!v) return aviso('No se encontró ese quiz.'); return cambiarQuiz(JSON.parse(v)).then(vistaInicio); }),
     dupQ: el => IDB.get('q:' + el.dataset.id).then(v => { if (!v) return; const q = normalizarQuiz(JSON.parse(v)); q.id = nid() + nid(); q.config.titulo += ' (copia)'; return guardarEnIndice(q).then(vistaInicio); }),
     delQ: el => {
@@ -1646,12 +1676,13 @@ function vistaEditor() {
       <span class="sp"></span>
       <button class="solo-pc" data-a="abrir" title="Abrir archivo">${ic('folder_open')}<span class="lbl">Abrir</span></button>
       <button class="solo-pc" data-a="importar" title="Importar preguntas">${ic('playlist_add')}<span class="lbl">Importar</span></button>
+      <button class="solo-pc" data-a="exportarPdf" title="Exportar a PDF">${ic('picture_as_pdf')}<span class="lbl">PDF</span></button>
       <button class="solo-pc" data-a="tutorial" title="Tutorial">${ic('help')}</button>
       <button data-a="vista" title="Vista previa">${ic('visibility')}<span class="lbl">Vista previa</span></button>
       <button class="solo-pc" data-a="guardar" title="Guardar archivo">${ic('download')}<span class="lbl">Guardar archivo</span></button>
       <button class="pri" data-a="presentar" title="Presentar">${ic('play_circle', 'fill')}<span class="lbl">Presentar</span></button>
       <button class="solo-cel" data-a="menuMas" title="Más" aria-label="Más opciones">${ic('more_vert')}</button>
-      <div class="menu-mas" id="menuMas" hidden><button data-a="guardar">${ic('download')} Guardar archivo</button><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="importar">${ic('playlist_add')} Importar preguntas</button><button data-a="importarPpt">${ic('slideshow')} Importar PowerPoint</button><button data-a="tutorial">${ic('help')} Tutorial</button></div></header>
+      <div class="menu-mas" id="menuMas" hidden><button data-a="guardar">${ic('download')} Guardar archivo</button><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="importar">${ic('playlist_add')} Importar preguntas</button><button data-a="exportarPdf">${ic('picture_as_pdf')} Exportar a PDF</button><button data-a="importarPpt">${ic('slideshow')} Importar PowerPoint</button><button data-a="tutorial">${ic('help')} Tutorial</button></div></header>
     <div class="ed-body"><aside id="lista"></aside><main id="form"></main></div></div>`;
   $('#qTitulo').oninput = e => { quiz.config.titulo = e.target.value; guardarLocal(); };
   const form = $('#form');
@@ -1727,6 +1758,7 @@ function vistaEditor() {
     vista: () => abrirVistaPrevia(),
     importar: () => abrirImportar(),
     importarPpt: () => abrirImportarPpt(),
+    exportarPdf: () => abrirExportarPdf(),
     tutorial: () => tour('editor'),
     imgfile: () => elegirImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
     parImg: el => elegirImagen(d => { objActual().pares[+el.dataset.i][el.dataset.lado + 'i'] = d; guardarLocal(); renderForm(); }, 700),
@@ -2048,6 +2080,63 @@ function vistaPrevia(modo) { // esta página está dentro de un iframe de la vis
   });
   app.innerHTML = '<div class="jug"><div class="cuerpo"><h2>⏳</h2></div></div>';
   window.parent.postMessage({ t: 'vista-lista' }, '*');
+}
+
+/* =================== EXPORTAR A PDF ===================
+   Una hoja de 1280 × 720 por cada diapositiva y pregunta, tal como se ve en la pantalla grande, en modo pregunta
+   o modo respuesta. Se muestra una vista previa y se usa la impresión del navegador («Guardar como PDF»). */
+let IMPRIMIENDO = false;
+function abrirExportarPdf() {
+  if (!quiz.items.length) return aviso('El quiz está vacío.');
+  $('#capa')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp">
+    <div class="imp-cab"><h2>${ic('picture_as_pdf')} Exportar a PDF</h2><button data-a="pdfCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <p class="muted">Una hoja por cada diapositiva y pregunta, tal como se ven en la pantalla grande. Sirve para estudiar el quiz o presentarlo sin la app.</p>
+    <p><b>¿Cómo quieres descargarlo?</b></p>
+    <div class="ppt-op">
+      <button class="ppt-card" data-a="pdfModo" data-v="pregunta"><b>${ic('help')} Modo pregunta</b><span>Las preguntas sin la respuesta, como las ven los niños. Para presentar o repasar.</span></button>
+      <button class="ppt-card" data-a="pdfModo" data-v="respuesta"><b>${ic('task_alt')} Modo respuesta</b><span>Cada pregunta con la respuesta marcada y escrita al pie de la hoja. Para que el profesor estudie.</span></button>
+    </div>
+    <label class="chkf"><input type="checkbox" id="pdfDiapos" checked> Incluir las diapositivas</label></div></div>`);
+  Object.assign(ACC, {
+    pdfCerrar: () => $('#capa')?.remove(),
+    pdfModo: el => { const conDiapos = $('#pdfDiapos').checked; $('#capa')?.remove(); prepararImpresion(el.dataset.v, conDiapos); },
+  });
+}
+function prepararImpresion(modo, conDiapos) {
+  const rev = modo === 'respuesta', previo = H, nPreg = quiz.items.filter(esPregunta).length;
+  const fp = quiz.config.fondoPres, conFondo = fp && fp.tipo !== 'ninguno';
+  IMPRIMIENDO = true;
+  const paginas = [];
+  try {
+    quiz.items.forEach((it, i) => {
+      if (it.tipo === 'diapositiva') { if (conDiapos) paginas.push(`<section class="pag pag-diapo">${lienzoHTML(it, false)}</section>`); return; }
+      const sinP = !!TIPOS[it.tipo].sinPuntaje;
+      H = nuevoH(); H.vista = true; H.imprimir = true; H.idx = i; H.t0 = Date.now(); H.fase = rev && !sinP ? 'revelar' : 'pregunta';
+      H.shuf = barajar(it); H.tiles = it.tipo === 'revela' ? shuffle([...Array(gridRevela(it).n).keys()]) : null;
+      const cuerpo = hostPregunta(rev && !sinP), resp = rev && !sinP ? (it.tipo === 'pin' ? 'el lugar marcado con el círculo verde en la imagen' : textoCorrecta(it)) : '';
+      paginas.push(`<section class="pag"><div class="host${conFondo ? ' con-fondo' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
+        <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>Pregunta ${numPregunta(i)} de ${nPreg}</small></div></div>
+          <div class="pills">${rev ? '<span class="badge cyan"><span class="dot"></span>Modo respuesta</span>' : ''}</div></div></header>
+        <main class="stage"><div class="esc">${cuerpo}</div></main>
+        ${resp ? `<div class="pie-resp">${ic('check_circle', 'fill')}<span><b>Respuesta:</b> ${esc(resp)}</span></div>` : ''}</div></section>`);
+    });
+  } finally { H = previo; IMPRIMIENDO = false; }
+  $('#impresion')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div id="impresion">
+    <div class="imp-barra"><b>${ic('picture_as_pdf')} ${esc(quiz.config.titulo)} · ${rev ? 'modo respuesta' : 'modo pregunta'} · ${paginas.length} hoja${paginas.length === 1 ? '' : 's'}</b><span class="sp"></span>
+      <span class="muted">En la ventana de impresión elige <b>Guardar como PDF</b></span>
+      <button data-a="impCerrarPdf">Cerrar</button><button class="pri" data-a="impImprimir">${ic('download')} Guardar como PDF</button></div>
+    <div class="imp-pags">${paginas.join('')}</div></div>`);
+  Object.assign(GLOBAL, {
+    impCerrarPdf: () => $('#impresion')?.remove(),
+    impImprimir: () => { const t = document.title; document.title = (slug(quiz.config.titulo) || 'quiz') + (rev ? '-respuestas' : '-preguntas'); window.print(); setTimeout(() => document.title = t, 1000); },
+  });
+  // ajustar el contenido que no quepa en la hoja
+  requestAnimationFrame(() => document.querySelectorAll('#impresion .pag .stage').forEach(st => {
+    const e = st.querySelector('.esc'); if (!e) return;
+    const k = Math.min(1, (st.clientHeight - 8) / e.scrollHeight); if (k < 1) e.style.zoom = k.toFixed(3);
+  }));
 }
 
 /* =================== IMPORTAR POWERPOINT ===================
@@ -3201,7 +3290,7 @@ function hostPregunta(rev) {
     ${rev ? `<span class="badge cyan">${ic('check_circle', 'fill')} ${nTot} respuestas</span>` : `<span class="timer">${ic('timer')}<span id="tLeft">${left}</span>s</span>`}</div>
     ${it.pregunta ? `<h1 class="hq-q">${esc(it.pregunta)}</h1>` : ''}</section>`;
   if (it.imagen && !['pin', 'revela', 'zoom'].includes(it.tipo) && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
-  const resumen = txt => `<p class="resumen">${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} ${txt}</p>`;
+  const resumen = txt => H.imprimir ? '' : `<p class="resumen">${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} ${txt}</p>`;
   if (it.tipo === 'emoji') h += `<div class="emojis">${esc(it.emojis)}</div>`;
   if (it.tipo === 'zoom') h += `<div class="zoomwrap"><img id="zimg" src="${esc(it.imagen)}" style="transform-origin:${+it.zx}% ${+it.zy}%;transform:scale(${rev ? 1 : +it.zoom || 6})"></div>`;
   if (it.tipo === 'audio') h += `<div class="audiobox ${H.audio && !H.audio.paused ? 'sonando' : ''}"><button class="pri big" data-a="audPlay">${ic(H.audio && !H.audio.paused ? 'pause' : 'play_arrow', 'fill')} ${H.audio && !H.audio.paused ? 'Pausar audio' : 'Reproducir audio'}</button><div class="ondas">${'<i></i>'.repeat(12)}</div></div>`;
@@ -3231,13 +3320,13 @@ function hostPregunta(rev) {
     case 'pin': {
       h += `<div class="pinhost"><img src="${esc(it.imagen)}">${rev ? `<div class="tgt" style="left:${it.x}%;top:${it.y}%;width:${it.radio * 2}%"></div>` +
         Object.entries(H.resp).map(([pid, r]) => `<span class="pp" style="left:${+r.val.x}%;top:${+r.val.y}%" title="${esc(H.players[pid]?.name)}">${esc(H.players[pid]?.avatar || '📍')}</span>`).join('') : ''}</div>`;
-      if (rev) h += `<p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo encontraron</p>`;
+      if (rev && !H.imprimir) h += `<p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo encontraron</p>`;
       break;
     }
     case 'ordenar':
       if (!rev) h += `<div class="lista-ord">${H.shuf.map(x => `<div>${esc(x.o)}</div>`).join('')}</div>`;
       else h += `<div class="lista-ord">${opcionesValidas(it.elementos).map((x, k) => `<div><b>${k + 1}</b>${esc(x.o)}</div>`).join('')}</div>
-        <p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo ordenaron bien</p>`;
+        ${H.imprimir ? '' : `<p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo ordenaron bien</p>`}`;
       break;
     case 'parejas': {
       const p = paresValidos(it);
@@ -3323,6 +3412,7 @@ function hostPregunta(rev) {
           const no = H.rNo.has(pid), act = pid === t;
           return `<div class="${no ? 'no' : act ? 'act' : ''}"><span class="pos">${k + 1}</span><span class="nm">${esc(p.avatar)} ${esc(p.name)}</span>${act ? `<button class="ok" data-a="rOk" data-pid="${esc(pid)}">${ic('check')} Correcto</button><button class="no" data-a="rNo" data-pid="${esc(pid)}">${ic('close')} Incorrecto</button>` : no ? '<span>✘</span>' : ''}</div>`; }).join('')}</div>`
         : '<div class="buzz-espera">🔔</div><p class="resumen">¡Toca el botón en tu teléfono si sabes la respuesta!</p>';
+      else if (H.imprimir) h += `<div class="frase">Respuesta: <span class="bien">${esc(it.respuesta || '—')}</span></div>`;
       else { const g = H.ganador && H.players[H.ganador]; h += `<div class="frase">${g ? `🏅 ${esc(g.avatar)} ${esc(g.name)} respondió bien` : 'Nadie acertó esta vez'}</div>${it.respuesta ? `<p class="resumen">Respuesta: <b>${esc(it.respuesta)}</b></p>` : ''}`; }
       break;
     }
@@ -3360,6 +3450,7 @@ function hostPregunta(rev) {
   return h;
 }
 function topRespuestas(esOk) {
+  if (H && H.imprimir) return '';
   const c = {}, orig = {};
   Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k || H.ocultas.has(k)) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val); });
   const top = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 6);
