@@ -13,6 +13,8 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 ## Estado actual (v1)
 - Todo está en un solo archivo: `index.html` (HTML + CSS + JS vanilla, sin build).
 - Dependencias por CDN: PeerJS 1.5.4 (WebRTC, conexión teléfono ↔ pantalla, sin servidor propio) y qrcode-generator 1.4.4.
+- Diseño visual: sistema "Sanctuary Tech" del proyecto de Google Stitch "Interactive Church Quiz Redesign" (pantallas Inicio y Pregunta, escritorio y celular). Tokens como variables CSS en `:root` (primario índigo #180157, cian #006780, magenta #A21CAF, dorado #F59E0B, fondo #FDF8FF). Fuentes de Google Fonts: Instrument Serif (títulos y preguntas), Instrument Sans (texto), Source Code Pro (códigos y números) e íconos Material Symbols Outlined (helper `ic(nombre)`). Sin Tailwind: CSS propio.
+- Alternativas con letras A–F (`LETRAS`) y los colores de `COLORES`; V/F con V verde y F roja. En el teléfono se responde con un solo toque.
 - Vistas: Inicio, Editor, Presentar (host), Jugador (`?join=CODIGO`).
 - ID del host en PeerJS: `quiziglesia-<código>`.
 - Autoguardado en localStorage + Descargar/Abrir archivo `.quiz.json`.
