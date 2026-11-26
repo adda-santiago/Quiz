@@ -33,6 +33,10 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
   - ¿Quién soy?: el puntaje depende de cuántas pistas había visibles (no del tiempo). Imagen que se revela: siempre con bonus por velocidad.
 - Modo equipos (config `modoEquipos` + `nombresEquipos`): se elige equipo en el lobby desde el teléfono; ranking, podio y CSV por equipo (suma de integrantes).
 - Al presentar, `problemasQuiz()` avisa de preguntas incompletas.
+- Sonido (`SND`, Web Audio sin archivos): música de sala de espera y de pregunta, tic en los últimos 5 s, revelar, unirse, redoble (ranking), fanfarria (podio), transición. Config `sonidos` y `musica`; botón silenciar (tecla M) guardado en localStorage.
+- Durante la pregunta: pausar (P, congela también los teléfonos), +10 s (+), saltar sin puntaje. Tiempo con `tiempoH()` / `transcurrido()` / `restanteH()`. ← vuelve a la diapositiva anterior (solo diapositivas).
+- Control remoto: `?remoto=CODIGO&k=TOKEN` (QR en el modal del host, botón "Nuevo enlace" invalida los anteriores). El host manda `rstate` y recibe `rcmd`.
+- Transiciones entre pantallas (config `transicion`, o por diapositiva `it.transicion`): fundido, deslizar, zoom, subir. Animaciones de entrada por elemento (`el.anim`, `el.retraso`). El teléfono vibra al recibir el resultado.
 - Host: lobby con QR, sacar jugadores, ranking cada N preguntas, podio final, exportar resultados CSV, modo solo pantalla si no hay conexión.
 - Jugador: nombre + avatar emoji, reconexión conservando puntaje (pid en localStorage).
 

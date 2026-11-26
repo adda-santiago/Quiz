@@ -348,6 +348,41 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .ayuda-red ul{margin:6px 0 0;padding-left:18px}
 details.avanzado{margin:16px 0;padding:10px 14px;border:1px solid var(--outline-var);border-radius:var(--r-lg);background:var(--s-lowest)}
 details.avanzado summary{cursor:pointer;font-weight:600;color:var(--c)}
+/* ---------- Transiciones y animaciones ---------- */
+@keyframes anFundido{from{opacity:0}}
+@keyframes anDeslizar{from{opacity:0;transform:translateX(90px)}}
+@keyframes anZoom{from{opacity:0;transform:scale(.88)}}
+@keyframes anSubir{from{opacity:0;transform:translateY(60px)}}
+@keyframes anIzq{from{opacity:0;transform:translateX(-14cqw)}}
+@keyframes anDer{from{opacity:0;transform:translateX(14cqw)}}
+.stage.an-fundido>*{animation:anFundido .5s ease both}
+.stage.an-deslizar>*{animation:anDeslizar .55s cubic-bezier(.2,0,0,1) both}
+.stage.an-zoom>*{animation:anZoom .5s cubic-bezier(.2,0,0,1) both}
+.stage.an-subir>*{animation:anSubir .55s cubic-bezier(.2,0,0,1) both}
+.stage[class*=an-]>*:nth-child(2){animation-delay:.08s}.stage[class*=an-]>*:nth-child(3){animation-delay:.16s}.stage[class*=an-]>*:nth-child(n+4){animation-delay:.22s}
+.lienzo .ea-aparecer{animation:anFundido .7s ease both}
+.lienzo .ea-subir{animation:anSubir .7s cubic-bezier(.2,0,0,1) both}
+.lienzo .ea-zoom{animation:anZoom .6s cubic-bezier(.2,0,0,1) both}
+.lienzo .ea-izquierda{animation:anIzq .7s cubic-bezier(.2,0,0,1) both}
+.lienzo .ea-derecha{animation:anDer .7s cubic-bezier(.2,0,0,1) both}
+.jug .cuerpo{animation:anFundido .3s ease both}
+.pausa-vel{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#18015799;color:#fff;z-index:20;pointer-events:none;animation:anFundido .25s ease}
+.pausa-vel .ms{font-size:120px;max-width:none;color:var(--gold)}
+.pausa-vel b{font:400 4rem var(--serif)}
+.jpausa{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#180157e6;color:#fff;z-index:20;animation:anFundido .25s ease}
+.jpausa .ms{font-size:96px;max-width:none;color:var(--gold)}
+.jpausa b{font:400 3rem var(--serif)}
+.ibtn.on{background:var(--secondary-container);border-color:var(--secondary-container)}
+.ctl-in button{white-space:nowrap}
+.modal{position:fixed;inset:0;background:#0f0e12a6;display:grid;place-items:center;z-index:30;padding:16px;animation:anFundido .2s}
+.modal-in{max-width:440px;width:100%;padding:28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;animation:anZoom .25s cubic-bezier(.2,0,0,1)}
+.modal-in h2{display:flex;align-items:center;gap:10px;margin:0}
+.modal-in .qr svg{width:230px;height:230px;display:block}
+.remoto .cuerpo{justify-content:flex-start;gap:16px}
+.r-main{width:100%;max-width:520px;font-size:1.35rem;padding:1.2em}
+.r-fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;width:100%;max-width:520px}
+.r-fila button{padding:1em .6em}
+@media (max-width:760px){.ctl-in{flex-wrap:wrap;justify-content:flex-end}}
 /* ---------- Diapositivas (lienzo 16:9) ---------- */
 .lienzo{position:relative;width:100%;aspect-ratio:16/9;container-type:size;overflow:hidden;border-radius:var(--r-lg);box-shadow:var(--sombra);background:#180157;user-select:none;-webkit-user-select:none}
 .stage .lienzo{width:min(100%,calc((100vh - 200px) * 16 / 9));width:min(100%,calc((100dvh - 200px) * 16 / 9));border-radius:var(--r-xl);text-align:initial}
@@ -532,7 +567,8 @@ function configDefecto() {
   return { titulo: 'Mi quiz', organizacion: '', color: '#180157', tiempo: 20, puntos: 1000,
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas',
-    filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '' };
+    filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
+    sonidos: true, musica: true, transicion: 'fundido' };
 }
 function nuevoItem(tipo) {
   const b = { tipo };
@@ -614,6 +650,8 @@ function migrarDiapo(it) { // diapositivas del formato anterior (título, texto,
   return { tipo: 'diapositiva', fondo, els };
 }
 const HANDLES = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(h => `<i class="h ${h}" data-h="${h}"></i>`).join('');
+const ANIMS = [['', 'Ninguna'], ['aparecer', 'Aparecer'], ['subir', 'Subir'], ['zoom', 'Zoom'], ['izquierda', 'Desde la izquierda'], ['derecha', 'Desde la derecha']];
+const TRANSICIONES = [['ninguna', 'Ninguna'], ['fundido', 'Fundido'], ['deslizar', 'Deslizar'], ['zoom', 'Zoom'], ['subir', 'Subir']];
 function elHTML(e, ed, sel) {
   const st = [`left:${+e.x}%`, `top:${+e.y}%`, `width:${+e.w}%`, `height:${+e.h}%`, `opacity:${e.op ?? 1}`,
     e.rot ? `transform:rotate(${+e.rot}deg)` : '', e.forma === 'elipse' ? 'border-radius:50%' : `border-radius:calc(${+e.rad || 0} * 1cqw / 12.8)`];
@@ -630,7 +668,9 @@ function elHTML(e, ed, sel) {
     else inner = e.src ? `<img src="${esc(e.src)}" alt="" draggable="false" style="object-fit:${e.ajuste === 'contain' ? 'contain' : 'cover'}">`
       : ed ? '<div class="ph-img">🖼️<br>Doble clic o toca de nuevo<br>para elegir imagen</div>' : '';
   }
-  return `<div class="lz-el t-${e.t}${sel ? ' sel' : ''}" data-id="${esc(e.id)}" style="${esc(st.filter(Boolean).join(';'))}">${inner}${sel && ed ? HANDLES : ''}</div>`;
+  const anim = !ed && ANIMS.some(([k]) => k && k === e.anim) ? ` ea-${e.anim}` : '';
+  if (anim) st.push(`animation-delay:${0.25 + Math.max(0, Math.min(10, +e.retraso || 0))}s`);
+  return `<div class="lz-el t-${e.t}${sel ? ' sel' : ''}${anim}" data-id="${esc(e.id)}" style="${esc(st.filter(Boolean).join(';'))}">${inner}${sel && ed ? HANDLES : ''}</div>`;
 }
 const lienzoHTML = (it, ed) => `<div class="lienzo${ed ? ' ed-lz' : ''}"${ed ? ' id="lz"' : ''} style="${esc(cssRelleno(it.fondo))}">${it.els.map(e => elHTML(e, ed, ed && e.id === sSel)).join('')}${ed ? '<i class="guia gv" hidden></i><i class="guia gh" hidden></i>' : ''}</div>`;
 const textoDiapo = it => { const ts = (it.els || []).filter(e => e.t === 'texto' && String(e.texto).trim()), t = ts.find(e => /\p{L}/u.test(e.texto)) || ts[0]; return t ? String(t.texto).split('\n')[0] : ''; };
@@ -764,6 +804,7 @@ function renderProps() {
       h += `<div class="sp-row"><button data-a="sSubirFondo">${ic('upload')} Subir imagen</button>${f.imagen ? `<button data-a="sQuitarFondo">Quitar imagen</button>` : ''}
         <label>Oscurecer <input type="range" min="0" max="0.8" step="0.05" data-scope="fondo" data-sp="oscurecer" value="${+f.oscurecer || 0}"></label></div>`;
     } else h += editorRelleno('fondo', f, '', false, true);
+    h += `</div><div class="sp-sec"><h3>${ic('animation')} Transición al entrar</h3><div class="sp-row"><div class="seg">${[['', 'La del quiz']].concat(TRANSICIONES).map(([v, n]) => `<button data-a="sTrans" data-v="${v}" class="${(it.transicion || '') === v ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
     box.innerHTML = h + '</div><p class="hint">Toca un elemento de la diapositiva para cambiar su formato.</p>';
     return;
   }
@@ -785,6 +826,8 @@ function renderProps() {
       <label>Opacidad <input type="range" min="0.1" max="1" step="0.05" data-scope="el" data-sp="op" value="${el.op ?? 1}"></label>
       <label>Rotación <input type="range" min="-180" max="180" step="5" data-scope="el" data-sp="rot" value="${+el.rot || 0}"></label>
       <button class="tg ${el.sombra ? 'on' : ''}" data-a="sTog" data-k="sombra">Sombra</button></div>
+    <p class="lbl-sm">Animación de entrada</p><div class="sp-row"><div class="seg">${ANIMS.map(([v, n]) => `<button data-a="sSet" data-k="anim" data-v="${v}" class="${(el.anim || '') === v ? 'on' : ''}">${n}</button>`).join('')}</div>
+      ${el.anim ? `<label>Esperar <input type="range" min="0" max="5" step="0.25" data-scope="el" data-sp="retraso" value="${+el.retraso || 0}"> s</label><button data-a="sAnimProbar">${ic('play_arrow')} Probar</button>` : ''}</div>
     <div class="sp-row"><button data-a="sOrden" data-v="frente">${ic('flip_to_front')} Traer al frente</button><button data-a="sOrden" data-v="atras">${ic('flip_to_back')} Enviar atrás</button>
       <button data-a="sDup">${ic('content_copy')} Duplicar</button><button class="peligro" data-a="sDel">${ic('delete')} Eliminar</button></div></div>`;
   box.innerHTML = h;
@@ -828,6 +871,12 @@ function accionesDiapositiva() {
     sSubirFondo: () => leerImagen(d => { const f = diapoActual().fondo; f.imagen = d; f.tipo = 'imagen'; listo(); }, 1920),
     sQuitarFondo: () => { diapoActual().fondo.imagen = ''; listo(); },
     sImg: () => leerImagen(d => { const e = elSel(); if (e) { e.src = d; listo(); } }),
+    sTrans: el => { diapoActual().transicion = el.dataset.v; guardarLocal(); renderProps(); },
+    sAnimProbar: () => {
+      const e = elSel(), d = e && $(`#lz .lz-el[data-id="${e.id}"]`); if (!d || !e.anim) return;
+      d.classList.remove('ea-' + e.anim); void d.offsetWidth; d.style.animationDelay = '0s'; d.classList.add('ea-' + e.anim);
+      setTimeout(() => d.classList.remove('ea-' + e.anim), 1200);
+    },
   };
 }
 function teclasDiapositiva(e) {
@@ -951,6 +1000,75 @@ function moverHistorial(d) {
   if ($('#lista')) { renderLista(); renderForm(); }
   botonesHistorial(); aviso(d < 0 ? '↶ Deshecho' : '↷ Rehecho', 1200);
 }
+
+/* ---------- Sonidos y música generados con Web Audio (sin archivos) ---------- */
+const midi = n => 440 * Math.pow(2, (n - 69) / 12);
+const SND = {
+  ctx: null, master: null, musica: null,
+  silencio: (() => { try { return localStorage.getItem('quiziglesia.silencio') === '1'; } catch (_) { return false; } })(),
+  init() {
+    if (!this.ctx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; this.ctx = new C(); this.master = this.ctx.createGain(); this.master.gain.value = this.silencio ? 0 : 0.7; this.master.connect(this.ctx.destination); }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+  alternar() { this.silencio = !this.silencio; try { localStorage.setItem('quiziglesia.silencio', this.silencio ? '1' : '0'); } catch (_) { } if (this.master) this.master.gain.value = this.silencio ? 0 : 0.7; },
+  nota(f, t, d, o = {}) {
+    const c = this.ctx, osc = c.createOscillator(), g = c.createGain();
+    osc.type = o.tipo || 'triangle'; osc.frequency.setValueAtTime(f, t);
+    if (o.hasta) osc.frequency.exponentialRampToValueAtTime(o.hasta, t + d);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(o.vol || 0.2, t + (o.ataque || 0.01)); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    osc.connect(g).connect(o.dest || this.master); osc.start(t); osc.stop(t + d + 0.05);
+  },
+  ruido(t, d, o = {}) {
+    const c = this.ctx, n = Math.ceil(c.sampleRate * d), buf = c.createBuffer(1, n, c.sampleRate), ch = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    src.buffer = buf; f.type = o.filtro || 'highpass'; f.frequency.setValueAtTime(o.fq || 6000, t); if (o.fq2) f.frequency.exponentialRampToValueAtTime(o.fq2, t + d);
+    g.gain.setValueAtTime(o.vol0 ?? (o.vol || 0.1), t); g.gain.exponentialRampToValueAtTime(o.vol1 ?? 0.0001, t + d);
+    src.connect(f).connect(g).connect(o.dest || this.master); src.start(t); src.stop(t + d);
+  },
+  efecto(nombre) {
+    if (!quiz.config.sonidos || !this.init()) return;
+    const t = this.ctx.currentTime + 0.02, N = (m, dt, d, o) => this.nota(midi(m), t + dt, d, o);
+    switch (nombre) {
+      case 'unir': N(84, 0, 0.12, { tipo: 'sine', vol: 0.15 }); N(91, 0.07, 0.18, { tipo: 'sine', vol: 0.12 }); break;
+      case 'tic': N(96, 0, 0.07, { tipo: 'square', vol: 0.05 }); break;
+      case 'revelar': [60, 64, 67, 72].forEach((m, k) => N(m + 12, k * 0.07, 0.5, { vol: 0.14 })); N(48, 0, 0.6, { tipo: 'sine', vol: 0.2 }); break;
+      case 'transicion': this.ruido(t, 0.35, { filtro: 'bandpass', fq: 400, fq2: 3000, vol0: 0.08, vol1: 0.0001 }); break;
+      case 'redoble': for (let k = 0; k < 22; k++) this.ruido(t + k * 0.055, 0.05, { filtro: 'bandpass', fq: 1800, vol: 0.05 + k * 0.006 }); N(48, 1.25, 0.5, { tipo: 'sine', vol: 0.3 }); this.ruido(t + 1.25, 0.4, { fq: 3000, vol: 0.12 }); break;
+      case 'fanfarria': [[67, 0], [72, 0.15], [76, 0.3], [79, 0.45], [76, 0.75], [79, 0.9]].forEach(([m, dt]) => { N(m, dt, dt > 0.8 ? 0.9 : 0.3, { tipo: 'sawtooth', vol: 0.07 }); N(m - 12, dt, 0.3, { vol: 0.08 }); }); [60, 64, 67, 72].forEach(m => N(m, 0.9, 1.2, { vol: 0.07 })); break;
+      case 'pausa': N(72, 0, 0.15, { tipo: 'sine', vol: 0.12 }); N(67, 0.12, 0.25, { tipo: 'sine', vol: 0.12 }); break;
+    }
+  },
+  musicaIniciar(modo) {
+    this.musicaParar(0.05);
+    if (!quiz.config.musica || !this.init()) return;
+    const c = this.ctx, g = c.createGain(); g.gain.value = modo === 'lobby' ? 0.22 : 0.3; g.connect(this.master);
+    const lobby = modo === 'lobby', sem = 60 / (lobby ? 84 : 128) / 2;
+    const acordes = lobby ? [[60, 64, 67, 71], [57, 60, 64, 67], [53, 57, 60, 64], [55, 59, 62, 65]] : [[60, 64, 67, 72], [55, 59, 62, 67], [57, 60, 64, 69], [53, 57, 60, 65]];
+    let paso = 0, prox = c.currentTime + 0.05;
+    const id = setInterval(() => {
+      while (prox < c.currentTime + 0.25) {
+        const a = acordes[Math.floor(paso / 8) % 4], k = paso % 8;
+        if (lobby) { if (k % 2 === 0) this.nota(midi(a[[0, 2, 1, 3][(k / 2) | 0]] + 12), prox, sem * 3, { tipo: 'sine', vol: 0.12, dest: g, ataque: 0.05 }); if (k === 0) this.nota(midi(a[0] - 12), prox, sem * 7.5, { tipo: 'sine', vol: 0.18, dest: g, ataque: 0.2 }); }
+        else {
+          this.nota(midi(a[[0, 1, 2, 3, 2, 1, 2, 3][k]] + 12), prox, sem * 0.8, { tipo: 'triangle', vol: 0.1, dest: g });
+          if (k % 4 === 0) this.nota(midi(a[0] - 12), prox, sem * 3.5, { tipo: 'sine', vol: 0.22, dest: g });
+          if (k % 2 === 1) this.ruido(prox, 0.04, { fq: 7000, vol: 0.035, dest: g });
+          if (k === 0 || k === 4) this.nota(90, prox, 0.12, { tipo: 'sine', hasta: 45, vol: 0.35, dest: g });
+        }
+        paso++; prox += sem;
+      }
+    }, 60);
+    this.musica = { g, id };
+  },
+  musicaParar(fade = 0.4) {
+    if (!this.musica) return;
+    const m = this.musica; this.musica = null; clearInterval(m.id);
+    try { m.g.gain.setTargetAtTime(0.0001, this.ctx.currentTime, fade / 3); } catch (_) { }
+    setTimeout(() => { try { m.g.disconnect(); } catch (_) { } }, fade * 1000 + 300);
+  },
+};
 
 /* ---------- Filtro de palabras (nombres y respuestas escritas) ---------- */
 const FILTRO_BASE = ('puta,puto,mierda,weon,weona,wn,hueon,huevon,aweonao,aweonado,conchetumare,conchesumare,ctm,csm,concha,chucha,culiao,culiado,ql,qliao,kuliao,'
@@ -1101,8 +1219,9 @@ let ACC = {};
 document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (el && ACC[el.dataset.a]) ACC[el.dataset.a](el, e); });
 
 function iniciar() {
-  const code = new URLSearchParams(location.search).get('join');
+  const qs = new URLSearchParams(location.search), code = qs.get('join');
   if (code) return vistaJugador(code.trim());
+  if (qs.get('remoto')) return vistaRemoto(qs.get('remoto').trim(), qs.get('k') || '');
   IDB.get('actual').then(v => {
     if (v) { const q = JSON.parse(v); if (q && q.items) quiz = normalizarQuiz(q); }
     else guardarAhora(); // primera vez: pasar a IndexedDB lo que había en localStorage
@@ -1309,6 +1428,11 @@ function renderFormCampos() {
       </select></label></div>
       ${fChk('Mostrar la respuesta correcta en el teléfono', 'mostrarCorrectaTelefono', c.mostrarCorrectaTelefono)}
       ${fChk('Permitir unirse después de comenzar', 'permitirTarde', c.permitirTarde)}
+      <h3 class="sub-cfg">🎵 Sonido y efectos</h3>
+      ${fChk('Efectos de sonido (cuenta regresiva, revelar, podio…)', 'sonidos', c.sonidos)}
+      ${fChk('Música de fondo en la sala de espera y en las preguntas', 'musica', c.musica)}
+      <label class="fld sm ancho"><span>Transición entre pantallas</span><select data-f="transicion">${TRANSICIONES.map(([v, n]) => `<option value="${v}" ${c.transicion === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      <p class="hint">En la presentación: <b>P</b> pausa, <b>+</b> agrega 10 segundos, <b>M</b> silencia, <b>←</b> vuelve a la diapositiva anterior. Cada diapositiva puede tener su propia transición y animaciones de entrada.</p>
       ${fChk('Jugar por equipos (el puntaje se suma por equipo)', 'modoEquipos', c.modoEquipos)}
       ${fTxt('Nombres de los equipos (separados por coma, de 2 a 6)', 'nombresEquipos', c.nombresEquipos)}
       <p class="hint">Con equipos, cada participante elige su equipo al entrar. Sirve también con un solo teléfono por equipo.</p>
@@ -1404,7 +1528,7 @@ function actualizarPinMark() {
 
 /* =================== PRESENTAR (pantalla principal) =================== */
 let H = null;
-function detenerHost() { if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
+function detenerHost() { SND.musicaParar(0.2); if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
 function latidoHost() {
   if (!H) return;
   const ahora = Date.now(); let cambio = false;
@@ -1417,12 +1541,26 @@ function vistaPresentar() {
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost();
-  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(), ocultas: new Set() };
+  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(), ocultas: new Set(), token: nid() + nid(), remotos: new Set(), modal: null };
   iniciarPeerHost();
+  SND.musicaIniciar('lobby');
   H.latido = setInterval(latidoHost, 5000);
-  document.onkeydown = e => { if (H && ['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key) && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) { e.preventDefault(); avanzar(); } };
+  document.onkeydown = e => {
+    if (!H || ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); avanzar(); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); retroceder(); }
+    else if (e.key.toLowerCase() === 'p') alternarPausa();
+    else if (e.key === '+') masTiempo();
+    else if (e.key.toLowerCase() === 'm') ACC.sonido();
+    else if (e.key === 'Escape' && H.modal) { H.modal = null; renderHost(); }
+  };
   ACC = {
     next: avanzar,
+    pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder,
+    sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
+    remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
+    cerrarModal: () => { H.modal = null; renderHost(); },
+    nuevoEnlace: () => { H.token = nid() + nid(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
     salir: () => { if (confirm('¿Salir de la presentación? Se perderá el puntaje.')) vistaInicio(); },
     fs: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(),
     kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm('¿Sacar a ' + p.name + ' de la sala?')) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
@@ -1496,12 +1634,19 @@ function alRecibirHost(conn, d) {
   if (!H || !d) return;
   if (conn.pid && H.players[conn.pid]) { const p = H.players[conn.pid]; p.visto = Date.now(); if (!p.online && p.conn === conn) { p.online = true; if (H.fase === 'lobby') renderHost(); } }
   if (d.t === 'pong') return;
+  if (d.t === 'remoto') {
+    if (d.k !== H.token) { conn.send({ t: 'rerror' }); return; }
+    conn.esRemoto = true; H.remotos.add(conn); conn.on('close', () => { if (H) { H.remotos.delete(conn); if (H.modal) renderHost(); } });
+    renderHost(); return;
+  }
+  if (conn.esRemoto) { if (d.t === 'rcmd') comandoRemoto(d.c); return; }
   if (d.t === 'join') {
     let p = H.players[d.pid];
     if (!p) {
       if (H.fase !== 'lobby' && !quiz.config.permitirTarde) { conn.send({ t: 'msg', icono: '🚪', msg: 'El juego ya comenzó. ¡Espera la próxima ronda!' }); return; }
       const f = filtroQuiz();
       if (f && tieneGroseria(d.name, f)) { conn.send({ t: 'rechazo', msg: 'Ese nombre no está permitido. Elige otro.' }); return; }
+      SND.efecto('unir');
       p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
       if (H.eq.length) p.eq = equipoMenor();
     }
@@ -1515,7 +1660,7 @@ function alRecibirHost(conn, d) {
     p.eq = i; enviarEstado(p); renderHost();
   } else if (d.t === 'ans') {
     const pid = conn.pid, p = H.players[pid];
-    if (!p || p.pendiente || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
+    if (!p || p.pendiente || H.pausa || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
     let val = d.val; const f = filtroQuiz();
     if (f && typeof val === 'string' && tieneGroseria(val, f)) val = ''; // se cuenta como respuesta vacía y no se muestra
     H.resp[pid] = { val, ms: Date.now() - H.t0 };
@@ -1527,7 +1672,7 @@ function alRecibirHost(conn, d) {
 function enviarEstado(p) {
   if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: 'Esperando que el presentador apruebe tu nombre…' });
   else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
-  else if (H.fase === 'pregunta' && !H.resp[p.pid]) enviar(p, { ...H.payload, restante: Math.max(1, tiempoDe(quiz.items[H.idx]) - Math.floor((Date.now() - H.t0) / 1000)) });
+  else if (H.fase === 'pregunta' && !H.resp[p.pid]) { enviar(p, { ...H.payload, tiempo: tiempoH(), restante: restanteH() }); if (H.pausa) enviar(p, { t: 'pausa', on: true }); }
   else enviar(p, { t: 'msg', icono: '👀', msg: 'Mira la pantalla', score: p.score });
 }
 function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = H.fase === 'pregunta' || H.fase === 'revelar' ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`; }
@@ -1557,7 +1702,7 @@ function avanzar() {
     case 'revelar': {
       const it = quiz.items[H.idx], cada = +quiz.config.rankingCada, hay = Object.keys(H.players).length;
       const ultima = !quiz.items.slice(H.idx + 1).some(esPregunta);
-      if (hay && !TIPOS[it.tipo].sinPuntaje && cada > 0 && !ultima && numPregunta(H.idx) % cada === 0) { H.fase = 'ranking'; difundir({ t: 'msg', icono: '🏆', msg: 'Mira el ranking' }); renderHost(); }
+      if (hay && !TIPOS[it.tipo].sinPuntaje && cada > 0 && !ultima && numPregunta(H.idx) % cada === 0) { H.fase = 'ranking'; SND.efecto('redoble'); difundir({ t: 'msg', icono: '🏆', msg: 'Mira el ranking' }); renderHost(); }
       else irA(H.idx + 1);
       break;
     }
@@ -1566,18 +1711,20 @@ function avanzar() {
 function irA(i) {
   clearInterval(H.timer);
   if (i >= quiz.items.length) return fin();
-  H.idx = i; const it = quiz.items[i];
-  if (!esPregunta(it)) { H.fase = 'slide'; difundir({ t: 'msg', icono: '👀', msg: 'Mira la pantalla' }); renderHost(); return; }
+  H.idx = i; const it = quiz.items[i]; H.pausa = false; H.extra = 0; H.ultLeft = null;
+  if (!esPregunta(it)) { H.fase = 'slide'; SND.musicaParar(); SND.efecto('transicion'); difundir({ t: 'msg', icono: '👀', msg: 'Mira la pantalla' }); renderHost(); return; }
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
+  SND.musicaIniciar('pregunta');
   H.shuf = barajar(it);
   H.tiles = it.tipo === 'revela' ? shuffle([...Array(NTILES).keys()]) : null; // orden en que se destapa cada cuadro
   H.payload = payload(it, i);
   difundir(H.payload);
   renderHost();
-  const T = tiempoDe(it);
   H.timer = setInterval(() => {
-    const left = Math.max(0, Math.ceil(T - (Date.now() - H.t0) / 1000));
+    if (H.pausa) return;
+    const left = Math.max(0, Math.ceil(tiempoH() - transcurrido() / 1000));
     const el = $('#tLeft'); if (el) el.textContent = left;
+    if (left !== H.ultLeft) { H.ultLeft = left; if (left > 0 && left <= 5) SND.efecto('tic'); }
     tickHost();
     if (left <= 0) revelar();
   }, 250);
@@ -1594,16 +1741,34 @@ function barajar(it) { // mezcla evitando, si se puede, que quede igual al orden
 }
 function tickHost() { // animaciones que dependen del tiempo: imagen que se revela y pistas de ¿Quién soy?
   if (!H || H.fase !== 'pregunta') return;
-  const it = quiz.items[H.idx], ms = Date.now() - H.t0, T = tiempoDe(it) * 1000;
+  const it = quiz.items[H.idx], ms = transcurrido(), T = tiempoH() * 1000;
   if (it.tipo === 'revela') { const n = Math.floor(ms / T * NTILES); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
   if (it.tipo === 'quiensoy') { const k = pistasVisibles(pistasValidas(it).length, ms, T); document.querySelectorAll('.pistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
 }
 function ranking() { return Object.values(H.players).filter(p => !p.pendiente).sort((a, b) => b.score - a.score); }
+const transcurrido = () => (H.pausa ? H.pausaIni : Date.now()) - H.t0;
+const tiempoH = () => tiempoDe(quiz.items[H.idx]) + (H.extra || 0);
+const restanteH = () => Math.max(1, Math.ceil(tiempoH() - transcurrido() / 1000));
+function alternarPausa() {
+  if (!H || H.fase !== 'pregunta') return;
+  if (!H.pausa) { H.pausa = true; H.pausaIni = Date.now(); SND.musicaParar(); SND.efecto('pausa'); difundir({ t: 'pausa', on: true }); }
+  else { H.t0 += Date.now() - H.pausaIni; H.pausa = false; SND.musicaIniciar('pregunta'); difundir({ t: 'pausa', on: false, restante: restanteH(), total: tiempoH() }); }
+  renderHost();
+}
+function masTiempo(seg = 10) { if (!H || H.fase !== 'pregunta') return; H.extra = (H.extra || 0) + seg; difundir({ t: 'tiempo', restante: restanteH(), total: tiempoH() }); renderHost(); aviso(`+${seg} segundos`, 1200); }
+function saltar() { if (!H || H.fase !== 'pregunta') return; clearInterval(H.timer); H.pausa = false; SND.musicaParar(); difundir({ t: 'msg', icono: '⏭', msg: 'Pregunta saltada' }); irA(H.idx + 1); }
+function anteriorDiapo() { // volver a la diapositiva anterior (solo diapositivas, para no repetir preguntas)
+  if (!H || !['slide', 'lobby', 'ranking'].includes(H.fase)) return -1;
+  const i = H.idx - 1; return i >= 0 && !esPregunta(quiz.items[i]) ? i : -1;
+}
+function retroceder() { const i = anteriorDiapo(); if (i >= 0) irA(i); }
 function revelar() {
   clearInterval(H.timer);
   if (H.fase !== 'pregunta') return;
+  if (H.pausa) { H.t0 += Date.now() - H.pausaIni; H.pausa = false; }
+  SND.musicaParar(); SND.efecto('revelar');
   const it = quiz.items[H.idx], sinP = TIPOS[it.tipo].sinPuntaje;
-  const T = tiempoDe(it) * 1000, base = (+quiz.config.puntos || 0) * (it.mult ?? 1);
+  const T = tiempoH() * 1000, base = (+quiz.config.puntos || 0) * (it.mult ?? 1);
   H.fase = 'revelar'; H.ult = {};
   for (const p of Object.values(H.players)) {
     const r = H.resp[p.pid]; let ok = null, pts = 0, fr = 0;
@@ -1624,7 +1789,7 @@ function revelar() {
   renderHost();
 }
 function fin() {
-  H.fase = 'fin'; clearInterval(H.timer);
+  H.fase = 'fin'; clearInterval(H.timer); SND.musicaParar(); SND.efecto('fanfarria');
   const rk = ranking();
   rk.forEach((p, k) => enviar(p, { t: 'fin', ...posicion(p, k, rk.length), score: p.score }));
   renderHost();
@@ -1655,16 +1820,45 @@ function renderHost() {
     pregunta: `Los jugadores eligen su respuesta en el celular con el código ${H.code}.`, revelar: 'Respuesta revelada. Sigue cuando todos la hayan visto.',
     ranking: '¡Así va la competencia!', fin: '¡Gracias por jugar!' }[H.fase];
   const pct = H.fase === 'lobby' ? 0 : H.fase === 'fin' ? 100 : (H.idx + 1) / quiz.items.length * 100;
+  const clave = H.fase === 'revelar' ? 'pregunta:' + H.idx : H.fase + ':' + H.idx; // la transición se ve solo al cambiar de pantalla
+  const it0 = quiz.items[H.idx], trans = clave !== H.ultClave ? ((it0 && it0.tipo === 'diapositiva' && it0.transicion) || quiz.config.transicion || 'ninguna') : '';
+  H.ultClave = clave;
   app.innerHTML = `<div class="host" style="--c:${esc(quiz.config.color)}">
     <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>${sub}</small></div></div>
       <div class="pills"><span class="badge cyan"><span class="dot"></span>Sala ${H.code}</span>
         <span class="badge ind">${ic('group')}<span id="nResp">${enPreg ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`}</span></span>
+        <button class="ibtn" id="bSonido" data-a="sonido" title="Sonido (M)" aria-label="Sonido">${ic(SND.silencio ? 'volume_off' : 'volume_up')}</button>
+        <button class="ibtn ${H.remotos.size ? 'on' : ''}" data-a="remoto" title="Control remoto desde el celular" aria-label="Control remoto">${ic('settings_remote')}</button>
         <button class="ibtn" data-a="fs" title="Pantalla completa" aria-label="Pantalla completa">${ic('fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
-    <main class="stage">${c}</main>${porAprobar()}
+    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>En pausa</b><span>Presiona P o Seguir para continuar</span></div>` : ''}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
-      <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div></div>`;
+      ${H.fase === 'pregunta' ? `<button data-a="pausa" title="Pausar (P)">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="mas" title="Agregar 10 segundos (+)">+10 s</button><button data-a="saltar" title="Saltar sin puntaje">${ic('skip_next')} Saltar</button>` : ''}
+      ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="Diapositiva anterior (←)">${ic('arrow_back')}</button>` : ''}
+      <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : ''}</div>`;
   tickHost();
+  actualizarRemotos(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente', sub);
+}
+function urlRemoto() { return location.origin + location.pathname + '?remoto=' + H.code + '&k=' + H.token; }
+function modalRemoto() {
+  let qr = '';
+  try { const q = qrcode(0, 'M'); q.addData(urlRemoto()); q.make(); qr = q.createSvgTag(5, 2); } catch (e) { qr = '<p>(QR no disponible)</p>'; }
+  return `<div class="modal" data-a="cerrarModal"><div class="card modal-in" data-a="nada">
+    <h2>${ic('settings_remote')} Control remoto</h2>
+    <p class="muted">Escanea este código con <b>tu</b> celular para avanzar, pausar o saltar desde cualquier parte de la sala. No lo dejes a la vista de los jugadores.</p>
+    <div class="qr">${qr}</div>
+    <p class="muted">${H.remotos.size ? `<span class="badge cyan"><span class="dot"></span>${H.remotos.size} control${H.remotos.size > 1 ? 'es' : ''} conectado${H.remotos.size > 1 ? 's' : ''}</span>` : 'Ningún control conectado'}</p>
+    <div class="botones"><button data-a="nuevoEnlace">${ic('autorenew')} Nuevo enlace</button><button class="pri" data-a="cerrarModal">Listo</button></div></div></div>`;
+}
+function actualizarRemotos(btn, sub) {
+  if (!H || !H.remotos.size) return;
+  const it = quiz.items[H.idx];
+  const st = { t: 'rstate', fase: H.fase, sub, btn, titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0,
+    resp: Object.keys(H.resp).length, jug: conectados().length, codigo: H.code };
+  H.remotos.forEach(c => { try { c.open && c.send(st); } catch (_) { } });
+}
+function comandoRemoto(cmd) {
+  ({ next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder })[cmd]?.();
 }
 function resumenConexion(ps) {
   const on = ps.filter(p => p.online), off = ps.length - on.length, r = on.filter(p => p.via === 'respaldo').length;
@@ -1703,7 +1897,7 @@ function hostSlide() {
 function conteo(fn) { const c = {}; Object.values(H.resp).forEach(r => { const k = fn(r.val); c[k] = (c[k] || 0) + 1; }); return c; }
 function hostPregunta(rev) {
   const it = quiz.items[H.idx], T = tiempoDe(it), nTot = Object.keys(H.resp).length;
-  const left = Math.max(0, Math.ceil(T - (Date.now() - H.t0) / 1000));
+  const left = Math.max(0, Math.ceil(tiempoH() - transcurrido() / 1000));
   let h = `<section class="card hq-card"><div class="hq-meta"><span class="badge mag">${TIPOS[it.tipo].icono} ${TIPOS[it.tipo].nombre}</span>
     ${rev ? `<span class="badge cyan">${ic('check_circle', 'fill')} ${nTot} respuestas</span>` : `<span class="timer">${ic('timer')}<span id="tLeft">${left}</span>s</span>`}</div>
     ${it.pregunta ? `<h1 class="hq-q">${esc(it.pregunta)}</h1>` : ''}</section>`;
@@ -1838,6 +2032,36 @@ function hostFin() {
     <div class="botones"><button class="big" data-a="csv">${ic('download')} Descargar resultados</button><button class="pri big" data-a="inicio">${ic('home')} Volver al inicio</button></div>`;
 }
 
+/* =================== CONTROL REMOTO (celular del presentador) =================== */
+let R = null;
+function vistaRemoto(code, k) {
+  document.title = 'Control remoto · Quiz Iglesia';
+  R = { code, k, st: null };
+  ACC = { rc: el => { try { R.conn.send({ t: 'rcmd', c: el.dataset.c }); } catch (_) { } navigator.vibrate?.(30); }, reintentar: () => location.reload() };
+  pintarRemoto('⏳ Conectando con la pantalla…');
+  if (!window.Peer) return pintarRemoto('📵 No se pudo cargar la conexión.');
+  R.peer = new Peer(opcionesPeer());
+  R.peer.on('open', () => {
+    const c = R.peer.connect(PREFIJO + code, { reliable: true }); R.conn = c;
+    c.on('open', () => c.send({ t: 'remoto', k }));
+    c.on('data', d => { if (d.t === 'rstate') { R.st = d; pintarRemoto(); } else if (d.t === 'rerror') { R.fin = true; pintarRemoto('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.'); } });
+    c.on('close', () => { if (!R.fin) { pintarRemoto('🔄 Reconectando…'); setTimeout(() => location.reload(), 2500); } });
+  });
+  R.peer.on('error', e => pintarRemoto(e.type === 'peer-unavailable' ? '🔍 No se encontró la presentación. ¿Sigue abierta?' : '📵 Problema de conexión'));
+  if ('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(() => { });
+}
+function pintarRemoto(msg) {
+  const st = R.st;
+  app.innerHTML = `<div class="jug remoto"><header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>Control remoto</b><small>Sala ${esc(R.code)}</small></div></div></header>
+    <div class="cuerpo">${msg || !st ? `<h2>${esc(msg || '⏳ Conectando…')}</h2>${msg && !R.fin ? '' : ''}<button data-a="reintentar">Reintentar</button>` : `
+      <div class="jq"><span class="badge mag">${esc(st.sub || '')}</span><p>${esc(st.titulo || '')}</p></div>
+      <p class="muted">${st.fase === 'pregunta' ? `${st.resp} / ${st.jug} respuestas` : `${st.jug} jugador${st.jug === 1 ? '' : 'es'} conectado${st.jug === 1 ? '' : 's'}`}${st.pausa ? ' · <b>en pausa</b>' : ''}</p>
+      ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : '<h2>¡Fin del quiz! 🎉</h2>'}
+      <div class="r-fila">${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} Anterior</button>` : ''}
+        ${st.fase === 'pregunta' ? `<button data-a="rc" data-c="pausa">${ic(st.pausa ? 'play_arrow' : 'pause')} ${st.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="rc" data-c="mas">+10 s</button><button data-a="rc" data-c="saltar">${ic('skip_next')} Saltar</button>` : ''}</div>`}
+    </div></div>`;
+}
+
 /* =================== JUGADOR (teléfono) =================== */
 let P = null;
 function vistaJugador(code, error) {
@@ -1953,7 +2177,13 @@ function alRecibirJ(d) {
     case 'msg': pantallaJ(d.icono || '👀', esc(d.msg)); break;
     case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
     case 'recibido': pantallaJ('⏳', '¡Respuesta enviada!<br><small>Espera a los demás…</small>'); break;
+    case 'pausa':
+      if (d.on) { P.pausa = true; P.restPausa = P.limite - Date.now(); }
+      else { P.pausa = false; P.limite = Date.now() + (d.restante ? d.restante * 1000 : P.restPausa || 0); if (P.q && d.total) P.q.tiempo = d.total; }
+      overlayPausa(); break;
+    case 'tiempo': P.limite = Date.now() + d.restante * 1000; if (P.q && d.total) P.q.tiempo = d.total; break;
     case 'res': {
+      if (d.ok !== null && navigator.vibrate) navigator.vibrate(d.ok ? 80 : d.fr > 0 ? [60, 40, 60] : [150, 80, 150]);
       const corr = d.correcta ? `<p>Respuesta: <b>${esc(d.correcta)}</b></p>` : '';
       const pos = d.equipo ? `<p>Tu equipo <b>${esc(d.equipo)}</b> va en el lugar <b>${d.rank}</b> de ${d.n}</p>` : `<p>Vas en el lugar <b>${d.rank}</b> de ${d.n}</p>`;
       if (d.ok === null) pantallaJ('🙌', '¡Gracias por participar!', '#A21CAF');
@@ -2021,18 +2251,24 @@ function renderJPregunta(soloLista) {
       h += `<div class="jescala">${[1, 2, 3, 4, 5].map(v => `<button data-a="jv" data-v="${v}" style="background:${ESCALA[v - 1]}">${v}</button>`).join('')}</div>
         <div class="jescala-et"><span>1 = ${esc(q.min)}</span><span>5 = ${esc(q.max)}</span></div>`; break;
   }
-  marcoJ(h, null, true);
+  marcoJ(h, null, true); overlayPausa();
   const r = $('#jrange'); if (r) r.oninput = () => $('#jval').textContent = r.value;
   if (q.tipo === 'versiculo') renderArmado();
   const t = $('#jtxt'); if (t) { t.focus(); t.onkeydown = e => { if (e.key === 'Enter') ACC.jenviar(); }; }
   clearInterval(P.tInt);
   const tick = () => {
+    if (P.pausa) return;
     const s = Math.max(0, Math.ceil((P.limite - Date.now()) / 1000)); const el = $('#jt'); if (el) el.textContent = s + 's';
     const bar = $('#jbar'); if (bar) bar.style.width = Math.max(0, (P.limite - Date.now()) / (q.tiempo * 1000) * 100) + '%';
     if (q.tipo === 'quiensoy') { const T = q.tiempo * 1000, k = pistasVisibles(q.pistas.length, T - (P.limite - Date.now()), T); app.querySelectorAll('#jpistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
     if (s <= 0) { clearInterval(P.tInt); }
   };
   tick(); P.tInt = setInterval(tick, 250);
+}
+function overlayPausa() {
+  const j = $('.jug'), o = $('#jpausa');
+  if (P.pausa && P.q && j && !o) j.insertAdjacentHTML('beforeend', `<div id="jpausa" class="jpausa">${ic('pause_circle', 'fill')}<b>Pausa</b><span>Espera un momento…</span></div>`);
+  else if (!P.pausa && o) o.remove();
 }
 function renderArmado() {
   const q = P.q; if (!q) return;
