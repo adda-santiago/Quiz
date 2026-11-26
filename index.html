@@ -181,6 +181,8 @@ input[type=color]{padding:3px;height:44px;width:84px}
   .bar .lbl{display:none}
   .bar button{padding:.55em .7em}
   .bar .titulo{flex:1;min-width:0;max-width:none}
+  .bar #bUndo,.bar #bRedo{padding:.55em .45em}
+  .bar .guardado{display:none}
   .bar .sp{display:none}
   .editor.vista-lista #form{display:none}
   .editor.vista-form #lista{display:none}
@@ -322,6 +324,24 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .eqbox h3{margin:0;padding:8px 16px;color:#fff;font-size:1.1rem}
 .eqbox .players{padding:12px}
 .eqbox small{color:var(--outline)}
+/* ---------- Guardado, avisos, filtro ---------- */
+.guardado{display:inline-flex;align-items:center;gap:4px;font-size:.78rem;font-weight:600;color:var(--on-s-var);white-space:nowrap}
+.guardado .ms{font-size:1.15em;color:var(--success);max-width:none}
+.guardado.guardando .ms{color:var(--outline)}
+.guardado.error,.guardado.error .ms{color:var(--error)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--inverse,#313035);color:#F4EFF7;padding:10px 18px;border-radius:999px;font-weight:600;font-size:.92rem;box-shadow:var(--sombra);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:min(560px,92vw);text-align:center}
+#toast.ver{opacity:1;transform:translate(-50%,0)}
+.sub-cfg{font:600 1.05rem var(--sans);color:var(--c);margin:26px 0 4px}
+.pend-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;max-width:1168px;margin:0 auto 10px;padding:10px 16px;background:#FEF3C7;border:1px solid var(--gold);border-radius:var(--r-lg)}
+.chip.pend{display:inline-flex;align-items:center;gap:6px;cursor:default;padding:4px 6px 4px 14px}
+.chip.pend:hover{text-decoration:none;border-color:var(--outline-var)}
+.chip.pend button{width:30px;height:30px;padding:0;border-radius:50%}
+.chip.pend .ok{background:var(--success);border-color:var(--success);color:#fff}
+.chip.pend .no{background:var(--error-container);border-color:var(--error-container);color:#93000A}
+.tops div[data-a],.nube span[data-a]{cursor:pointer}
+.tops div[data-a]:hover,.nube span[data-a]:hover{text-decoration:line-through}
+.jug .aviso{margin:0;color:var(--error);font-weight:600}
+.jug.est .aviso{color:#fff}
 /* ---------- Diapositivas (lienzo 16:9) ---------- */
 .lienzo{position:relative;width:100%;aspect-ratio:16/9;container-type:size;overflow:hidden;border-radius:var(--r-lg);box-shadow:var(--sombra);background:#180157;user-select:none;-webkit-user-select:none}
 .stage .lienzo{width:min(100%,calc((100vh - 200px) * 16 / 9));width:min(100%,calc((100dvh - 200px) * 16 / 9));border-radius:var(--r-xl);text-align:initial}
@@ -505,7 +525,8 @@ const NTILES = 24; // cuadros que tapan la imagen que se revela (6 × 4)
 function configDefecto() {
   return { titulo: 'Mi quiz', organizacion: '', color: '#180157', tiempo: 20, puntos: 1000,
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
-    modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas' };
+    modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas',
+    filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false };
 }
 function nuevoItem(tipo) {
   const b = { tipo };
@@ -872,7 +893,79 @@ function ejemploQuiz() {
 /* ---------- Archivo / almacenamiento ---------- */
 const LS = 'quiziglesia.quiz';
 let quiz = (() => { try { const q = JSON.parse(localStorage.getItem(LS)); return q && q.items ? normalizarQuiz(q) : ejemploQuiz(); } catch (e) { return ejemploQuiz(); } })();
-function guardarLocal() { try { localStorage.setItem(LS, JSON.stringify(quiz)); } catch (e) { console.warn('No se pudo autoguardar (archivo muy grande)'); } }
+/* El quiz se guarda en IndexedDB (mucho más espacio que localStorage, que queda solo como respaldo). */
+const IDB = {
+  db: null,
+  abrir() {
+    if (this.db) return Promise.resolve(this.db);
+    return new Promise((ok, mal) => {
+      const r = indexedDB.open('quiziglesia', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('datos');
+      r.onsuccess = () => ok(this.db = r.result); r.onerror = () => mal(r.error);
+    });
+  },
+  get(k) { return this.abrir().then(db => new Promise((ok, mal) => { const q = db.transaction('datos').objectStore('datos').get(k); q.onsuccess = () => ok(q.result); q.onerror = () => mal(q.error); })); },
+  set(k, v) { return this.abrir().then(db => new Promise((ok, mal) => { const tx = db.transaction('datos', 'readwrite'); tx.objectStore('datos').put(v, k); tx.oncomplete = () => ok(); tx.onerror = tx.onabort = () => mal(tx.error); })); },
+};
+let tGuardar = null, errorGuardadoAvisado = false;
+function guardarLocal() { estadoGuardado('guardando'); clearTimeout(tGuardar); tGuardar = setTimeout(guardarAhora, 400); }
+function guardarAhora() {
+  clearTimeout(tGuardar); tGuardar = null;
+  const s = JSON.stringify(quiz);
+  registrarHistorial(s);
+  return IDB.set('actual', s).then(() => { estadoGuardado('ok'); try { localStorage.removeItem(LS); } catch (_) { } })
+    .catch(e => { console.warn(e); try { localStorage.setItem(LS, s); estadoGuardado('ok'); } catch (_) { estadoGuardado('error'); } });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && tGuardar) guardarAhora(); });
+function estadoGuardado(st) {
+  const el = $('#guardado');
+  if (el) { el.className = 'guardado ' + st; el.innerHTML = st === 'error' ? `${ic('error')}<span class="lbl">No se pudo guardar</span>` : st === 'ok' ? `${ic('cloud_done')}<span class="lbl">Guardado</span>` : `${ic('sync')}<span class="lbl">Guardando…</span>`; }
+  if (st === 'error' && !errorGuardadoAvisado) { errorGuardadoAvisado = true; aviso('⚠️ No se pudo guardar en este navegador. Descarga el archivo con 💾 para no perder cambios.', 8000); }
+}
+function aviso(msg, ms = 2200) {
+  let t = $('#toast'); if (!t) { t = document.createElement('div'); t.id = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.className = 'ver'; clearTimeout(t._t); t._t = setTimeout(() => t.className = '', ms);
+}
+const HIST = { pila: [], pos: -1 };
+function registrarHistorial(s) {
+  if (HIST.pila[HIST.pos] === s) return;
+  HIST.pila = HIST.pila.slice(0, HIST.pos + 1); HIST.pila.push(s);
+  if (HIST.pila.length > 60) HIST.pila.shift();
+  HIST.pos = HIST.pila.length - 1; botonesHistorial();
+}
+function botonesHistorial() { const u = $('#bUndo'), r = $('#bRedo'); if (u) u.disabled = HIST.pos <= 0; if (r) r.disabled = HIST.pos >= HIST.pila.length - 1; }
+function moverHistorial(d) {
+  if (tGuardar) guardarAhora();
+  const j = HIST.pos + d; if (j < 0 || j >= HIST.pila.length) return;
+  HIST.pos = j; quiz = JSON.parse(HIST.pila[j]);
+  IDB.set('actual', HIST.pila[j]).then(() => estadoGuardado('ok')).catch(() => estadoGuardado('error'));
+  if (edSel >= quiz.items.length) edSel = quiz.items.length - 1;
+  sSel = null; sEdit = false; sItem = null;
+  const t = $('#qTitulo'); if (t) t.value = quiz.config.titulo;
+  if ($('#lista')) { renderLista(); renderForm(); }
+  botonesHistorial(); aviso(d < 0 ? '↶ Deshecho' : '↷ Rehecho', 1200);
+}
+
+/* ---------- Filtro de palabras (nombres y respuestas escritas) ---------- */
+const FILTRO_BASE = ('puta,puto,mierda,weon,weona,wn,hueon,huevon,aweonao,aweonado,conchetumare,conchesumare,ctm,csm,concha,chucha,culiao,culiado,ql,qliao,kuliao,'
+  + 'pico,pichula,raja,poto,culo,maricon,maricona,maraco,marica,idiota,estupido,estupida,imbecil,tarado,tarada,mongolico,retrasado,tonto,tonta,gil,'
+  + 'pendejo,pendeja,cabron,carajo,verga,joder,coño,chingar,chingada,mamon,zorra,perra,bastardo,malparido,gonorrea,hijueputa,hdp,sexo,porno,pene,vagina,'
+  + 'teta,tetas,caca,pedo,callate,hijo de puta').split(',');
+const normFiltro = x => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[0134578@$]/g, c => ({ 0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', 8: 'b', '@': 'a', $: 's' }[c]))
+  .replace(/[^a-z\s]/g, ' ').replace(/([a-z])\1+/g, '$1').replace(/\s+/g, ' ').trim();
+const extraFiltro = txt => String(txt || '').split(',').map(x => x.trim()).filter(Boolean);
+function tieneGroseria(txt, extra) {
+  const t = normFiltro(txt); if (!t) return false;
+  const lista = FILTRO_BASE.concat(extra || []).map(normFiltro).filter(b => b.length >= 2);
+  const tok = t.split(' '), pegadas = []; let buf = '';
+  tok.forEach(w => { if (w.length === 1) buf += w; else { if (buf.length > 1) pegadas.push(buf); buf = ''; } }); // "p u t a"
+  if (buf.length > 1) pegadas.push(buf);
+  const suf = ['', 's', 'es', 'a', 'o', 'as', 'os', 'ito', 'ita', 'azo'];
+  return lista.some(b => b.includes(' ') ? (' ' + t + ' ').includes(' ' + b + ' ')
+    : tok.concat(pegadas).some(w => w === b || (b.length >= 3 && suf.some(x => w === b + x))));
+}
+const filtroQuiz = () => quiz.config.filtroActivo ? extraFiltro(quiz.config.palabrasBloqueadas) : null;
 function bajar(nombre, texto, tipo) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([texto], { type: tipo }));
@@ -1003,7 +1096,11 @@ document.addEventListener('click', e => { const el = e.target.closest('[data-a]'
 
 function iniciar() {
   const code = new URLSearchParams(location.search).get('join');
-  if (code) vistaJugador(code.trim()); else vistaInicio();
+  if (code) return vistaJugador(code.trim());
+  IDB.get('actual').then(v => {
+    if (v) { const q = JSON.parse(v); if (q && q.items) quiz = normalizarQuiz(q); }
+    else guardarAhora(); // primera vez: pasar a IndexedDB lo que había en localStorage
+  }).catch(e => console.warn('IndexedDB no disponible', e)).finally(() => { registrarHistorial(JSON.stringify(quiz)); vistaInicio(); });
 }
 
 /* =================== INICIO =================== */
@@ -1071,6 +1168,8 @@ function vistaEditor() {
   app.innerHTML = `<div class="editor vista-${edVista}" style="--c:${esc(quiz.config.color)}">
     <header class="bar"><button data-a="home" title="Inicio">${ic('arrow_back')}<span class="lbl">Inicio</span></button>
       <input class="titulo" id="qTitulo" value="${esc(quiz.config.titulo)}" aria-label="Título del quiz">
+      <button data-a="deshacer" id="bUndo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer">${ic('undo')}</button><button data-a="rehacer" id="bRedo" title="Rehacer (Ctrl+Y)" aria-label="Rehacer">${ic('redo')}</button>
+      <span class="guardado ok" id="guardado">${ic('cloud_done')}<span class="lbl">Guardado</span></span>
       <span class="sp"></span>
       <button data-a="abrir" title="Abrir archivo">${ic('folder_open')}<span class="lbl">Abrir</span></button><button data-a="guardar" title="Guardar archivo">${ic('download')}<span class="lbl">Guardar archivo</span></button>
       <button class="pri" data-a="presentar" title="Presentar">${ic('play_circle', 'fill')}<span class="lbl">Presentar</span></button></header>
@@ -1130,6 +1229,7 @@ function vistaEditor() {
     corr: el => { const it = objActual(), i = +el.dataset.i; it.correctas = it.correctas.includes(i) ? it.correctas.filter(c => c !== i) : [...it.correctas, i]; if (!it.correctas.length) it.correctas = [i]; guardarLocal(); renderForm(); },
     vf: el => { objActual().correcta = el.dataset.v === 'true'; guardarLocal(); renderForm(); },
     ...accionesDiapositiva(),
+    deshacer: () => moverHistorial(-1), rehacer: () => moverHistorial(1),
     imgfile: () => leerImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
     imgdel: () => { objActual().imagen = ''; guardarLocal(); renderForm(); },
     pinset: (el, e) => {
@@ -1138,8 +1238,16 @@ function vistaEditor() {
       guardarLocal(); actualizarPinMark();
     },
   };
-  document.onkeydown = teclasDiapositiva;
-  renderLista(); renderForm();
+  document.onkeydown = e => {
+    const enTexto = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable;
+    if ((e.ctrlKey || e.metaKey) && !enTexto) {
+      const k = e.key.toLowerCase();
+      if (k === 'z') { e.preventDefault(); return moverHistorial(e.shiftKey ? 1 : -1); }
+      if (k === 'y') { e.preventDefault(); return moverHistorial(1); }
+    }
+    teclasDiapositiva(e);
+  };
+  renderLista(); renderForm(); botonesHistorial();
 }
 function mover(i, d) { const j = i + d; if (j < 0 || j >= quiz.items.length) return; [quiz.items[i], quiz.items[j]] = [quiz.items[j], quiz.items[i]]; edSel = j; guardarLocal(); renderLista(); renderForm(); }
 function renderLista() {
@@ -1198,6 +1306,11 @@ function renderFormCampos() {
       ${fChk('Jugar por equipos (el puntaje se suma por equipo)', 'modoEquipos', c.modoEquipos)}
       ${fTxt('Nombres de los equipos (separados por coma, de 2 a 6)', 'nombresEquipos', c.nombresEquipos)}
       <p class="hint">Con equipos, cada participante elige su equipo al entrar. Sirve también con un solo teléfono por equipo.</p>
+      <h3 class="sub-cfg">🛡️ Cuidado de los niños</h3>
+      ${fChk('Filtrar palabras inapropiadas en nombres y respuestas escritas', 'filtroActivo', c.filtroActivo)}
+      ${fTxt('Palabras bloqueadas adicionales (separadas por coma)', 'palabrasBloqueadas', c.palabrasBloqueadas, 'Ej: apodos, palabras que no quieras ver')}
+      ${fChk('Aprobar cada nombre antes de que aparezca en pantalla', 'aprobarNombres', c.aprobarNombres)}
+      <p class="hint">El filtro ya trae una lista de groserías en español y reconoce trucos como tildes, letras repetidas o números en vez de letras. Durante el juego también puedes tocar una respuesta en la pantalla para ocultarla.</p>
       <p class="hint">Todo se guarda automáticamente en este navegador. Para conservarlo o pasarlo a otro computador usa <b>💾 Guardar archivo</b>.</p>`;
     return;
   }
@@ -1285,7 +1398,7 @@ function vistaPresentar() {
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost();
-  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe() };
+  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(), ocultas: new Set() };
   iniciarPeerHost();
   document.onkeydown = e => { if (H && ['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key) && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) { e.preventDefault(); avanzar(); } };
   ACC = {
@@ -1294,6 +1407,9 @@ function vistaPresentar() {
     fs: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(),
     kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm('¿Sacar a ' + p.name + ' de la sala?')) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
     csv: descargarResultados,
+    aprobar: el => { const p = H.players[el.dataset.pid]; if (p) { p.pendiente = false; enviarEstado(p); renderHost(); } },
+    rechazar: el => { const p = H.players[el.dataset.pid]; if (p) { enviar(p, { t: 'rechazo', msg: 'El presentador no aprobó ese nombre. Elige otro.' }); delete H.players[p.pid]; renderHost(); } },
+    ocultar: el => { H.ocultas.add(el.dataset.k); renderHost(); },
     inicio: vistaInicio,
   };
   renderHost();
@@ -1321,7 +1437,7 @@ function equiposDe() {
 const equipoMenor = () => H.eq.map((_, i) => [i, Object.values(H.players).filter(p => p.eq === i).length]).sort((a, b) => a[1] - b[1])[0][0];
 function rankingEquipos() {
   return H.eq.map((nombre, i) => {
-    const ms = Object.values(H.players).filter(p => p.eq === i);
+    const ms = Object.values(H.players).filter(p => p.eq === i && !p.pendiente);
     return { i, nombre, n: ms.length, score: ms.reduce((s, p) => s + p.score, 0), plus: ms.reduce((s, p) => s + (H.ult[p.pid]?.pts || 0), 0) };
   }).filter(e => e.n > 0).sort((a, b) => b.score - a.score); // los equipos sin integrantes no compiten
 }
@@ -1332,18 +1448,20 @@ function posicion(p, k, n) { // con equipos, la posición que se informa es la d
 }
 function enviar(p, msg) { try { if (p.conn && p.conn.open) p.conn.send(msg); } catch (e) { } }
 function difundir(msg) { Object.values(H.players).forEach(p => enviar(p, msg)); }
-const conectados = () => Object.values(H.players).filter(p => p.online);
+const conectados = () => Object.values(H.players).filter(p => p.online && !p.pendiente);
 function alRecibirHost(conn, d) {
   if (!H || !d) return;
   if (d.t === 'join') {
     let p = H.players[d.pid];
     if (!p) {
       if (H.fase !== 'lobby' && !quiz.config.permitirTarde) { conn.send({ t: 'msg', icono: '🚪', msg: 'El juego ya comenzó. ¡Espera la próxima ronda!' }); return; }
-      p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0 };
+      const f = filtroQuiz();
+      if (f && tieneGroseria(d.name, f)) { conn.send({ t: 'rechazo', msg: 'Ese nombre no está permitido. Elige otro.' }); return; }
+      p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
       if (H.eq.length) p.eq = equipoMenor();
     }
     p.conn = conn; p.online = true; conn.pid = d.pid;
-    enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq });
+    enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq, filtro: filtroQuiz() });
     enviarEstado(p);
     if (H.fase === 'lobby') renderHost(); else actualizarContador();
   } else if (d.t === 'team') {
@@ -1352,15 +1470,18 @@ function alRecibirHost(conn, d) {
     p.eq = i; enviarEstado(p); renderHost();
   } else if (d.t === 'ans') {
     const pid = conn.pid, p = H.players[pid];
-    if (!p || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
-    H.resp[pid] = { val: d.val, ms: Date.now() - H.t0 };
+    if (!p || p.pendiente || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
+    let val = d.val; const f = filtroQuiz();
+    if (f && typeof val === 'string' && tieneGroseria(val, f)) val = ''; // se cuenta como respuesta vacía y no se muestra
+    H.resp[pid] = { val, ms: Date.now() - H.t0 };
     enviar(p, { t: 'recibido' });
     actualizarContador();
     if (conectados().every(x => H.resp[x.pid])) revelar();
   }
 }
 function enviarEstado(p) {
-  if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
+  if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: 'Esperando que el presentador apruebe tu nombre…' });
+  else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
   else if (H.fase === 'pregunta' && !H.resp[p.pid]) enviar(p, { ...H.payload, restante: Math.max(1, tiempoDe(quiz.items[H.idx]) - Math.floor((Date.now() - H.t0) / 1000)) });
   else enviar(p, { t: 'msg', icono: '👀', msg: 'Mira la pantalla', score: p.score });
 }
@@ -1432,7 +1553,7 @@ function tickHost() { // animaciones que dependen del tiempo: imagen que se reve
   if (it.tipo === 'revela') { const n = Math.floor(ms / T * NTILES); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
   if (it.tipo === 'quiensoy') { const k = pistasVisibles(pistasValidas(it).length, ms, T); document.querySelectorAll('.pistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
 }
-function ranking() { return Object.values(H.players).sort((a, b) => b.score - a.score); }
+function ranking() { return Object.values(H.players).filter(p => !p.pendiente).sort((a, b) => b.score - a.score); }
 function revelar() {
   clearInterval(H.timer);
   if (H.fase !== 'pregunta') return;
@@ -1495,10 +1616,15 @@ function renderHost() {
         <span class="badge ind">${ic('group')}<span id="nResp">${enPreg ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`}</span></span>
         <button class="ibtn" data-a="fs" title="Pantalla completa" aria-label="Pantalla completa">${ic('fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
-    <main class="stage">${c}</main>
+    <main class="stage">${c}</main>${porAprobar()}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
       <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div></div>`;
   tickHost();
+}
+function porAprobar() { // nombres esperando aprobación (en el lobby y si alguien entra tarde)
+  const pend = Object.values(H.players).filter(p => p.pendiente && p.online);
+  return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} Por aprobar:</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
+    <button class="ok" data-a="aprobar" data-pid="${esc(p.pid)}" title="Aprobar">${ic('check')}</button><button class="no" data-a="rechazar" data-pid="${esc(p.pid)}" title="Rechazar">${ic('close')}</button></span>`).join('')}</div>` : '';
 }
 function urlUnirse() { return location.origin + location.pathname + '?join=' + H.code; }
 function hostLobby() {
@@ -1509,6 +1635,7 @@ function hostLobby() {
       : H.estado === 'error' ? '<div class="warn">⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.</div>' : '';
   const ps = Object.values(H.players);
   const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="Clic para sacar">${esc(p.avatar)} ${esc(p.name)}</span>`;
+  ps.splice(0, ps.length, ...ps.filter(p => !p.pendiente));
   return `<h1 class="lobby-t">${esc(quiz.config.titulo)}</h1>${quiz.config.organizacion ? `<p class="muted">${esc(quiz.config.organizacion)}</p>` : ''}
     <div class="join card"><div class="qr">${qr}</div>
       <div><p>Escanea el QR o entra a:</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>y escribe el código</p><div class="code">${H.code}</div>
@@ -1628,16 +1755,16 @@ function hostPregunta(rev) {
 }
 function topRespuestas(esOk) {
   const c = {}, orig = {};
-  Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val); });
+  Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k || H.ocultas.has(k)) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val); });
   const top = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 6);
-  return top.length ? `<div class="tops">${top.map(([k, n]) => `<div><span>${esOk(orig[k]) ? '✔' : '✘'} ${esc(orig[k])}</span><b>${n}</b></div>`).join('')}</div>` : '<p>Nadie respondió 😅</p>';
+  return top.length ? `<div class="tops">${top.map(([k, n]) => `<div data-a="ocultar" data-k="${esc(k)}" title="Clic para ocultar esta respuesta"><span>${esOk(orig[k]) ? '✔' : '✘'} ${esc(orig[k])}</span><b>${n}</b></div>`).join('')}</div>` : '<p>Nadie respondió 😅</p>';
 }
 function nube() {
   const c = {}, orig = {};
-  Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val).trim(); });
+  Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k || H.ocultas.has(k)) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val).trim(); });
   const e = shuffle(Object.entries(c)); if (!e.length) return '<p>Nadie respondió 😅</p>';
   const max = Math.max(...e.map(x => x[1])), cols = ['#180157', '#006780', '#A21CAF', '#7C3AED', '#D97706'];
-  return `<div class="nube">${e.map(([k, n], i) => `<span style="font-size:${1.2 + 3.3 * n / max}rem;color:${cols[i % cols.length]}">${esc(orig[k])}</span>`).join('')}</div>`;
+  return `<div class="nube">${e.map(([k, n], i) => `<span data-a="ocultar" data-k="${esc(k)}" title="Clic para ocultar" style="font-size:${1.2 + 3.3 * n / max}rem;color:${cols[i % cols.length]}">${esc(orig[k])}</span>`).join('')}</div>`;
 }
 function hostRanking() {
   if (H.eq.length) {
@@ -1663,7 +1790,7 @@ function hostFin() {
 
 /* =================== JUGADOR (teléfono) =================== */
 let P = null;
-function vistaJugador(code) {
+function vistaJugador(code, error) {
   P = { code, pid: localStorage.getItem('quiziglesia.pid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
     name: localStorage.getItem('quiziglesia.name') || '', avatar: localStorage.getItem('quiziglesia.avatar') || AVATARES[Math.floor(Math.random() * AVATARES.length)], score: 0 };
   localStorage.setItem('quiziglesia.pid', P.pid);
@@ -1671,13 +1798,18 @@ function vistaJugador(code) {
     av: el => { P.avatar = el.dataset.v; app.querySelectorAll('.avs button').forEach(b => b.classList.toggle('on', b === el)); },
     entrar: () => {
       const n = $('#jname').value.trim(); if (!n) { $('#jname').focus(); return; }
+      if (tieneGroseria(n, [])) { const a = $('#jerrnom'); a.textContent = 'Ese nombre no está permitido. Elige otro.'; a.hidden = false; $('#jname').focus(); return; }
       P.name = n; localStorage.setItem('quiziglesia.name', n); localStorage.setItem('quiziglesia.avatar', P.avatar);
       pantallaJ('⏳', 'Conectando…'); conectarJugador();
     },
     jv: el => responder(el.dataset.v),
     jenviar: () => {
       const q = P.q; if (!q) return;
-      if (['completar', 'nube', 'quiensoy'].includes(q.tipo)) { const v = $('#jtxt').value.trim(); if (v) responder(v.slice(0, 40)); }
+      if (['completar', 'nube', 'quiensoy'].includes(q.tipo)) {
+        const v = $('#jtxt').value.trim(); if (!v) return;
+        if (P.filtro && tieneGroseria(v, P.filtro)) { const a = $('#javiso'); if (a) { a.textContent = 'Esa palabra no está permitida, intenta otra 🙂'; a.hidden = false; } $('#jtxt').select(); return; }
+        responder(v.slice(0, 40));
+      }
       else if (q.tipo === 'parejas') responder(q.izq.map((_, k) => { const s = $(`[data-jp="${k}"]`).value; return s === '' ? -1 : Number(s); }));
       else if (q.tipo === 'versiculo') { if (P.armado.length) responder(P.armado.map(i => q.palabras[i])); }
       else if (q.tipo === 'clasificar') responder(Object.entries(P.clas).map(([i, c]) => [+i, +c]));
@@ -1701,6 +1833,7 @@ function vistaJugador(code) {
     <span class="badge cyan"><span class="dot"></span>Sala ${esc(code)}</span>
     <h2>¡Únete al juego!</h2>
     <label class="fld"><span>Tu nombre</span><input id="jname" maxlength="16" value="${esc(P.name)}" placeholder="Ej: Sofi" autocomplete="off"></label>
+    <p class="aviso" id="jerrnom" ${error ? '' : 'hidden'}>${esc(error || '')}</p>
     <div class="fld"><span>Elige tu personaje</span><div class="avs">${AVATARES.map(a => `<button data-a="av" data-v="${a}" class="${a === P.avatar ? 'on' : ''}">${a}</button>`).join('')}</div></div>
     <button class="sec big" style="width:100%" data-a="entrar">Entrar al juego ${ic('arrow_forward')}</button></div></div></div>`;
 }
@@ -1737,7 +1870,8 @@ function alRecibirJ(d) {
   if (!d) return;
   if (d.score != null) P.score = d.score;
   switch (d.t) {
-    case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; break;
+    case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
+    case 'rechazo': P.kicked = true; try { P.peer.destroy(); } catch (e) { } vistaJugador(P.code, d.msg); break;
     case 'equipos': P.equipos = d.equipos; P.eq = d.eq; renderEquipos(); break;
     case 'msg': pantallaJ(d.icono || '👀', esc(d.msg)); break;
     case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
@@ -1778,7 +1912,7 @@ function renderJPregunta(soloLista) {
       h += `<div class="jopts"><button data-a="jv" data-v="true" style="--oc:#059669"><span class="f">V</span>Verdadero</button><button data-a="jv" data-v="false" style="--oc:#BA1A1A"><span class="f">F</span>Falso</button></div>`; break;
     case 'completar': case 'nube':
       if (q.frase) h += `<div class="jq sub">${esc(q.frase).replace(/_{3,}/, '<b>_____</b>')}</div>`;
-      h += `<input id="jtxt" maxlength="40" autocomplete="off" placeholder="Escribe aquí…" style="max-width:420px;font-size:1.3rem"><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<input id="jtxt" maxlength="40" autocomplete="off" placeholder="Escribe aquí…" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
     case 'numero':
       h += `<div class="jnum" id="jval">${Math.round((q.min + q.max) / 2)}</div><div>${esc(q.unidad || '')}</div>
         <input type="range" id="jrange" min="${q.min}" max="${q.max}" step="${q.paso}" value="${Math.round((q.min + q.max) / 2)}">
@@ -1795,7 +1929,7 @@ function renderJPregunta(soloLista) {
       h += `<div class="jarm" id="jarm"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
     case 'quiensoy':
       h += `<ol class="jpistas" id="jpistas">${q.pistas.map(t => `<li class="off">${esc(t)}</li>`).join('')}</ol>
-        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Quién es?" style="max-width:420px;font-size:1.3rem"><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Quién es?" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
     case 'clasificar':
       h += `<div class="jclas">${q.items.map(e => `<div><span>${esc(e.t)}</span><div>${q.categorias.map((c, ci) => `<button data-a="jcl" data-i="${e.i}" data-c="${ci}" style="--cc:${COLORES[ci % 6]}">${esc(c)}</button>`).join('')}</div></div>`).join('')}</div>
         <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
