@@ -520,6 +520,15 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .lz-el .tx{width:100%;outline:none}
 .lz-el img{width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
 .ppt-op{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.imp.ancho{width:min(1100px,100%)}
+.sel-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sel-diapos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;max-height:52vh;overflow:auto;padding:4px}
+.sel-d{position:relative;display:flex;flex-direction:column;gap:4px;cursor:pointer;font-size:.85rem;color:var(--on-s-var)}
+.sel-d input{position:absolute;top:8px;left:8px;z-index:2;width:22px;height:22px}
+.sel-min .lienzo{border-radius:10px;box-shadow:none;border:2px solid var(--outline-var)}
+.sel-min *{animation:none!important}
+.sel-d:has(input:checked) .lienzo{border-color:var(--c);box-shadow:0 0 0 2px var(--c)}
+.sel-d.oculta .lienzo{opacity:.55}
 .ppt-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;padding:16px;border-radius:var(--r-lg);background:var(--s-lowest);border:2px solid var(--outline-var);font-weight:400}
 .ppt-card:hover{border-color:var(--c);background:var(--s-low)}
 .ppt-card>b{display:flex;align-items:center;gap:6px;color:var(--c);font-size:1.05rem}
@@ -2042,10 +2051,11 @@ function vistaPrevia(modo) { // esta página está dentro de un iframe de la vis
 }
 
 /* =================== IMPORTAR POWERPOINT ===================
-   - Como elementos editables: se lee el .pptx (es un zip con XML) con JSZip y se pasan títulos, textos,
-     imágenes, formas, tablas y fondos a elementos del lienzo.
-   - Como imágenes: el navegador no puede dibujar un .pptx, así que se usa el PDF exportado desde PowerPoint
-     (pdf.js convierte cada página en imagen) o las imágenes JPG/PNG de cada diapositiva. */
+   - Como elementos editables: se lee el .pptx (zip con XML) con JSZip. Textos, imágenes y formas simples quedan
+     editables; gráficos, SmartArt, tablas, líneas y figuras especiales se DIBUJAN como imagen (canvas/SVG) para que
+     no se deformen. Opcional: con el PDF exportado del mismo PowerPoint esos elementos se recortan del PDF (idénticos).
+   - Como imágenes: PDF exportado (pdf.js) o imágenes JPG/PNG de cada diapositiva.
+   - En ambos casos se muestran miniaturas para elegir qué diapositivas importar. */
 const LIBS = {
   jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
   pdf: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
@@ -2056,24 +2066,35 @@ const cargarScript = url => new Promise((ok, mal) => {
   const sc = document.createElement('script'); sc.src = url; sc.onload = () => { sc.dataset.listo = '1'; ok(); }; sc.onerror = () => mal(new Error('No se pudo descargar una librería necesaria. Revisa tu conexión a internet.'));
   document.head.appendChild(sc);
 });
+async function abrirPdf(file) {
+  await cargarScript(LIBS.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
+  return pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+}
+async function paginaACanvas(pdf, n, ancho) {
+  const pg = await pdf.getPage(n), v0 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: ancho / v0.width });
+  const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+  await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  return c;
+}
+let IMP = null; // importación en curso: { diapos, omitidos, complejos, modo }
 function abrirImportarPpt() {
   $('#capa')?.remove();
-  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp">
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp ancho" id="impPpt">
     <div class="imp-cab"><h2>${ic('slideshow')} Importar PowerPoint</h2><button data-a="pptCerrar" aria-label="Cerrar">${ic('close')}</button></div>
     <p>¿Cómo quieres importarlo?</p>
     <div class="ppt-op">
       <button class="ppt-card" data-a="pptModo" data-v="elementos"><b>${ic('edit_note')} Como elementos editables</b>
-        <span>La app intenta pasar los títulos, textos, imágenes, formas y fondos para que puedas moverlos y editarlos. El diseño puede variar un poco respecto del original.</span>
+        <span>Los títulos, textos, imágenes y formas quedan editables. Los gráficos, SmartArt, tablas y figuras especiales se convierten en imagen para que no se deformen.</span>
         <small>Elige el archivo <b>.pptx</b></small></button>
       <button class="ppt-card" data-a="pptModo" data-v="imagenes"><b>${ic('image')} Como imágenes</b>
         <span>Cada diapositiva queda idéntica al original, pero no se puede editar el texto.</span>
         <small>En PowerPoint usa <b>Archivo → Exportar → PDF</b> y elige ese PDF (o las imágenes JPG/PNG de cada diapositiva).</small></button>
     </div>
     <p class="imp-res" id="pptProg"></p>
-    <p class="hint">Las diapositivas se agregan después de la seleccionada. Las animaciones, transiciones, gráficos y SmartArt de PowerPoint no se importan.</p>
+    <p class="hint">Después podrás elegir qué diapositivas importar. Las animaciones y transiciones de PowerPoint no se importan.</p>
     <div class="botones"><button data-a="pptCerrar">Cancelar</button></div></div></div>`);
   Object.assign(ACC, {
-    pptCerrar: () => $('#capa')?.remove(),
+    pptCerrar: () => { $('#capa')?.remove(); IMP = null; },
     pptModo: el => {
       const modo = el.dataset.v, inp = document.createElement('input'); inp.type = 'file';
       inp.accept = modo === 'elementos' ? '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation' : '.pdf,application/pdf,image/*';
@@ -2083,25 +2104,76 @@ function abrirImportarPpt() {
     },
   });
 }
+const progPpt = t => { const el = $('#pptProg'); if (el) el.innerHTML = t; };
 async function ejecutarImportPpt(modo, files) {
-  const prog = t => { const el = $('#pptProg'); if (el) el.innerHTML = t; };
   $('#capa')?.querySelectorAll('.ppt-card').forEach(b => b.disabled = true);
   try {
-    let r;
     if (modo === 'elementos') {
       const f = files[0];
       if (!/\.pptx$/i.test(f.name)) throw new Error(/\.ppt$/i.test(f.name) ? 'Ese es el formato antiguo (.ppt). Ábrelo en PowerPoint y guárdalo como .pptx, o expórtalo como PDF e impórtalo como imágenes.' : 'Elige un archivo .pptx.');
-      r = await importarPptx(f, prog);
-    } else r = { diapos: await importarComoImagenes(files, prog), omitidos: 0 };
-    if (!r.diapos.length) throw new Error('No se encontraron diapositivas.');
-    const i = Math.max(-1, edSel) + 1;
-    quiz.items.splice(i, 0, ...r.diapos); edSel = i; guardarLocal();
-    $('#capa')?.remove(); renderLista(); renderForm();
-    aviso(`✅ Se importaron ${r.diapos.length} diapositiva${r.diapos.length > 1 ? 's' : ''}${r.omitidos ? ` (se omitieron ${r.omitidos} elemento${r.omitidos > 1 ? 's' : ''} no compatibles)` : ''}`, 5000);
+      IMP = { ...(await importarPptx(f, progPpt)), modo };
+    } else IMP = { diapos: await importarComoImagenes(files, progPpt), omitidos: 0, complejos: 0, modo };
+    if (!IMP.diapos.length) throw new Error('No se encontraron diapositivas.');
+    mostrarSeleccion();
   } catch (e) {
-    console.warn(e); prog(`<span class="aviso">⚠️ ${esc(e.message || 'No se pudo importar el archivo.')}</span>`);
+    console.warn(e); progPpt(`<span class="aviso">⚠️ ${esc(e.message || 'No se pudo importar el archivo.')}</span>`);
     $('#capa')?.querySelectorAll('.ppt-card').forEach(b => b.disabled = false);
   }
+}
+function mostrarSeleccion() {
+  const r = IMP, caja = $('#impPpt'); if (!caja) return;
+  caja.innerHTML = `<div class="imp-cab"><h2>${ic('checklist')} Elige las diapositivas</h2><button data-a="pptCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <div class="sel-bar"><b id="selN"></b><span class="sp"></span><button data-a="selTodas">Todas</button><button data-a="selNinguna">Ninguna</button></div>
+    <div class="sel-diapos" id="selDiapos">${r.diapos.map((d, i) => `<label class="sel-d ${d._oculta ? 'oculta' : ''}"><input type="checkbox" data-i="${i}" ${d._oculta ? '' : 'checked'}>
+      <div class="sel-min">${lienzoHTML(d, false)}</div><span>${i + 1}${d._oculta ? ' · oculta' : ''}</span></label>`).join('')}</div>
+    ${r.complejos ? `<div class="aviso-yt">${ic('info')}<span>Se convirtieron en imagen <b>${r.complejos}</b> gráfico${r.complejos > 1 ? 's' : ''}, tabla${r.complejos > 1 ? 's' : ''} o figura${r.complejos > 1 ? 's' : ''}. Si quieres que queden <b>idénticos</b> al original, agrega también el PDF exportado del mismo PowerPoint (Archivo → Exportar → PDF).
+      <br><button data-a="pptPdf">${ic('picture_as_pdf')} Agregar PDF (opcional)</button> <span id="pdfEstado"></span></span></div>` : ''}
+    ${r.omitidos ? `<p class="hint">No se pudieron importar ${r.omitidos} elemento${r.omitidos > 1 ? 's' : ''} (por ejemplo, objetos incrustados sin imagen).</p>` : ''}
+    <p class="imp-res" id="pptProg"></p>
+    <div class="botones"><button data-a="pptCerrar">Cancelar</button><button class="pri" data-a="pptImportar" id="btnImp"></button></div>`;
+  const cuenta = () => { const n = caja.querySelectorAll('.sel-d input:checked').length; $('#selN').textContent = `${n} de ${r.diapos.length} seleccionadas`; $('#btnImp').textContent = `Importar ${n} diapositiva${n === 1 ? '' : 's'}`; $('#btnImp').disabled = !n; };
+  caja.querySelector('#selDiapos').onchange = cuenta; cuenta();
+  Object.assign(ACC, {
+    selTodas: () => { caja.querySelectorAll('.sel-d input').forEach(c => c.checked = true); cuenta(); },
+    selNinguna: () => { caja.querySelectorAll('.sel-d input').forEach(c => c.checked = false); cuenta(); },
+    pptPdf: () => {
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.pdf,application/pdf';
+      inp.onchange = async () => {
+        if (!inp.files[0]) return;
+        try { await recortarConPdf(inp.files[0]); const marc = [...caja.querySelectorAll('.sel-d input')].map(c => c.checked); mostrarSeleccion(); caja.querySelectorAll('.sel-d input').forEach((c, i) => c.checked = marc[i]); caja.querySelector('#selDiapos').onchange(); $('#pdfEstado') && ($('#pdfEstado').textContent = '✅ Gráficos y figuras tomados del PDF'); }
+        catch (e) { const s = $('#pdfEstado'); if (s) s.innerHTML = `<span class="aviso">⚠️ ${esc(e.message)}</span>`; }
+      };
+      inp.click();
+    },
+    pptImportar: () => {
+      const sel = [...caja.querySelectorAll('.sel-d input:checked')].map(c => r.diapos[+c.dataset.i]);
+      sel.forEach(d => { delete d._oculta; d.els.forEach(e => { delete e._pdf; delete e._sobre; }); });
+      const i = Math.max(-1, edSel) + 1;
+      quiz.items.splice(i, 0, ...sel); edSel = i; guardarLocal();
+      $('#capa')?.remove(); IMP = null; renderLista(); renderForm();
+      aviso(`✅ Se importaron ${sel.length} diapositiva${sel.length > 1 ? 's' : ''}`, 4000);
+    },
+  });
+}
+async function recortarConPdf(file) { // reemplaza gráficos/figuras dibujados por recortes exactos del PDF
+  const r = IMP; progPpt('Leyendo el PDF…');
+  const pdf = await abrirPdf(file), visibles = r.diapos.map((d, i) => i).filter(i => !r.diapos[i]._oculta);
+  const mapa = pdf.numPages === r.diapos.length ? r.diapos.map((_, i) => i) : pdf.numPages === visibles.length ? visibles : null;
+  if (!mapa) throw new Error(`El PDF tiene ${pdf.numPages} páginas y el PowerPoint ${r.diapos.length} diapositivas: no parecen ser el mismo archivo.`);
+  for (let p = 0; p < mapa.length; p++) {
+    const d = r.diapos[mapa[p]], cs = d.els.filter(e => e._pdf); if (!cs.length) continue;
+    progPpt(`Recortando del PDF la diapositiva ${mapa[p] + 1}…`);
+    const c = await paginaACanvas(pdf, p + 1, 1920);
+    for (const e of cs) {
+      const sx = Math.max(0, e.x / 100 * c.width), sy = Math.max(0, e.y / 100 * c.height), sw = Math.min(c.width - sx, e.w / 100 * c.width), sh = Math.min(c.height - sy, e.h / 100 * c.height);
+      if (sw < 2 || sh < 2) continue;
+      const k = document.createElement('canvas'); k.width = Math.round(sw); k.height = Math.round(sh);
+      k.getContext('2d').drawImage(c, sx, sy, sw, sh, 0, 0, k.width, k.height);
+      e.src = k.toDataURL('image/png'); e.ajuste = 'cover'; e.rot = 0;
+      d.els = d.els.filter(o => o._sobre !== e.id); // el texto que iba encima ya viene en el recorte
+    }
+  }
+  progPpt('');
 }
 function imagenAData(blob, max = 1600, tipo) { // reduce la imagen y la devuelve como data URL + proporción
   return new Promise((ok, mal) => {
@@ -2128,14 +2200,11 @@ async function importarComoImagenes(files, prog) {
   for (const f of files) {
     if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) {
       prog('Cargando el lector de PDF…');
-      await cargarScript(LIBS.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
-      const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
+      const pdf = await abrirPdf(f);
       for (let i = 1; i <= pdf.numPages; i++) {
         prog(`Convirtiendo página ${i} de ${pdf.numPages}…`);
-        const pg = await pdf.getPage(i), v0 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 1600 / v0.width });
-        const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
-        await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
-        out.push(diapoDeImagen(c.toDataURL('image/jpeg', 0.85), vp.width / vp.height));
+        const c = await paginaACanvas(pdf, i, 1600);
+        out.push(diapoDeImagen(c.toDataURL('image/jpeg', 0.85), c.width / c.height));
       }
     } else if (/^image\//.test(f.type)) {
       prog(`Procesando ${esc(f.name)}…`);
@@ -2144,40 +2213,198 @@ async function importarComoImagenes(files, prog) {
   }
   return out;
 }
+
+/* ----- Dibujo de figuras (SVG) y gráficos (canvas) ----- */
+const svgURL = (w, h, cuerpo) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${Math.max(1, w).toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" viewBox="0 0 ${Math.max(1, w).toFixed(2)} ${Math.max(1, h).toFixed(2)}">${cuerpo}</svg>`);
+const escX = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const POLIGONOS = (() => {
+  const reg = (n, r0 = 0.5, rot = -Math.PI / 2) => [...Array(n)].map((_, i) => [0.5 + r0 * Math.cos(rot + i * 2 * Math.PI / n), 0.5 + r0 * Math.sin(rot + i * 2 * Math.PI / n)]);
+  const estrella = (n, ri) => [...Array(n * 2)].map((_, i) => { const r = i % 2 ? ri : 0.5, a = -Math.PI / 2 + i * Math.PI / n; return [0.5 + r * Math.cos(a), 0.5 + r * Math.sin(a)]; });
+  const flecha = [[0, .25], [.6, .25], [.6, 0], [1, .5], [.6, 1], [.6, .75], [0, .75]];
+  const P = {
+    triangle: [[.5, 0], [1, 1], [0, 1]], rtTriangle: [[0, 0], [1, 1], [0, 1]], diamond: [[.5, 0], [1, .5], [.5, 1], [0, .5]],
+    parallelogram: [[.25, 0], [1, 0], [.75, 1], [0, 1]], trapezoid: [[.25, 0], [.75, 0], [1, 1], [0, 1]],
+    pentagon: reg(5), hexagon: [[.25, 0], [.75, 0], [1, .5], [.75, 1], [.25, 1], [0, .5]], heptagon: reg(7), octagon: [[.29, 0], [.71, 0], [1, .29], [1, .71], [.71, 1], [.29, 1], [0, .71], [0, .29]], decagon: reg(10), dodecagon: reg(12),
+    homePlate: [[0, 0], [.8, 0], [1, .5], [.8, 1], [0, 1]], chevron: [[0, 0], [.75, 0], [1, .5], [.75, 1], [0, 1], [.25, .5]],
+    rightArrow: flecha, leftArrow: flecha.map(([x, y]) => [1 - x, y]), upArrow: flecha.map(([x, y]) => [y, 1 - x]), downArrow: flecha.map(([x, y]) => [y, x]),
+    leftRightArrow: [[0, .5], [.2, 0], [.2, .25], [.8, .25], [.8, 0], [1, .5], [.8, 1], [.8, .75], [.2, .75], [.2, 1]],
+    upDownArrow: [[.5, 0], [1, .2], [.75, .2], [.75, .8], [1, .8], [.5, 1], [0, .8], [.25, .8], [.25, .2], [0, .2]],
+    plus: [[.33, 0], [.67, 0], [.67, .33], [1, .33], [1, .67], [.67, .67], [.67, 1], [.33, 1], [.33, .67], [0, .67], [0, .33], [.33, .33]], mathPlus: null,
+    star4: estrella(4, .19), star5: estrella(5, .19), star6: estrella(6, .25), star7: estrella(7, .25), star8: estrella(8, .3), star10: estrella(10, .35), star12: estrella(12, .37), star16: estrella(16, .4), star24: estrella(24, .42),
+    flowChartDecision: [[.5, 0], [1, .5], [.5, 1], [0, .5]], flowChartInputOutput: [[.2, 0], [1, 0], [.8, 1], [0, 1]], flowChartPreparation: [[.2, 0], [.8, 0], [1, .5], [.8, 1], [.2, 1], [0, .5]],
+    flowChartMerge: [[0, 0], [1, 0], [.5, 1]], flowChartExtract: [[.5, 0], [1, 1], [0, 1]], snip1Rect: [[0, 0], [.85, 0], [1, .15], [1, 1], [0, 1]],
+    wedgeRectCallout: [[0, 0], [1, 0], [1, .8], [.4, .8], [.2, 1], [.25, .8], [0, .8]], notchedRightArrow: [[0, .25], [.6, .25], [.6, 0], [1, .5], [.6, 1], [.6, .75], [0, .75], [.15, .5]],
+  };
+  P.mathPlus = P.plus; return P;
+})();
+const RECTANGULOS = ['rect', 'flowChartProcess', 'flowChartAlternateProcess', 'roundRect', 'round1Rect', 'round2SameRect', 'snipRoundRect', 'flowChartTerminator'];
+function geomSVG(geo, w, h, k, extra) { // geo: { prst, cust (a:custGeom) }, devuelve SVG de la figura (path/polygon/ellipse/rect)
+  const a = extra || '';
+  if (geo.cust) {
+    let d = '';
+    [...geo.cust.getElementsByTagName('a:path')].forEach(p => {
+      const pw = +p.getAttribute('w') || w / k, ph = +p.getAttribute('h') || h / k, sx = w / (pw || 1), sy = h / (ph || 1);
+      let cx = 0, cy = 0;
+      const pt = el => [+el.getAttribute('x') * sx, +el.getAttribute('y') * sy];
+      [...p.children].forEach(c => {
+        const pts = [...c.getElementsByTagName('a:pt')].map(pt);
+        if (c.tagName === 'a:moveTo') { [cx, cy] = pts[0]; d += `M${cx} ${cy}`; }
+        else if (c.tagName === 'a:lnTo') { [cx, cy] = pts[0]; d += `L${cx} ${cy}`; }
+        else if (c.tagName === 'a:cubicBezTo') { d += `C${pts.map(q => q.join(' ')).join(' ')}`; [cx, cy] = pts[2]; }
+        else if (c.tagName === 'a:quadBezTo') { d += `Q${pts.map(q => q.join(' ')).join(' ')}`; [cx, cy] = pts[1]; }
+        else if (c.tagName === 'a:arcTo') {
+          const wr = +c.getAttribute('wR') * sx, hr = +c.getAttribute('hR') * sy, st = +c.getAttribute('stAng') / 60000 * Math.PI / 180, sw = +c.getAttribute('swAng') / 60000 * Math.PI / 180;
+          const ox = cx - wr * Math.cos(st), oy = cy - hr * Math.sin(st), ex = ox + wr * Math.cos(st + sw), ey = oy + hr * Math.sin(st + sw);
+          d += `A${wr} ${hr} 0 ${Math.abs(sw) > Math.PI ? 1 : 0} ${sw > 0 ? 1 : 0} ${ex} ${ey}`; [cx, cy] = [ex, ey];
+        } else if (c.tagName === 'a:close') d += 'Z';
+      });
+    });
+    return `<path d="${d}" ${a}/>`;
+  }
+  const p = geo.prst || 'rect';
+  if (p === 'ellipse' || p === 'flowChartConnector' || p === 'donut') return `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w / 2}" ry="${h / 2}" ${a}/>`;
+  if (p === 'line' || p === 'straightConnector1') return '';
+  if (POLIGONOS[p]) return `<polygon points="${POLIGONOS[p].map(([x, y]) => `${(x * w).toFixed(2)},${(y * h).toFixed(2)}`).join(' ')}" ${a}/>`;
+  if (p === 'heart') return `<path d="M${w / 2} ${h} C${-w * .1} ${h * .55} ${w * .05} ${-h * .15} ${w / 2} ${h * .28} C${w * .95} ${-h * .15} ${w * 1.1} ${h * .55} ${w / 2} ${h}Z" ${a}/>`;
+  const r = /round|Terminator/.test(p) ? Math.min(w, h) * (/Terminator/.test(p) ? .5 : .17) : 0;
+  return `<rect x="0" y="0" width="${w}" height="${h}" rx="${r}" ${a}/>`;
+}
+function textoSVG(lineas, w, h, o) { // texto centrado (o alineado) y con saltos de línea aproximados
+  const fs = o.fs, ancho = Math.max(1, Math.floor((w - 8) / (fs * 0.52)));
+  const filas = []; lineas.forEach(l => { let r = ''; String(l).split(/\s+/).forEach(p => { if ((r + ' ' + p).trim().length > ancho && r) { filas.push(r); r = p; } else r = (r + ' ' + p).trim(); }); filas.push(r); });
+  const alto = filas.length * fs * 1.15, y0 = o.va === 't' ? fs : o.va === 'b' ? h - alto + fs * .9 : (h - alto) / 2 + fs * .9;
+  const x = o.al === 'l' ? 6 : o.al === 'r' ? w - 6 : w / 2, anc = o.al === 'l' ? 'start' : o.al === 'r' ? 'end' : 'middle';
+  return `<text font-family="Instrument Sans, Arial, sans-serif" font-size="${fs.toFixed(1)}" fill="${o.color}" ${o.b ? 'font-weight="700"' : ''} text-anchor="${anc}">${filas.map((f, i) => `<tspan x="${x}" y="${(y0 + i * fs * 1.15).toFixed(1)}">${escX(f)}</tspan>`).join('')}</text>`;
+}
+const niceMax = v => { if (v <= 0) return 1; const e = Math.pow(10, Math.floor(Math.log10(v))), f = v / e; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * e; };
+function dibujarGrafico(doc, W, H, colorDe, paleta) { // gráfico de PowerPoint → PNG (a partir de los datos guardados en el XML)
+  const D1 = (el, t) => el ? el.getElementsByTagName(t)[0] || null : null;
+  const plot = D1(doc, 'c:plotArea'); if (!plot) return null;
+  const tipos = ['c:barChart', 'c:bar3DChart', 'c:lineChart', 'c:line3DChart', 'c:areaChart', 'c:area3DChart', 'c:pieChart', 'c:pie3DChart', 'c:doughnutChart', 'c:ofPieChart', 'c:scatterChart', 'c:radarChart'];
+  const nodo = tipos.map(t => D1(plot, t)).find(Boolean); if (!nodo) return null;
+  const tipo = nodo.tagName.replace(/^c:|3D|Chart$/g, '').replace('ofPie', 'pie'), horizontal = D1(nodo, 'c:barDir')?.getAttribute('val') === 'bar';
+  const apilado = /stacked/i.test(D1(nodo, 'c:grouping')?.getAttribute('val') || ''), pct = /percent/i.test(D1(nodo, 'c:grouping')?.getAttribute('val') || '');
+  const leerPts = el => { const m = {}; if (!el) return m; [...el.getElementsByTagName('c:pt')].forEach(p => m[+p.getAttribute('idx')] = D1(p, 'c:v')?.textContent ?? ''); return m; };
+  const series = [...nodo.getElementsByTagName('c:ser')].map((s, i) => {
+    const vals = leerPts(D1(s, 'c:val') || D1(s, 'c:yVal')), cats = leerPts(D1(s, 'c:cat') || D1(s, 'c:xVal'));
+    const n = Math.max(0, ...Object.keys(vals).map(Number)) + 1;
+    const colPts = {}; [...s.getElementsByTagName('c:dPt')].forEach(dp => { const c = colorDe(D1(D1(dp, 'c:spPr'), 'a:solidFill')); if (c) colPts[+D1(dp, 'c:idx')?.getAttribute('val')] = c; });
+    const spPr = [...s.children].find(c => c.tagName === 'c:spPr');
+    return { nombre: [...(D1(s, 'c:tx')?.getElementsByTagName('c:v') || [])].map(v => v.textContent).join(' ') || `Serie ${i + 1}`,
+      vals: [...Array(n)].map((_, k) => +vals[k] || 0), cats: [...Array(n)].map((_, k) => cats[k] ?? ''), color: colorDe(D1(spPr, 'a:solidFill')) || colorDe(D1(D1(spPr, 'a:ln'), 'a:solidFill')) || paleta[i % paleta.length], colPts };
+  });
+  if (!series.length) return null;
+  const nodoTit = D1(D1(doc, 'c:chart'), 'c:title'), sinTit = D1(doc, 'c:autoTitleDeleted')?.getAttribute('val') === '1';
+  const titulo = [...(nodoTit?.getElementsByTagName('a:t') || [])].map(t => t.textContent).join('') || (!sinTit && (nodoTit || series.length === 1) ? series[0].nombre : ''); // título automático de PowerPoint
+  const conLeyenda = !!D1(D1(doc, 'c:chart'), 'c:legend');
+  const mostrarVal = [...nodo.getElementsByTagName('c:showVal')].some(x => x.getAttribute('val') === '1'), mostrarPct = [...nodo.getElementsByTagName('c:showPercent')].some(x => x.getAttribute('val') === '1');
+  const E = 2, c = document.createElement('canvas'); c.width = Math.round(W * E); c.height = Math.round(H * E);
+  const x = c.getContext('2d'); x.scale(E, E);
+  const fs = Math.max(10, Math.min(22, H / 18)), fuente = (t, b) => `${b ? '700 ' : ''}${t}px "Instrument Sans", Arial, sans-serif`, gris = '#595959';
+  x.textBaseline = 'middle';
+  let top = 8, bottom = H - 8;
+  if (titulo) { x.font = fuente(fs * 1.25, true); x.fillStyle = '#262626'; x.textAlign = 'center'; x.fillText(titulo, W / 2, top + fs * .8); top += fs * 2; }
+  const circular = ['pie', 'doughnut'].includes(tipo);
+  const leyenda = !conLeyenda && !(circular || series.length > 1) ? [] : circular ? series[0].cats.map((ct, k) => ({ t: String(ct), c: series[0].colPts[k] || paleta[k % paleta.length] })) : series.map(s => ({ t: s.nombre, c: s.color }));
+  if (leyenda.length) {
+    x.font = fuente(fs * .85); const anchos = leyenda.map(l => x.measureText(l.t).width + fs * 1.6), total = anchos.reduce((a, b) => a + b, 0);
+    let lx = Math.max(8, (W - total) / 2); const ly = bottom - fs * .6;
+    leyenda.forEach((l, i) => { x.fillStyle = l.c; x.fillRect(lx, ly - fs * .35, fs * .7, fs * .7); x.fillStyle = gris; x.textAlign = 'left'; x.fillText(l.t, lx + fs * .95, ly); lx += anchos[i]; });
+    bottom -= fs * 1.8;
+  }
+  if (circular) {
+    const s = series[0], tot = s.vals.reduce((a, b) => a + Math.max(0, b), 0) || 1, cx = W / 2, cy = (top + bottom) / 2, r = Math.max(10, Math.min(W / 2, (bottom - top) / 2) - 6);
+    let ang = -Math.PI / 2;
+    s.vals.forEach((v, k) => {
+      const a = Math.max(0, v) / tot * Math.PI * 2; x.beginPath(); x.moveTo(cx, cy); x.arc(cx, cy, r, ang, ang + a); x.closePath();
+      x.fillStyle = s.colPts[k] || paleta[k % paleta.length]; x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 2; x.stroke();
+      if (mostrarVal || mostrarPct) { const m = ang + a / 2, rr = tipo === 'doughnut' ? r * .78 : r * .62; x.fillStyle = '#fff'; x.font = fuente(fs * .9, true); x.textAlign = 'center'; x.fillText(mostrarPct ? Math.round(v / tot * 100) + '%' : String(v), cx + Math.cos(m) * rr, cy + Math.sin(m) * rr); }
+      ang += a;
+    });
+    if (tipo === 'doughnut') { x.beginPath(); x.arc(cx, cy, r * .55, 0, Math.PI * 2); x.fillStyle = '#fff'; x.fill(); }
+    return c.toDataURL('image/png');
+  }
+  // ejes
+  const cats = series[0].cats, n = cats.length || 1;
+  const sumas = cats.map((_, k) => series.reduce((a, s) => a + Math.max(0, s.vals[k] || 0), 0));
+  let max = pct ? 100 : apilado ? Math.max(...sumas) : Math.max(...series.flatMap(s => s.vals)), min = pct || apilado ? 0 : Math.min(0, ...series.flatMap(s => s.vals));
+  max = niceMax(max); min = min < 0 ? -niceMax(-min) : 0;
+  x.font = fuente(fs * .8); const etiq = v => (Math.abs(v) >= 1000 ? (v / 1000).toLocaleString('es') + ' mil' : (+v.toFixed(2)).toLocaleString('es')) + (pct ? '%' : '');
+  const anchoEtqV = Math.max(...[0, 1, 2, 3, 4, 5].map(i => x.measureText(etiq(min + (max - min) * i / 5)).width));
+  const anchoEtqC = horizontal ? Math.min(W * .3, Math.max(...cats.map(t => x.measureText(String(t)).width))) : 0;
+  const L = 10 + (horizontal ? anchoEtqC : anchoEtqV) + 6, R = W - 12, T = top + 4, B = bottom - (horizontal ? fs * 1.4 : fs * 1.6);
+  const escV = v => horizontal ? L + (v - min) / (max - min) * (R - L) : B - (v - min) / (max - min) * (B - T);
+  x.strokeStyle = '#D9D9D9'; x.lineWidth = 1; x.fillStyle = gris;
+  for (let i = 0; i <= 5; i++) { const v = min + (max - min) * i / 5, p = escV(v); x.beginPath(); horizontal ? (x.moveTo(p, T), x.lineTo(p, B)) : (x.moveTo(L, p), x.lineTo(R, p)); x.stroke();
+    x.textAlign = horizontal ? 'center' : 'right'; horizontal ? x.fillText(etiq(v), p, B + fs * .8) : x.fillText(etiq(v), L - 6, p); }
+  const banda = (horizontal ? B - T : R - L) / n;
+  cats.forEach((ct, k) => { x.textAlign = horizontal ? 'right' : 'center'; const t = String(ct), p = (horizontal ? T : L) + banda * (k + .5);
+    const maxW = horizontal ? anchoEtqC : banda - 4; let tt = t; while (tt.length > 1 && x.measureText(tt).width > maxW) tt = tt.slice(0, -1); if (tt !== t) tt = tt.slice(0, -1) + '…';
+    horizontal ? x.fillText(tt, L - 6, p) : x.fillText(tt, p, B + fs * .8); });
+  const cero = escV(Math.max(min, 0));
+  if (tipo === 'bar') {
+    const grupo = banda * .7, ancho = apilado ? grupo : grupo / series.length;
+    cats.forEach((_, k) => { let acum = 0;
+      series.forEach((s, j) => { let v = s.vals[k] || 0; if (pct) v = sumas[k] ? v / sumas[k] * 100 : 0;
+        const p0 = apilado ? escV(acum) : cero, p1 = escV(apilado ? acum + v : v), base = (horizontal ? T : L) + banda * k + banda * .15 + (apilado ? 0 : ancho * j);
+        x.fillStyle = s.colPts[k] || s.color; horizontal ? x.fillRect(Math.min(p0, p1), base, Math.abs(p1 - p0), ancho) : x.fillRect(base, Math.min(p0, p1), ancho, Math.abs(p1 - p0));
+        if (mostrarVal) { x.fillStyle = '#262626'; x.font = fuente(fs * .75); x.textAlign = 'center'; horizontal ? x.fillText(String(s.vals[k]), p1 + 14, base + ancho / 2) : x.fillText(String(s.vals[k]), base + ancho / 2, p1 - 9); }
+        if (apilado) acum += v; }); });
+  } else { // líneas, áreas, dispersión, radar (como líneas)
+    series.forEach(s => {
+      const pts = s.vals.map((v, k) => [L + banda * (k + .5), escV(v)]);
+      if (tipo === 'area') { x.beginPath(); x.moveTo(pts[0][0], cero); pts.forEach(q => x.lineTo(...q)); x.lineTo(pts[pts.length - 1][0], cero); x.closePath(); x.globalAlpha = .55; x.fillStyle = s.color; x.fill(); x.globalAlpha = 1; }
+      x.beginPath(); pts.forEach((q, i) => i ? x.lineTo(...q) : x.moveTo(...q)); x.strokeStyle = s.color; x.lineWidth = 3; if (tipo !== 'scatter') x.stroke();
+      pts.forEach(q => { x.beginPath(); x.arc(q[0], q[1], tipo === 'scatter' ? 5 : 3.5, 0, Math.PI * 2); x.fillStyle = s.color; x.fill(); });
+      if (mostrarVal) { x.fillStyle = '#262626'; x.font = fuente(fs * .75); x.textAlign = 'center'; pts.forEach((q, k) => x.fillText(String(s.vals[k]), q[0], q[1] - 12)); }
+    });
+  }
+  x.strokeStyle = '#A6A6A6'; x.beginPath(); horizontal ? (x.moveTo(cero, T), x.lineTo(cero, B)) : (x.moveTo(L, cero), x.lineTo(R, cero)); x.stroke();
+  return c.toDataURL('image/png');
+}
+
 async function importarPptx(file, prog) {
   prog('Cargando el lector de PowerPoint…');
   await cargarScript(LIBS.jszip);
   const zip = await JSZip.loadAsync(file);
   const xml = {};
-  const leer = async ruta => { if (ruta in xml) return xml[ruta]; const f = zip.file(ruta); xml[ruta] = f ? new DOMParser().parseFromString(await f.async('string'), 'application/xml') : null; return xml[ruta]; };
+  const leer = async ruta => { if (!ruta) return null; if (ruta in xml) return xml[ruta]; const f = zip.file(ruta); xml[ruta] = f ? new DOMParser().parseFromString(await f.async('string'), 'application/xml') : null; return xml[ruta]; };
   const resolver = (dir, t) => { if (t.startsWith('/')) return t.slice(1); const o = []; (dir + '/' + t).split('/').forEach(x => { if (x === '..') o.pop(); else if (x && x !== '.') o.push(x); }); return o.join('/'); };
   const rels = async ruta => {
     const dir = ruta.slice(0, ruta.lastIndexOf('/')), d = await leer(`${dir}/_rels/${ruta.slice(ruta.lastIndexOf('/') + 1)}.rels`), m = {};
     if (d) [...d.getElementsByTagName('Relationship')].forEach(r => m[r.getAttribute('Id')] = { ruta: r.getAttribute('TargetMode') === 'External' ? null : resolver(dir, r.getAttribute('Target')), tipo: r.getAttribute('Type') || '' });
     return m;
   };
-  const H1 = (el, tag) => el ? [...el.children].find(c => c.tagName === tag) : null; // hijo directo
+  const H1 = (el, tag) => el ? [...el.children].find(c => c.tagName === tag) || null : null; // hijo directo
   const D1 = (el, tag) => el ? el.getElementsByTagName(tag)[0] || null : null; // descendiente
   const pres = await leer('ppt/presentation.xml'); if (!pres) throw new Error('El archivo no parece un PowerPoint válido.');
   const sz = D1(pres, 'p:sldSz'), CX = +sz?.getAttribute('cx') || 12192000, CY = +sz?.getAttribute('cy') || 6858000;
+  const k = 1280 / CX; // px (lienzo de 1280) por EMU
   const prel = await rels('ppt/presentation.xml');
-  // colores del tema
   const tema = {};
-  const rTema = Object.values(prel).find(r => /\/theme$/.test(r.tipo));
-  const dTema = rTema && await leer(rTema.ruta);
+  const rTema = Object.values(prel).find(r => /\/theme$/.test(r.tipo)), dTema = rTema && await leer(rTema.ruta);
   if (dTema) { const cs = D1(dTema, 'a:clrScheme'); if (cs) [...cs.children].forEach(c => { const v = D1(c, 'a:srgbClr')?.getAttribute('val') || D1(c, 'a:sysClr')?.getAttribute('lastClr'); if (v) tema[c.tagName.replace('a:', '')] = '#' + v; }); }
+  const paleta = ['accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6'].map(a => tema[a]).filter(Boolean).concat(['#4472C4', '#ED7D31', '#A5A5A5', '#FFC000', '#5B9BD5', '#70AD47']);
   const alias = { tx1: 'dk1', bg1: 'lt1', tx2: 'dk2', bg2: 'lt2' };
-  const colorDe = cont => { // a:solidFill (u otro contenedor) → '#rrggbb[aa]'
+  const colorDe = cont => {
     if (!cont) return null;
-    const n = [...cont.children].find(c => /^a:(srgbClr|schemeClr|sysClr|prstClr)$/.test(c.tagName)); if (!n) return null;
-    let c = n.tagName === 'a:srgbClr' ? '#' + n.getAttribute('val') : n.tagName === 'a:sysClr' ? '#' + (n.getAttribute('lastClr') || '000000') : n.tagName === 'a:prstClr' ? ({ black: '#000000', white: '#FFFFFF', red: '#FF0000' }[n.getAttribute('val')] || '#000000') : tema[alias[n.getAttribute('val')] || n.getAttribute('val')] || null;
+    const n = [...cont.children].find(c => /^a:(srgbClr|schemeClr|sysClr|prstClr|scrgbClr)$/.test(c.tagName)); if (!n) return null;
+    let c = n.tagName === 'a:srgbClr' ? '#' + n.getAttribute('val') : n.tagName === 'a:sysClr' ? '#' + (n.getAttribute('lastClr') || '000000')
+      : n.tagName === 'a:prstClr' ? ({ black: '#000000', white: '#FFFFFF', red: '#FF0000', blue: '#0000FF', green: '#008000', yellow: '#FFFF00', gray: '#808080' }[n.getAttribute('val')] || '#000000')
+      : n.tagName === 'a:scrgbClr' ? '#' + ['r', 'g', 'b'].map(q => Math.round(Math.min(1, (+n.getAttribute(q) || 0) / 100000) * 255).toString(16).padStart(2, '0')).join('')
+      : tema[alias[n.getAttribute('val')] || n.getAttribute('val')] || null;
     if (!c) return null;
-    const lm = D1(n, 'a:lumMod')?.getAttribute('val'), lo = D1(n, 'a:lumOff')?.getAttribute('val');
-    if (lm || lo) { const k = (+lm || 100000) / 100000, off = (+lo || 0) / 100000; c = '#' + [1, 3, 5].map(i => Math.round(Math.min(255, parseInt(c.substr(i, 2), 16) * k + 255 * off)).toString(16).padStart(2, '0')).join(''); }
-    const al = D1(n, 'a:alpha')?.getAttribute('val'); if (al && +al < 100000) c += Math.round(+al / 100000 * 255).toString(16).padStart(2, '0');
+    let rgb = [1, 3, 5].map(i => parseInt(c.substr(i, 2), 16));
+    const val = t => { const e = D1(n, t); return e ? +e.getAttribute('val') / 100000 : null; };
+    const lm = val('a:lumMod'), lo = val('a:lumOff'), ti = val('a:tint'), sh = val('a:shade');
+    if (lm != null || lo != null) rgb = rgb.map(v => Math.min(255, v * (lm ?? 1) + 255 * (lo ?? 0)));
+    if (ti != null) rgb = rgb.map(v => v + (255 - v) * (1 - ti));
+    if (sh != null) rgb = rgb.map(v => v * sh);
+    c = '#' + rgb.map(v => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join('');
+    const al = val('a:alpha'); if (al != null && al < 1) c += Math.round(al * 255).toString(16).padStart(2, '0');
     return c.toUpperCase();
   };
-  const rellenoDe = spPr => { // a:solidFill / a:gradFill → relleno de la app
+  const rellenoDe = spPr => {
     const sol = H1(spPr, 'a:solidFill'), gr = H1(spPr, 'a:gradFill');
     if (sol) { const c = colorDe(sol); return c ? rellenoDef('color', c) : null; }
     if (gr) { const gs = [...gr.getElementsByTagName('a:gs')].map(g => colorDe(g)).filter(Boolean); if (gs.length) { const ang = +D1(gr, 'a:lin')?.getAttribute('ang') || 0; return { ...rellenoDef('degradado'), colores: gs.length > 1 ? [gs[0], gs[gs.length - 1]] : [gs[0], gs[0]], angulo: Math.round(ang / 60000 + 90) % 360 }; } }
@@ -2192,7 +2419,7 @@ async function importarPptx(file, prog) {
     try { cacheImg[ruta] = (await imagenAData(blob, 1600, tipo)).url; } catch (_) { cacheImg[ruta] = null; }
     return cacheImg[ruta];
   };
-  const fondoDe = async (doc, ruta) => { // p:bg de una diapositiva, diseño o patrón
+  const fondoDe = async (doc, ruta) => {
     const bg = D1(doc, 'p:bg'); if (!bg) return null;
     const pr = H1(bg, 'p:bgPr'), ref = H1(bg, 'p:bgRef');
     if (pr) {
@@ -2203,27 +2430,33 @@ async function importarPptx(file, prog) {
     if (ref) { const c = colorDe(ref); if (c) return { ...fondoDef(), tipo: 'color', color: c }; }
     return null;
   };
-  // estilos de texto del patrón (tamaños y colores por defecto)
   const estiloPatron = (master, tipo) => {
-    const st = D1(master, tipo === 'title' ? 'p:titleStyle' : tipo === 'body' ? 'p:bodyStyle' : 'p:otherStyle'), l1 = D1(st, 'a:lvl1pPr'), rp = D1(l1, 'a:defRPr');
+    const st = D1(master, tipo === 'title' ? 'p:titleStyle' : tipo === 'body' ? 'p:bodyStyle' : 'p:otherStyle'), rp = D1(D1(st, 'a:lvl1pPr'), 'a:defRPr');
     return { sz: +rp?.getAttribute('sz') || 0, color: colorDe(D1(rp, 'a:solidFill')), b: rp?.getAttribute('b') === '1' };
   };
-  const tipoPh = ph => { const t = ph?.getAttribute('type') || 'obj'; return ['title', 'ctrTitle'].includes(t) ? 'title' : ['body', 'obj', 'subTitle'].includes(t) ? 'body' : 'other'; };
-  const buscarPh = (doc, ph) => { // placeholder equivalente en el diseño o patrón
+  const tipoPh = ph => { if (!ph) return 'other'; const t = ph.getAttribute('type') || 'obj'; return ['title', 'ctrTitle'].includes(t) ? 'title' : ['body', 'obj', 'subTitle'].includes(t) ? 'body' : 'other'; };
+  const buscarPh = (doc, ph) => {
     if (!doc || !ph) return null;
     const idx = ph.getAttribute('idx'), t = ph.getAttribute('type') || 'obj';
     const sps = [...doc.getElementsByTagName('p:sp')].filter(sp => D1(sp, 'p:ph'));
-    return sps.find(sp => idx != null && D1(sp, 'p:ph').getAttribute('idx') === idx)
-      || sps.find(sp => (D1(sp, 'p:ph').getAttribute('type') || 'obj') === t)
+    return sps.find(sp => idx != null && D1(sp, 'p:ph').getAttribute('idx') === idx) || sps.find(sp => (D1(sp, 'p:ph').getAttribute('type') || 'obj') === t)
       || sps.find(sp => tipoPh(D1(sp, 'p:ph')) === tipoPh(ph) && tipoPh(ph) !== 'other') || null;
   };
-  const xfrmDe = el => { const x = el && (H1(H1(el, 'p:spPr'), 'a:xfrm') || H1(el, 'p:xfrm') || H1(H1(el, 'p:grpSpPr'), 'a:xfrm')); if (!x) return null;
+  const xfrmDe = el => {
+    const x = el && (H1(H1(el, 'p:spPr'), 'a:xfrm') || H1(el, 'p:xfrm') || H1(H1(el, 'p:grpSpPr'), 'a:xfrm') || H1(H1(el, 'dsp:spPr'), 'a:xfrm')); if (!x) return null;
     const off = H1(x, 'a:off'), ext = H1(x, 'a:ext'); if (!off || !ext) return null;
-    return { x: +off.getAttribute('x'), y: +off.getAttribute('y'), w: +ext.getAttribute('cx'), h: +ext.getAttribute('cy'), rot: (+x.getAttribute('rot') || 0) / 60000, x0: x }; };
+    return { x: +off.getAttribute('x'), y: +off.getAttribute('y'), w: +ext.getAttribute('cx'), h: +ext.getAttribute('cy'), rot: (+x.getAttribute('rot') || 0) / 60000, fh: x.getAttribute('flipH') === '1', fv: x.getAttribute('flipV') === '1', x0: x };
+  };
+  const lineaDe = (spPr, estilo) => { // contorno: color y grosor (px) o null
+    const ln = H1(spPr, 'a:ln'); if (ln && H1(ln, 'a:noFill')) return null;
+    let c = ln ? colorDe(H1(ln, 'a:solidFill')) : null;
+    if (!c && !ln?.querySelector?.('gradFill')) { const lr = D1(estilo, 'a:lnRef'); if (lr && +lr.getAttribute('idx') > 0) c = colorDe(lr); }
+    if (!c) return null;
+    return { c, w: Math.max(0.75, (+ln?.getAttribute('w') || 12700) * k) };
+  };
   const pct = (v, total) => +(v / total * 100).toFixed(2);
-  const pxPorPt = 1280 / (CX / 12700);
   const ids = [...pres.getElementsByTagName('p:sldId')].map(s => s.getAttribute('r:id'));
-  const diapos = []; let omitidos = 0;
+  const diapos = []; let omitidos = 0, complejos = 0;
   for (let n = 0; n < ids.length; n++) {
     prog(`Leyendo diapositiva ${n + 1} de ${ids.length}…`);
     const ruta = prel[ids[n]]?.ruta; const doc = ruta && await leer(ruta); if (!doc) continue;
@@ -2232,6 +2465,13 @@ async function importarPptx(file, prog) {
     const rMas = rLay && Object.values(await rels(rLay.ruta)).find(r => /\/slideMaster$/.test(r.tipo)), mas = rMas && await leer(rMas.ruta);
     const fondo = await fondoDe(doc, ruta) || (lay && await fondoDe(lay, rLay.ruta)) || (mas && await fondoDe(mas, rMas.ruta)) || { ...fondoDef(), tipo: 'color', color: tema.lt1 || '#FFFFFF' };
     const els = [];
+    const agregarImagenCompleja = (geo, src, extra = {}) => { const e = elImagen({ ...geo, src, ajuste: 'cover', rad: 0, sombra: false, ...extra }); e._pdf = true; els.push(e); complejos++; return e; };
+    const textoDeTxBody = (txb, tipo, ph) => [...(txb ? txb.getElementsByTagName('a:p') : [])].map(pa => {
+      let t = ''; [...pa.children].forEach(c => { if (c.tagName === 'a:r' || c.tagName === 'a:fld') t += D1(c, 'a:t')?.textContent || ''; else if (c.tagName === 'a:br') t += '\n'; });
+      const ppr = H1(pa, 'a:pPr'), bu = D1(ppr, 'a:buChar')?.getAttribute('char');
+      if (t.trim() && (bu || (tipo === 'body' && ph && ph.getAttribute('type') !== 'subTitle' && !D1(ppr, 'a:buNone')))) t = (bu || '•') + ' ' + t;
+      return t;
+    });
     const procesar = async (nodo, T) => {
       const tag = nodo.tagName;
       if (tag === 'p:grpSp') {
@@ -2242,59 +2482,120 @@ async function importarPptx(file, prog) {
         for (const ch of [...nodo.children]) await procesar(ch, T2);
         return;
       }
+      if (tag === 'mc:AlternateContent') { const alt = H1(nodo, 'mc:Choice') || H1(nodo, 'mc:Fallback'); if (alt) for (const ch of [...alt.children]) await procesar(ch, T); return; }
       if (!['p:sp', 'p:pic', 'p:graphicFrame', 'p:cxnSp'].includes(tag)) return;
-      if (tag === 'p:cxnSp') { omitidos++; return; } // líneas y conectores
       const ph = D1(nodo, 'p:nvPr') && D1(D1(nodo, 'p:nvPr'), 'p:ph');
       const phLay = buscarPh(lay, ph), phMas = buscarPh(mas, ph);
       let bx = xfrmDe(nodo) || xfrmDe(phLay) || xfrmDe(phMas); if (!bx) return;
       bx = T(bx);
       const geo = { x: pct(bx.x, CX), y: pct(bx.y, CY), w: pct(bx.w, CX), h: pct(bx.h, CY), rot: Math.round(bx.rot) || 0 };
+      const wpx = Math.max(1, bx.w * k), hpx = Math.max(1, bx.h * k);
       if (tag === 'p:pic') {
         const blip = D1(nodo, 'a:blip'), src = await imagen(blip && srel[blip.getAttribute('r:embed')]?.ruta);
         if (src) els.push(elImagen({ ...geo, src, ajuste: 'cover', rad: 0, sombra: false })); else omitidos++;
         return;
       }
       if (tag === 'p:graphicFrame') {
-        const tbl = D1(nodo, 'a:tbl');
-        if (!tbl) { omitidos++; return; } // gráficos, SmartArt, etc.
-        const filas = [...tbl.getElementsByTagName('a:tr')].map(tr => [...tr.getElementsByTagName('a:tc')].map(tc => [...tc.getElementsByTagName('a:t')].map(t => t.textContent).join(' ').trim()).join('   ·   '));
-        els.push(elTexto({ ...geo, texto: filas.join('\n'), fs: Math.max(12, Math.round(16 * pxPorPt)), font: 'sans', color: tema.dk1 || '#1C1B20', al: 'left', va: 'top', fill: rellenoDef('color', '#FFFFFFE6'), rad: 8 }));
-        return;
+        const gd = D1(nodo, 'a:graphicData'), uri = gd?.getAttribute('uri') || '';
+        if (/chart/.test(uri)) { // gráfico: se dibuja con sus datos
+          const rid = D1(gd, 'c:chart')?.getAttribute('r:id'), cdoc = await leer(srel[rid]?.ruta);
+          let src = null; try { src = cdoc && dibujarGrafico(cdoc, wpx, hpx, colorDe, paleta); } catch (e) { console.warn('gráfico', e); }
+          agregarImagenCompleja(geo, src || svgURL(wpx, hpx, `<rect width="100%" height="100%" fill="#F1ECF4"/><text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="${Math.min(28, hpx / 8)}" fill="#797582">Gráfico</text>`));
+          return;
+        }
+        if (/diagram/.test(uri)) { // SmartArt: se usa el dibujo que PowerPoint guarda en el archivo
+          const dm = D1(gd, 'dgm:relIds')?.getAttribute('r:dm'), ddoc = await leer(srel[dm]?.ruta);
+          const relDib = D1(ddoc, 'dsp:dataModelExt')?.getAttribute('relId');
+          const rutaDib = (relDib && srel[relDib]?.ruta) || Object.values(srel).find(r => /diagramDrawing$/.test(r.tipo))?.ruta;
+          const dib = await leer(rutaDib); let cuerpo = '';
+          if (dib) for (const sp of [...dib.getElementsByTagName('dsp:sp')]) {
+            const x2 = xfrmDe(sp); if (!x2) continue;
+            const spPr = H1(sp, 'dsp:spPr'), fill = H1(spPr, 'a:noFill') ? null : rellenoDe(spPr) || (() => { const fr = D1(H1(sp, 'dsp:style'), 'a:fillRef'); const c = fr && +fr.getAttribute('idx') > 0 ? colorDe(fr) : null; return c ? rellenoDef('color', c) : null; })();
+            const ln = lineaDe(spPr, H1(sp, 'dsp:style')), w2 = x2.w * k, h2 = x2.h * k, fc = fill ? (fill.tipo === 'degradado' ? fill.colores[0] : fill.color) : 'none';
+            const attrs = `fill="${fc.slice(0, 7)}" ${fc.length > 7 ? `fill-opacity="${(parseInt(fc.slice(7), 16) / 255).toFixed(2)}"` : ''} stroke="${ln ? ln.c.slice(0, 7) : 'none'}" stroke-width="${ln ? ln.w : 0}"`;
+            const g = { prst: D1(spPr, 'a:prstGeom')?.getAttribute('prst'), cust: D1(spPr, 'a:custGeom') };
+            const txb = H1(sp, 'dsp:txBody'), lineas = textoDeTxBody(txb, 'other', null).filter(l => l.trim());
+            const rpr = D1(txb, 'a:rPr') || D1(txb, 'a:endParaRPr');
+            const tx = H1(sp, 'dsp:txXfrm'), tb = tx ? { x: +D1(tx, 'a:off').getAttribute('x'), y: +D1(tx, 'a:off').getAttribute('y'), w: +D1(tx, 'a:ext').getAttribute('cx'), h: +D1(tx, 'a:ext').getAttribute('cy') } : x2;
+            cuerpo += `<g transform="translate(${(x2.x * k).toFixed(2)} ${(x2.y * k).toFixed(2)})${x2.rot ? ` rotate(${x2.rot} ${w2 / 2} ${h2 / 2})` : ''}">${geomSVG(g, w2, h2, k, attrs)}</g>`;
+            if (lineas.length) cuerpo += `<g transform="translate(${(tb.x * k).toFixed(2)} ${(tb.y * k).toFixed(2)})">${textoSVG(lineas, tb.w * k, tb.h * k, { fs: Math.max(7, (+rpr?.getAttribute('sz') || 1800) / 100 * 12700 * k), color: colorDe(D1(rpr, 'a:solidFill')) || '#FFFFFF', b: rpr?.getAttribute('b') === '1', al: 'c', va: 'c' })}</g>`;
+          }
+          if (cuerpo) agregarImagenCompleja(geo, svgURL(wpx, hpx, cuerpo));
+          else { const ph2 = svgURL(wpx, hpx, `<rect width="100%" height="100%" fill="#F1ECF4"/><text x="50%" y="50%" text-anchor="middle" font-family="Arial" font-size="${Math.min(28, hpx / 8)}" fill="#797582">SmartArt</text>`); agregarImagenCompleja(geo, ph2); }
+          return;
+        }
+        if (/table/.test(uri)) { // tabla: se dibuja con su cuadrícula
+          const tbl = D1(gd, 'a:tbl'), cols = [...tbl.getElementsByTagName('a:gridCol')].map(c => +c.getAttribute('w') * k), filas = [...tbl.getElementsByTagName('a:tr')];
+          const sx = wpx / (cols.reduce((a, b) => a + b, 0) || wpx), hs = filas.map(tr => +tr.getAttribute('h') * k), sy = hpx / (hs.reduce((a, b) => a + b, 0) || hpx);
+          let cuerpo = '', yy = 0;
+          filas.forEach((tr, i) => {
+            let xx = 0; const h2 = hs[i] * sy;
+            [...tr.getElementsByTagName('a:tc')].forEach((tc, j) => {
+              const w2 = (cols[j] || 0) * sx, tcPr = H1(tc, 'a:tcPr'), bgc = colorDe(H1(tcPr, 'a:solidFill')) || (i === 0 ? (tema.accent1 || '#4472C4') : i % 2 ? '#E9EBF5' : '#CFD5EA');
+              const rpr = D1(tc, 'a:rPr'), lin = textoDeTxBody(H1(tc, 'a:txBody'), 'other', null).filter(l => l.trim());
+              cuerpo += `<rect x="${xx}" y="${yy}" width="${w2}" height="${h2}" fill="${bgc.slice(0, 7)}" stroke="#FFFFFF" stroke-width="1.5"/>`;
+              if (lin.length) cuerpo += `<g transform="translate(${xx} ${yy})">${textoSVG(lin, w2, h2, { fs: Math.max(7, (+rpr?.getAttribute('sz') || 1800) / 100 * 12700 * k), color: colorDe(D1(rpr, 'a:solidFill')) || (i === 0 ? '#FFFFFF' : '#1C1B20'), b: i === 0 || rpr?.getAttribute('b') === '1', al: 'l', va: 'c' })}</g>`;
+              xx += w2;
+            });
+            yy += h2;
+          });
+          agregarImagenCompleja(geo, svgURL(wpx, hpx, cuerpo));
+          return;
+        }
+        const blip = D1(nodo, 'a:blip'), src = blip && await imagen(srel[blip.getAttribute('r:embed')]?.ruta); // objeto incrustado con vista previa
+        if (src) { agregarImagenCompleja(geo, src); return; }
+        omitidos++; return;
       }
-      // p:sp: texto y/o forma
-      const spPr = H1(nodo, 'p:spPr'), txb = H1(nodo, 'p:txBody'), tipo = tipoPh(ph);
-      const geom = D1(spPr, 'a:prstGeom')?.getAttribute('prst') || 'rect';
-      let fill = rellenoDe(spPr);
-      if (!fill && !H1(spPr, 'a:noFill')) { const fr = D1(H1(nodo, 'p:style'), 'a:fillRef'); if (fr && +fr.getAttribute('idx') > 0) { const c = colorDe(fr); if (c) fill = rellenoDef('color', c); } }
-      if (H1(spPr, 'a:blipFill')) { const blip = D1(H1(spPr, 'a:blipFill'), 'a:blip'), src = await imagen(blip && srel[blip.getAttribute('r:embed')]?.ruta); if (src) { els.push(elImagen({ ...geo, src, ajuste: 'cover', rad: geom === 'ellipse' ? 0 : 0, sombra: false })); return; } }
-      const parrafos = txb ? [...txb.getElementsByTagName('a:p')] : [];
-      const lineas = parrafos.map(pa => {
-        let t = ''; [...pa.children].forEach(c => { if (c.tagName === 'a:r' || c.tagName === 'a:fld') t += D1(c, 'a:t')?.textContent || ''; else if (c.tagName === 'a:br') t += '\n'; });
-        const ppr = H1(pa, 'a:pPr'), bu = D1(ppr, 'a:buChar')?.getAttribute('char');
-        if (t.trim() && (bu || (tipo === 'body' && ph && ph.getAttribute('type') !== 'subTitle' && !D1(ppr, 'a:buNone')))) t = (bu || '•') + ' ' + t;
-        return t;
-      });
-      const texto = lineas.join('\n').replace(/\n+$/, '');
-      if (!texto.trim()) { // forma sin texto
-        if (fill) els.push(elForma({ ...geo, forma: geom === 'ellipse' ? 'elipse' : 'rect', fill, rad: /round/i.test(geom) ? 24 : 0 }));
-        return;
+      // p:sp y p:cxnSp: texto y/o figura
+      const spPr = H1(nodo, 'p:spPr'), estilo = H1(nodo, 'p:style'), txb = H1(nodo, 'p:txBody'), tipo = tipoPh(ph);
+      const g = { prst: D1(spPr, 'a:prstGeom')?.getAttribute('prst') || (D1(spPr, 'a:custGeom') ? null : 'rect'), cust: D1(spPr, 'a:custGeom') };
+      let fill = H1(spPr, 'a:noFill') ? null : rellenoDe(spPr);
+      if (!fill && !H1(spPr, 'a:noFill') && tag !== 'p:cxnSp') { const fr = D1(estilo, 'a:fillRef'); if (fr && +fr.getAttribute('idx') > 0) { const c = colorDe(fr); if (c) fill = rellenoDef('color', c); } }
+      const ln = lineaDe(spPr, estilo);
+      if (H1(spPr, 'a:blipFill')) { const blip = D1(H1(spPr, 'a:blipFill'), 'a:blip'), src = await imagen(blip && srel[blip.getAttribute('r:embed')]?.ruta); if (src) { els.push(elImagen({ ...geo, src, ajuste: 'cover', rad: 0, sombra: false })); return; } }
+      const texto = textoDeTxBody(txb, tipo, ph).join('\n').replace(/\n+$/, '');
+      // figura: las simples (rectángulo/óvalo sin borde) quedan como forma editable; el resto se dibuja como imagen
+      let figura = null;
+      const esLinea = tag === 'p:cxnSp' || /line|Connector/i.test(g.prst || '');
+      if (esLinea && ln) {
+        const fx = bx.fh, fy = bx.fv, x1 = fx ? wpx : 0, y1 = fy ? hpx : 0, x2 = fx ? 0 : wpx, y2 = fy ? 0 : hpx, m = ln.w;
+        figura = agregarImagenCompleja({ ...geo, x: geo.x - pct(m / k, CX), y: geo.y - pct(m / k, CY), w: geo.w + 2 * pct(m / k, CX), h: geo.h + 2 * pct(m / k, CY) },
+          svgURL(wpx + 2 * m, hpx + 2 * m, `<line x1="${x1 + m}" y1="${y1 + m}" x2="${x2 + m}" y2="${y2 + m}" stroke="${ln.c.slice(0, 7)}" stroke-width="${ln.w}" stroke-linecap="round"/>`));
+      } else if (!esLinea && (fill || ln)) {
+        const simple = !g.cust && (g.prst === 'rect' || g.prst === 'roundRect' || g.prst === 'ellipse') && !ln && !bx.fh && !bx.fv;
+        if (simple) els.push(elForma({ ...geo, forma: g.prst === 'ellipse' ? 'elipse' : 'rect', fill, rad: g.prst === 'roundRect' ? Math.round(Math.min(wpx, hpx) * .17 * 1280 / 1280) : 0 }));
+        else {
+          const fc = fill ? (fill.tipo === 'degradado' ? null : fill.color) : null;
+          const defs = fill && fill.tipo === 'degradado' ? `<defs><linearGradient id="g" gradientTransform="rotate(${fill.angulo - 90} .5 .5)">${fill.colores.map((c, i) => `<stop offset="${i / (fill.colores.length - 1 || 1)}" stop-color="${c.slice(0, 7)}"/>`).join('')}</linearGradient></defs>` : '';
+          const m = ln ? ln.w / 2 : 0;
+          const attrs = `fill="${defs ? 'url(#g)' : fc ? fc.slice(0, 7) : 'none'}" ${fc && fc.length > 7 ? `fill-opacity="${(parseInt(fc.slice(7), 16) / 255).toFixed(2)}"` : ''} stroke="${ln ? ln.c.slice(0, 7) : 'none'}" stroke-width="${ln ? ln.w : 0}" stroke-linejoin="round"`;
+          const flip = bx.fh || bx.fv ? ` transform="translate(${bx.fh ? wpx : 0} ${bx.fv ? hpx : 0}) scale(${bx.fh ? -1 : 1} ${bx.fv ? -1 : 1})"` : '';
+          const svg = svgURL(wpx + 2 * m, hpx + 2 * m, `${defs}<g transform="translate(${m} ${m})"><g${flip}>${geomSVG(g, wpx, hpx, k, attrs)}</g></g>`);
+          figura = agregarImagenCompleja({ ...geo, x: geo.x - pct(m / k, CX), y: geo.y - pct(m / k, CY), w: geo.w + 2 * pct(m / k, CX), h: geo.h + 2 * pct(m / k, CY) }, svg);
+        }
       }
+      if (!texto.trim()) return;
       const rPr = D1(txb, 'a:rPr') || D1(txb, 'a:endParaRPr'), defR = D1(D1(txb, 'a:lstStyle'), 'a:defRPr');
       const est = mas ? estiloPatron(mas, tipo) : {};
       const szPh = +D1(D1(phLay, 'a:lstStyle'), 'a:defRPr')?.getAttribute('sz') || +D1(D1(phMas, 'a:lstStyle'), 'a:defRPr')?.getAttribute('sz') || 0;
       const szPt = (+rPr?.getAttribute('sz') || +defR?.getAttribute('sz') || szPh || est.sz || (tipo === 'title' ? 4400 : 1800)) / 100;
       const escala = (+D1(D1(txb, 'a:bodyPr'), 'a:normAutofit')?.getAttribute('fontScale') || 100000) / 100000;
-      const color = colorDe(D1(rPr, 'a:solidFill')) || colorDe(D1(D1(phLay, 'a:defRPr'), 'a:solidFill')) || est.color || tema.dk1 || '#1C1B20';
-      const algn = D1(txb, 'a:pPr')?.getAttribute('algn') || D1(D1(phLay, 'a:lstStyle'), 'a:lvl1pPr')?.getAttribute('algn') || D1(D1(mas, tipo === 'title' ? 'p:titleStyle' : 'p:bodyStyle'), 'a:lvl1pPr')?.getAttribute('algn');
-      const anchor = D1(txb, 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phLay, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phMas, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || (tipo === 'title' ? 'ctr' : 't');
-      els.push(elTexto({ ...geo, texto, fs: Math.max(8, Math.round(szPt * escala * pxPorPt)), font: 'sans', color, b: rPr?.getAttribute('b') === '1' || (rPr?.getAttribute('b') == null && est.b), i: rPr?.getAttribute('i') === '1',
-        al: algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left', va: anchor === 'ctr' ? 'middle' : anchor === 'b' ? 'bottom' : 'top', fill: fill || rellenoDef(), rad: /round/i.test(geom) ? 24 : geom === 'ellipse' ? 200 : 0 }));
+      const color = colorDe(D1(rPr, 'a:solidFill')) || colorDe(D1(D1(phLay, 'a:defRPr'), 'a:solidFill')) || colorDe(D1(estilo, 'a:fontRef')) || est.color || tema.dk1 || '#1C1B20';
+      const algn = D1(txb, 'a:pPr')?.getAttribute('algn') || D1(D1(phLay, 'a:lstStyle'), 'a:lvl1pPr')?.getAttribute('algn') || D1(D1(mas, tipo === 'title' ? 'p:titleStyle' : 'p:bodyStyle'), 'a:lvl1pPr')?.getAttribute('algn') || (figura || (fill && !ph) ? 'ctr' : null);
+      const anchor = D1(txb, 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phLay, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phMas, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || (tipo === 'title' || figura || (fill && !ph) ? 'ctr' : 't');
+      const t = elTexto({ ...geo, texto, fs: Math.max(8, Math.round(szPt * escala * 12700 * k)), font: 'sans', color, b: rPr?.getAttribute('b') === '1' || (rPr?.getAttribute('b') == null && est.b), i: rPr?.getAttribute('i') === '1',
+        al: algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left', va: anchor === 'ctr' ? 'middle' : anchor === 'b' ? 'bottom' : 'top',
+        fill: rellenoDef(), rad: 0 });
+      if (figura) t._sobre = figura.id;
+      els.push(t);
     };
     const tree = D1(D1(doc, 'p:cSld'), 'p:spTree');
     if (tree) for (const ch of [...tree.children]) await procesar(ch, b => b);
-    diapos.push({ tipo: 'diapositiva', fondo, els });
+    const d = { tipo: 'diapositiva', fondo, els };
+    if (H1(doc, 'p:sld')?.getAttribute('show') === '0' || doc.documentElement.getAttribute('show') === '0') d._oculta = true;
+    diapos.push(d);
   }
-  return { diapos, omitidos };
+  return { diapos, omitidos, complejos };
 }
 
 /* =================== IMPORTAR PREGUNTAS =================== */
