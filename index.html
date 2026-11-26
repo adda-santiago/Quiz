@@ -815,6 +815,146 @@ const GRUPOS_TIPOS = [
   ['Sin puntaje (participación)', ['encuesta', 'nube', 'escala', 'dibujo', 'muro']],
 ];
 let menuAdd = false;
+
+/* =================== IDIOMAS (pantalla de presentación, teléfono y control remoto) ===================
+   El editor queda en español. tr('texto en español', {var}) busca la traducción del idioma actual (IDIOMA). */
+const IDIOMAS = [['es', 'Español'], ['en', 'English'], ['me', 'Crnogorski (montenegrino)']];
+let IDIOMA = 'es';
+function tr(s, v) {
+  let t = (IDIOMA !== 'es' && I18N[IDIOMA] && I18N[IDIOMA][s]) || s;
+  if (v) t = t.replace(/\{(\w+)\}/g, (m, k) => v[k] ?? m);
+  return t;
+}
+function ponerIdioma(l) { IDIOMA = I18N[l] || l === 'es' ? l : 'es'; document.documentElement.lang = IDIOMA === 'me' ? 'sr-Latn-ME' : IDIOMA; }
+function idiomaInicialTel() { // antes de conectarse: el del enlace (QR), el último usado o el del teléfono
+  const q = new URLSearchParams(location.search).get('l'); if (q) return q;
+  try { const g = localStorage.getItem('quiziglesia.idioma'); if (g) return g; } catch (_) { }
+  const n = (navigator.language || 'es').toLowerCase();
+  return n.startsWith('en') ? 'en' : /^(sr|cnr|bs|hr|me)/.test(n) ? 'me' : 'es';
+}
+const nombreTipo = k => tr((TIPOS[k] || {}).nombre || '');
+const I18N = { en: {}, me: {} };
+[
+  // tipos de pregunta
+  ['Diapositiva', 'Slide', 'Slajd'], ['Alternativas', 'Multiple choice', 'Višestruki izbor'], ['Verdadero / Falso', 'True / False', 'Tačno / Netačno'],
+  ['Completar la frase', 'Complete the sentence', 'Dopuni rečenicu'], ['Ubicar el pin', 'Find the spot', 'Pronađi mjesto'], ['Ordenar', 'Put in order', 'Poredaj'],
+  ['Adivina el número', 'Guess the number', 'Pogodi broj'], ['Unir parejas', 'Match the pairs', 'Spoji parove'], ['Ordenar el versículo', 'Build the verse', 'Složi stih'],
+  ['¿Quién soy?', 'Who am I?', 'Ko sam ja?'], ['Imagen que se revela', 'Hidden picture', 'Skrivena slika'], ['Clasificar', 'Sort into groups', 'Razvrstaj'],
+  ['Encontrar el error', 'Find the mistake', 'Pronađi grešku'], ['Emoji-historia', 'Emoji story', 'Emoji priča'], ['Línea de tiempo', 'Timeline', 'Vremenska linija'],
+  ['Completar con palabras', 'Fill in the blanks', 'Popuni praznine'], ['Marca todas las correctas', 'Mark all the correct ones', 'Označi sve tačne'],
+  ['Ráfaga de V/F', 'True or false blitz', 'Brza runda tačno/netačno'], ['Palabra misteriosa', 'Mystery word', 'Tajanstvena riječ'], ['Imagen con zoom', 'Zoomed picture', 'Uvećana slika'],
+  ['Escucha y responde', 'Listen and answer', 'Slušaj i odgovori'], ['Memoria', 'Memory', 'Memorija'], ['El más rápido', 'Fastest finger', 'Najbrži'],
+  ['Dibuja (sin puntaje)', 'Draw', 'Crtaj'], ['Muro de mensajes (sin puntaje)', 'Message wall', 'Zid poruka'], ['Encuesta (sin puntaje)', 'Poll', 'Anketa'],
+  ['Nube de palabras', 'Word cloud', 'Oblak riječi'], ['Escala 1 a 5 (sin puntaje)', 'Scale from 1 to 5', 'Skala od 1 do 5'],
+  // pantalla de presentación
+  ['Siguiente', 'Next', 'Dalje'], ['Comenzar', 'Start', 'Počni'], ['Mostrar respuesta', 'Show answer', 'Prikaži odgovor'], ['Sala de espera', 'Waiting room', 'Čekaonica'],
+  ['Diapositiva · {a} de {b}', 'Slide · {a} of {b}', 'Slajd · {a} od {b}'], ['Pregunta {a} de {b}', 'Question {a} of {b}', 'Pitanje {a} od {b}'],
+  ['Pregunta {a} de {b} · respuesta', 'Question {a} of {b} · answer', 'Pitanje {a} od {b} · odgovor'], ['Ranking', 'Leaderboard', 'Rang lista'],
+  ['Resultados finales', 'Final results', 'Konačni rezultati'],
+  ['Los jugadores entran desde el celular con el código {c}.', 'Players join from their phones with the code {c}.', 'Igrači se pridružuju sa telefona pomoću koda {c}.'],
+  ['Video de YouTube: los anuncios que muestre YouTube no dependen de esta app.', 'YouTube video: any ads shown by YouTube are not controlled by this app.', 'YouTube video: reklame koje prikazuje YouTube ne zavise od ove aplikacije.'],
+  ['Presiona Siguiente o la barra espaciadora para avanzar.', 'Press Next or the space bar to continue.', 'Pritisnite Dalje ili razmaknicu za nastavak.'],
+  ['Los jugadores eligen su respuesta en el celular con el código {c}.', 'Players choose their answer on their phones with the code {c}.', 'Igrači biraju odgovor na telefonu pomoću koda {c}.'],
+  ['Respuesta revelada. Sigue cuando todos la hayan visto.', 'Answer revealed. Continue when everyone has seen it.', 'Odgovor je otkriven. Nastavite kad ga svi vide.'],
+  ['¡Así va la competencia!', 'Here is how the competition is going!', 'Ovako stoji takmičenje!'], ['¡Gracias por jugar!', 'Thanks for playing!', 'Hvala na igri!'],
+  ['Sala {c}', 'Room {c}', 'Soba {c}'], ['{a} / {b} respuestas', '{a} / {b} answers', 'Odgovori: {a} / {b}'], ['{n} jugadores', '{n} players', 'Igrači: {n}'],
+  ['Sonido (M)', 'Sound (M)', 'Zvuk (M)'], ['Control remoto desde el celular', 'Remote control from your phone', 'Daljinski upravljač sa telefona'],
+  ['Pantalla completa', 'Full screen', 'Cijeli ekran'], ['En pausa', 'Paused', 'Pauzirano'], ['Presiona P o Seguir para continuar', 'Press P or Resume to continue', 'Pritisnite P ili Nastavi'],
+  ['Pausar (P)', 'Pause (P)', 'Pauza (P)'], ['Seguir', 'Resume', 'Nastavi'], ['Pausar', 'Pause', 'Pauza'], ['Agregar 10 segundos (+)', 'Add 10 seconds (+)', 'Dodaj 10 sekundi (+)'],
+  ['Saltar sin puntaje', 'Skip without points', 'Preskoči bez bodova'], ['Saltar', 'Skip', 'Preskoči'], ['Diapositiva anterior (←)', 'Previous slide (←)', 'Prethodni slajd (←)'],
+  ['Reproducir / pausar video (K)', 'Play / pause video (K)', 'Pusti / pauziraj video (K)'], ['Pausar video', 'Pause video', 'Pauziraj video'], ['Reproducir video', 'Play video', 'Pusti video'],
+  ['Volver al inicio del video', 'Restart the video', 'Vrati video na početak'], ['Salir', 'Exit', 'Izađi'],
+  ['¿Salir de la presentación? Se perderá el puntaje.', 'Exit the presentation? The scores will be lost.', 'Izaći iz prezentacije? Bodovi će biti izgubljeni.'],
+  ['¿Sacar a {n} de la sala?', 'Remove {n} from the room?', 'Ukloniti igrača {n} iz sobe?'],
+  ['El presentador no aprobó ese nombre. Elige otro.', 'The host did not approve that name. Choose another one.', 'Voditelj nije odobrio to ime. Izaberi drugo.'],
+  ['El juego ya comenzó. ¡Espera la próxima ronda!', 'The game has already started. Wait for the next round!', 'Igra je već počela. Sačekaj sljedeću rundu!'],
+  ['Ese nombre no está permitido. Elige otro.', 'That name is not allowed. Choose another one.', 'To ime nije dozvoljeno. Izaberi drugo.'],
+  ['Jugador', 'Player', 'Igrač'], ['Equipo {n}', 'Team {n}', 'Tim {n}'], ['🔀 Equipos mezclados', '🔀 Teams shuffled', '🔀 Timovi su izmiješani'],
+  ['¡Te toca! Responde en voz alta', 'Your turn! Answer out loud', 'Ti si na redu! Odgovori naglas'], ['Estás en la fila: lugar {n}', 'You are in line: position {n}', 'U redu si: mjesto {n}'],
+  ['No era esa… ¡Atento a la próxima!', 'Not quite… Get ready for the next one!', 'Nije to… Spremi se za sljedeće!'],
+  ['Esperando que el presentador apruebe tu nombre…', 'Waiting for the host to approve your name…', 'Čeka se da voditelj odobri tvoje ime…'],
+  ['¡Estás dentro! Espera a que comience.', 'You are in! Wait for the game to start.', 'Unutra si! Sačekaj da igra počne.'],
+  ['Mira la pantalla', 'Look at the screen', 'Pogledaj ekran'], ['Mira el ranking', 'Look at the leaderboard', 'Pogledaj rang listu'], ['Pregunta saltada', 'Question skipped', 'Pitanje je preskočeno'],
+  ['Posición', 'Position', 'Pozicija'], ['Nombre', 'Name', 'Ime'], ['Puntaje', 'Score', 'Bodovi'], ['Aciertos', 'Correct answers', 'Tačni odgovori'], ['Equipo', 'Team', 'Tim'], ['Integrantes', 'Members', 'Članovi'],
+  ['Control remoto', 'Remote control', 'Daljinski upravljač'],
+  ['Escanea este código con <b>tu</b> celular para avanzar, pausar o saltar desde cualquier parte de la sala. No lo dejes a la vista de los jugadores.', 'Scan this code with <b>your</b> phone to go forward, pause or skip from anywhere in the room. Keep it out of the players’ sight.', 'Skenirajte ovaj kod <b>svojim</b> telefonom da biste išli dalje, pauzirali ili preskakali sa bilo kog mjesta u sali. Ne ostavljajte ga na vidiku igračima.'],
+  ['(QR no disponible)', '(QR code not available)', '(QR kod nije dostupan)'], ['Controles conectados: {n}', 'Connected remotes: {n}', 'Povezani upravljači: {n}'],
+  ['Ningún control conectado', 'No remote connected', 'Nijedan upravljač nije povezan'], ['Nuevo enlace', 'New link', 'Novi link'], ['Listo', 'Done', 'Gotovo'],
+  ['Conectados: {n}', 'Connected: {n}', 'Povezani: {n}'], ['{n} por servidor de respaldo', '{n} via backup server', '{n} preko rezervnog servera'], ['{n} sin señal', '{n} without signal', '{n} bez signala'],
+  ['Por aprobar:', 'Waiting for approval:', 'Čeka odobrenje:'], ['Aprobar', 'Approve', 'Odobri'], ['Rechazar', 'Reject', 'Odbij'],
+  ['⚠️ Abriste el archivo directamente desde tu computador. Para que los teléfonos se unan, publica esta página en internet (por ejemplo, GitHub Pages) y presenta desde esa dirección.', '⚠️ You opened the file directly from your computer. For phones to join, publish this page online (for example, on GitHub Pages) and present from that address.', '⚠️ Otvorili ste fajl direktno sa računara. Da bi se telefoni pridružili, objavite ovu stranicu na internetu (na primjer, na GitHub Pages) i prezentujte sa te adrese.'],
+  ['⚠️ No se pudo cargar el módulo de conexión (¿sin internet?). Puedes presentar igual, en modo “solo pantalla”.', '⚠️ The connection module could not be loaded (no internet?). You can still present in “screen only” mode.', '⚠️ Modul za povezivanje nije učitan (nema interneta?). Ipak možete prezentovati u režimu „samo ekran“.'],
+  ['⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.', '⚠️ Connection problem. You can present in “screen only” mode or try again.', '⚠️ Problem sa vezom. Možete prezentovati u režimu „samo ekran“ ili pokušati ponovo.'],
+  ['Conectado por servidor de respaldo', 'Connected via backup server', 'Povezan preko rezervnog servera'], ['Conectado', 'Connected', 'Povezan'], ['Sin señal', 'No signal', 'Bez signala'],
+  ['clic para sacar', 'click to remove', 'klik za uklanjanje'], ['Escanea el QR o entra a:', 'Scan the QR code or go to:', 'Skeniraj QR kod ili idi na:'], ['y escribe el código', 'and enter the code', 'i unesi kod'],
+  ['Sala abierta', 'Room open', 'Soba je otvorena'], ['⏳ Abriendo sala…', '⏳ Opening room…', '⏳ Otvaranje sobe…'], ['🔴 Sin conexión', '🔴 Offline', '🔴 Nema veze'],
+  ['Cada uno elige su equipo en el teléfono', 'Everyone chooses their team on their phone', 'Svako bira svoj tim na telefonu'], ['Equipos asignados al azar', 'Teams assigned at random', 'Timovi su dodijeljeni nasumično'],
+  ['Equipos por orden de llegada', 'Teams by order of arrival', 'Timovi po redosljedu dolaska'], ['Mezclar equipos', 'Shuffle teams', 'Izmiješaj timove'], ['Sin integrantes', 'No members', 'Nema članova'],
+  ['Esperando participantes…', 'Waiting for players…', 'Čekaju se igrači…'], ['{n} respuestas', '{n} answers', 'Odgovori: {n}'],
+  ['Pausar audio', 'Pause audio', 'Pauziraj zvuk'], ['Reproducir audio', 'Play audio', 'Pusti zvuk'], ['Verdadero', 'True', 'Tačno'], ['Falso', 'False', 'Netačno'], ['V', 'T', 'T'], ['F', 'F', 'N'],
+  ['✍️ Escribe tu respuesta en el teléfono', '✍️ Type your answer on your phone', '✍️ Napiši odgovor na telefonu'], ['{a} de {b}', '{a} of {b}', '{a} od {b}'],
+  ['lo encontraron', 'found it', 'je pronašlo'], ['lo ordenaron bien', 'got the order right', 'je tačno poredalo'], ['unieron todas bien', 'matched them all correctly', 'je sve tačno spojilo'],
+  ['lo armaron bien', 'put it together correctly', 'je tačno složilo'], ['clasificaron todo bien', 'sorted everything correctly', 'je sve tačno razvrstalo'], ['encontraron el error', 'found the mistake', 'je pronašlo grešku'],
+  ['lo ubicaron bien', 'placed it correctly', 'je tačno smjestilo'], ['completaron todo bien', 'filled everything in correctly', 'je sve tačno popunilo'], ['marcaron todas bien', 'marked them all correctly', 'je sve tačno označilo'],
+  ['acertaron todas', 'got them all right', 'je sve pogodilo'], ['completaron el tablero', 'completed the board', 'je završilo tablu'], ['Soy', 'I am', 'Ja sam'],
+  ['☑️ Puede haber más de una correcta', '☑️ There may be more than one correct answer', '☑️ Može biti više tačnih odgovora'], ['{n}% bien', '{n}% correct', '{n}% tačno'],
+  ['🃏 ¡Encuentren las parejas en su teléfono!', '🃏 Find the pairs on your phone!', '🃏 Pronađite parove na telefonu!'], ['Correcto', 'Correct', 'Tačno'], ['Incorrecto', 'Wrong', 'Netačno'],
+  ['¡Toca el botón en tu teléfono si sabes la respuesta!', 'Tap the button on your phone if you know the answer!', 'Dodirni dugme na telefonu ako znaš odgovor!'], ['Respuesta:', 'Answer:', 'Odgovor:'],
+  ['🏅 {n} respondió bien', '🏅 {n} got it right', '🏅 Tačan odgovor: {n}'], ['Nadie acertó esta vez', 'Nobody got it this time', 'Ovaj put niko nije pogodio'],
+  ['🎨 Dibujando… {a} de {b} listos', '🎨 Drawing… {a} of {b} done', '🎨 Crtanje… gotovo {a} od {b}'], ['Clic para ocultar', 'Click to hide', 'Klik za sakrivanje'],
+  ['No llegaron dibujos 😅', 'No drawings arrived 😅', 'Nije stigao nijedan crtež 😅'], ['✍️ Escriban su mensaje en el teléfono', '✍️ Write your message on your phone', '✍️ Napišite poruku na telefonu'],
+  ['Por revisar ({n}):', 'To review ({n}):', 'Za pregled ({n}):'], ['📱 Responde en tu teléfono', '📱 Answer on your phone', '📱 Odgovori na telefonu'], ['Promedio: {n}', 'Average: {n}', 'Prosjek: {n}'],
+  ['Entre {a} y {b}', 'Between {a} and {b}', 'Između {a} i {b}'], ['Nadie respondió 😅', 'Nobody answered 😅', 'Niko nije odgovorio 😅'],
+  ['Clic para ocultar esta respuesta', 'Click to hide this answer', 'Klik za sakrivanje ovog odgovora'], ['🏆 Ranking por equipos', '🏆 Team leaderboard', '🏆 Rang lista timova'], ['🏆 Ranking', '🏆 Leaderboard', '🏆 Rang lista'],
+  ['¡Fin! 🎉', 'The end! 🎉', 'Kraj! 🎉'], ['Volver al inicio', 'Back to home', 'Nazad na početak'], ['🎉 ¡Felicitaciones! 🎉', '🎉 Congratulations! 🎉', '🎉 Čestitamo! 🎉'],
+  ['{n} pts', '{n} pts', '{n} b.'], ['Descargar resultados', 'Download results', 'Preuzmi rezultate'], ['Modo respuesta', 'Answer mode', 'Režim odgovora'],
+  ['el lugar marcado con el círculo verde en la imagen', 'the place marked with the green circle in the picture', 'mjesto označeno zelenim krugom na slici'],
+  [' debía decir ', ' should say ', ' treba da piše '], ['Antes de: ', 'Before: ', 'Prije: '], ['Después de: ', 'After: ', 'Poslije: '], ['📍 Mira la pantalla', '📍 Look at the screen', '📍 Pogledaj ekran'],
+  // control remoto
+  ['⏳ Conectando con la pantalla…', '⏳ Connecting to the screen…', '⏳ Povezivanje sa ekranom…'], ['📵 No se pudo cargar la conexión.', '📵 The connection could not be loaded.', '📵 Veza nije mogla da se učita.'],
+  ['🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.', '🔒 This link is no longer valid. Scan the new code from the screen.', '🔒 Ovaj link više ne važi. Skenirajte novi kod sa ekrana.'],
+  ['🔄 Reconectando…', '🔄 Reconnecting…', '🔄 Ponovno povezivanje…'], ['🔍 No se encontró la presentación. ¿Sigue abierta?', '🔍 The presentation was not found. Is it still open?', '🔍 Prezentacija nije pronađena. Da li je još otvorena?'],
+  ['📵 Problema de conexión', '📵 Connection problem', '📵 Problem sa vezom'], ['⏳ Conectando…', '⏳ Connecting…', '⏳ Povezivanje…'], ['Reintentar', 'Try again', 'Pokušaj ponovo'],
+  ['Jugadores conectados: {n}', 'Players connected: {n}', 'Povezani igrači: {n}'], ['en pausa', 'paused', 'pauzirano'], ['¡Fin del quiz! 🎉', 'End of the quiz! 🎉', 'Kraj kviza! 🎉'], ['Anterior', 'Previous', 'Prethodno'],
+  // teléfono
+  ['¡Únete al juego!', 'Join the game!', 'Pridruži se igri!'], ['Tu nombre', 'Your name', 'Tvoje ime'], ['Ej: Sofi', 'E.g. Sophie', 'Npr. Sofija'], ['Elige tu personaje', 'Choose your character', 'Izaberi svog lika'],
+  ['Entrar al juego', 'Join the game', 'Uđi u igru'], ['Conectando…', 'Connecting…', 'Povezivanje…'], ['Esa palabra no está permitida, intenta otra 🙂', 'That word is not allowed, try another one 🙂', 'Ta riječ nije dozvoljena, probaj drugu 🙂'],
+  ['No se pudo cargar la conexión. Revisa tu internet.', 'The connection could not be loaded. Check your internet.', 'Veza nije mogla da se učita. Provjeri internet.'],
+  ['No se encontró la sala {c}. Revisa el código.', 'Room {c} was not found. Check the code.', 'Soba {c} nije pronađena. Provjeri kod.'], ['Problema de conexión', 'Connection problem', 'Problem sa vezom'],
+  ['¿No conecta?', 'Not connecting?', 'Ne povezuje se?'], ['Revisa que el código sea el de la pantalla.', 'Make sure the code matches the one on the screen.', 'Provjeri da li je kod isti kao na ekranu.'],
+  ['Prueba cambiando de wifi a datos móviles (o al revés).', 'Try switching from Wi‑Fi to mobile data (or the other way round).', 'Probaj da pređeš sa Wi‑Fi mreže na mobilne podatke (ili obrnuto).'],
+  ['En el wifi de la iglesia, algunas redes bloquean la conexión entre equipos.', 'Some church Wi‑Fi networks block connections between devices.', 'Neke Wi‑Fi mreže u crkvi blokiraju vezu između uređaja.'],
+  ['No se pudo conectar', 'Could not connect', 'Povezivanje nije uspjelo'], ['Reconectando…', 'Reconnecting…', 'Ponovno povezivanje…'], ['¡Respuesta enviada!', 'Answer sent!', 'Odgovor je poslat!'],
+  ['Espera a los demás…', 'Wait for the others…', 'Sačekaj ostale…'], ['¡Gracias por participar!', 'Thanks for taking part!', 'Hvala na učešću!'], ['Se acabó el tiempo', 'Time is up', 'Vrijeme je isteklo'],
+  ['¡Correcto!', 'Correct!', 'Tačno!'], ['¡Casi! {n} % bien', 'Almost! {n}% correct', 'Skoro! {n}% tačno'],
+  ['Tu equipo <b>{e}</b> va en el lugar <b>{r}</b> de {n}', 'Your team <b>{e}</b> is in place <b>{r}</b> of {n}', 'Tvoj tim <b>{e}</b> je na <b>{r}.</b> mjestu od {n}'],
+  ['Vas en el lugar <b>{r}</b> de {n}', 'You are in place <b>{r}</b> of {n}', 'Na <b>{r}.</b> si mjestu od {n}'], ['¡Terminó!', 'Game over!', 'Kraj igre!'],
+  ['Tu equipo {e} quedó en el lugar {r} de {n}', 'Your team {e} finished in place {r} of {n}', 'Tvoj tim {e} je završio na {r}. mjestu od {n}'],
+  ['Quedaste en el lugar {r} de {n}', 'You finished in place {r} of {n}', 'Završio si na {r}. mjestu od {n}'], ['{n} puntos', '{n} points', 'Bodovi: {n}'],
+  ['El presentador te sacó de la sala.', 'The host removed you from the room.', 'Voditelj te je uklonio iz sobe.'], ['Enviando…', 'Sending…', 'Slanje…'],
+  ['👀 Mira la imagen en la pantalla', '👀 Look at the picture on the screen', '👀 Pogledaj sliku na ekranu'], ['🔊 Escucha el audio de la pantalla', '🔊 Listen to the audio from the screen', '🔊 Slušaj zvuk sa ekrana'],
+  ['Escribe aquí…', 'Type here…', 'Piši ovdje…'], ['Enviar', 'Send', 'Pošalji'], ['Confirmar', 'Confirm', 'Potvrdi'], ['Enviar orden', 'Send order', 'Pošalji redosljed'],
+  ['Arrastra (o toca) desde la izquierda hasta su pareja', 'Drag (or tap) from the left to its match', 'Prevuci (ili dodirni) sa lijeve strane do njegovog para'], ['¿Quién es?', 'Who is it?', 'Ko je to?'],
+  ['Toca la palabra equivocada:', 'Tap the wrong word:', 'Dodirni pogrešnu riječ:'], ['⬇ Aquí', '⬇ Here', '⬇ Ovdje'], ['¿Qué palabra es?', 'What word is it?', 'Koja je to riječ?'],
+  ['Parejas: {a} / {b}', 'Pairs: {a} / {b}', 'Parovi: {a} / {b}'], ['¡Yo sé!', 'I know!', 'Znam!'], ['Enviar dibujo', 'Send drawing', 'Pošalji crtež'], ['Escribe tu mensaje…', 'Write your message…', 'Napiši poruku…'],
+  ['Pausa', 'Pause', 'Pauza'], ['Espera un momento…', 'Wait a moment…', 'Sačekaj trenutak…'], ['Toca las palabras en orden…', 'Tap the words in order…', 'Dodiruj riječi redom…'],
+  ['¡Estás dentro!', 'You are in!', 'Unutra si!'], ['Tu equipo es:', 'Your team is:', 'Tvoj tim je:'], ['Elige tu equipo:', 'Choose your team:', 'Izaberi svoj tim:'], ['Espera a que comience.', 'Wait for it to start.', 'Sačekaj da počne.'],
+  // aviso de cookies
+  ['Aviso de cookies y almacenamiento', 'Cookies and storage notice', 'Obavještenje o kolačićima i skladištenju'], ['Más información', 'More information', 'Više informacija'], ['Entendido', 'Got it', 'Razumijem'],
+  ['Esta app guarda tus quizzes y preferencias solo en este navegador; no usa cookies de seguimiento ni de publicidad. Para funcionar se conecta a servicios externos (Google Fonts, PeerJS y, si una diapositiva tiene un video, YouTube) que pueden usar sus propias cookies.',
+    'This app stores your quizzes and preferences only in this browser; it does not use tracking or advertising cookies. To work, it connects to external services (Google Fonts, PeerJS and, if a slide has a video, YouTube) that may use their own cookies.',
+    'Ova aplikacija čuva tvoje kvizove i podešavanja samo u ovom pregledaču; ne koristi kolačiće za praćenje ni reklame. Da bi radila, povezuje se sa spoljnim servisima (Google Fonts, PeerJS i, ako slajd ima video, YouTube) koji mogu koristiti sopstvene kolačiće.'],
+  ['Cookies y privacidad', 'Cookies and privacy', 'Kolačići i privatnost'],
+  ['<b>En este navegador (sin cookies de seguimiento):</b> la app guarda tus quizzes, la lista «Mis quizzes», tu nombre y personaje de jugador y preferencias como el sonido o el tutorial. Usa el almacenamiento local del navegador (IndexedDB y localStorage). Esta información no se envía a ningún servidor de la app y puedes borrarla desde la configuración de tu navegador.',
+    '<b>In this browser (no tracking cookies):</b> the app stores your quizzes, the “My quizzes” list, your player name and character, and preferences such as sound or the tutorial. It uses the browser’s local storage (IndexedDB and localStorage). This information is not sent to any app server and you can delete it from your browser settings.',
+    '<b>U ovom pregledaču (bez kolačića za praćenje):</b> aplikacija čuva tvoje kvizove, listu „Moji kvizovi“, tvoje ime i lik igrača i podešavanja kao što su zvuk ili uputstvo. Koristi lokalno skladište pregledača (IndexedDB i localStorage). Ovi podaci se ne šalju nijednom serveru aplikacije i možeš ih obrisati u podešavanjima pregledača.'],
+  ['<b>Servicios externos que usa la app:</b>', '<b>External services used by the app:</b>', '<b>Spoljni servisi koje aplikacija koristi:</b>'],
+  ['<b>Google Fonts</b> (fonts.googleapis.com): tipografías e íconos.', '<b>Google Fonts</b> (fonts.googleapis.com): fonts and icons.', '<b>Google Fonts</b> (fonts.googleapis.com): fontovi i ikonice.'],
+  ['<b>PeerJS</b> (0.peerjs.com) y servidores STUN/TURN: conectan los teléfonos con la pantalla. Solo pasan los datos del juego (nombre, personaje, respuestas).', '<b>PeerJS</b> (0.peerjs.com) and STUN/TURN servers: they connect the phones to the screen. Only game data goes through them (name, character, answers).', '<b>PeerJS</b> (0.peerjs.com) i STUN/TURN serveri: povezuju telefone sa ekranom. Kroz njih prolaze samo podaci igre (ime, lik, odgovori).'],
+  ['<b>unpkg, jsDelivr y cdnjs</b>: entregan las librerías de la app (conexión, QR, lectura de PowerPoint/PDF).', '<b>unpkg, jsDelivr and cdnjs</b>: they deliver the app’s libraries (connection, QR, reading PowerPoint/PDF).', '<b>unpkg, jsDelivr i cdnjs</b>: isporučuju biblioteke aplikacije (veza, QR, čitanje PowerPoint/PDF fajlova).'],
+  ['<b>YouTube</b> (modo de privacidad mejorada, youtube-nocookie.com): solo si una diapositiva tiene un video. YouTube puede mostrar anuncios y usar sus propias cookies; <b>la app no se hace responsable de los anuncios ni del contenido que muestre YouTube</b>.', '<b>YouTube</b> (privacy-enhanced mode, youtube-nocookie.com): only if a slide has a video. YouTube may show ads and use its own cookies; <b>the app is not responsible for the ads or content shown by YouTube</b>.', '<b>YouTube</b> (režim poboljšane privatnosti, youtube-nocookie.com): samo ako slajd ima video. YouTube može prikazivati reklame i koristiti sopstvene kolačiće; <b>aplikacija nije odgovorna za reklame ni sadržaj koji prikazuje YouTube</b>.'],
+  ['Estos servicios tienen sus propias políticas de privacidad.', 'These services have their own privacy policies.', 'Ovi servisi imaju sopstvene politike privatnosti.'],
+].forEach(([es, en, me]) => { I18N.en[es] = en; I18N.me[es] = me; });
 const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela', 'zoom', 'audio']; // se responden tocando una opción
 const CON_CORRECTAS = ['alternativas', 'emoji', 'revela', 'zoom', 'audio'];
 const TEXTO_LIBRE = ['completar', 'nube', 'quiensoy', 'palabra', 'muro']; // respuestas escritas: pasan por el filtro de palabras
@@ -827,7 +967,7 @@ function configDefecto() {
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas', asignarEquipos: 'elegir',
     filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
-    sonidos: true, musica: true, transicion: 'fundido',
+    sonidos: true, musica: true, transicion: 'fundido', idioma: 'es',
     fondoPres: { tipo: 'ninguno', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.1 } };
 }
 function nuevoItem(tipo) {
@@ -1568,18 +1708,18 @@ function textoCorrecta(it) {
     case 'parejas': return paresValidos(it).map(p => (p.a || '🖼️') + ' → ' + (p.b || '🖼️')).join(' · ');
     case 'versiculo': return textoVersiculo(it) + (it.referencia ? ' (' + it.referencia + ')' : '');
     case 'clasificar': return catsDe(it).map((c, ci) => c + ': ' + clasifValidos(it).filter(e => e.c === ci).map(e => e.t).join(', ')).join(' · ');
-    case 'error': { const t = tokensError(it); return `«${t.palabra}»` + (it.correctaTxt ? ` debía decir «${it.correctaTxt}»` : ''); }
+    case 'error': { const t = tokensError(it); return `«${t.palabra}»` + (it.correctaTxt ? `${tr(' debía decir ')}«${it.correctaTxt}»` : ''); }
     case 'huecos': return palabrasHuecos(it).join(' · ');
     case 'multiple': return it.correctas.map(i => it.opciones[i]).filter(Boolean).join(' + ');
-    case 'rafaga': return afirmValidas(it).map((a, k) => `${k + 1}: ${a.v ? 'V' : 'F'}`).join(' · ');
+    case 'rafaga': return afirmValidas(it).map((a, k) => `${k + 1}: ${a.v ? tr('V') : tr('F')}`).join(' · ');
     case 'palabra': return it.palabra;
     case 'zoom': case 'audio': return it.correctas.map(i => it.opciones[i]).join(' / ');
     case 'memoria': return paresMem(it).map(x => x.a === x.b ? x.a : x.a + ' = ' + x.b).join(' · ');
     case 'rapido': return it.respuesta || '';
-    case 'linea': { const l = lineaDe(it); return l.pos === 0 ? 'Antes de: ' + l.fijos[0] : 'Después de: ' + l.fijos[l.pos - 1]; }
-    case 'vf': return it.correcta ? 'Verdadero' : 'Falso';
+    case 'linea': { const l = lineaDe(it); return l.pos === 0 ? tr('Antes de: ') + l.fijos[0] : tr('Después de: ') + l.fijos[l.pos - 1]; }
+    case 'vf': return it.correcta ? tr('Verdadero') : tr('Falso');
     case 'completar': return String(it.aceptadas).split(',')[0].trim();
-    case 'pin': return '📍 Mira la pantalla';
+    case 'pin': return tr('📍 Mira la pantalla');
     case 'ordenar': return opcionesValidas(it.elementos).map(x => x.o).join(' → ');
     case 'numero': return it.correcta + (it.unidad ? ' ' + it.unidad : '');
   }
@@ -1595,25 +1735,25 @@ function avisoCookies() {
   try { if (localStorage.getItem('quiziglesia.cookies') === '1') return; } catch (_) { return; }
   if (navigator.webdriver || document.documentElement.classList.contains('modo-vista') || $('#cookies')) return;
   document.body.insertAdjacentHTML('beforeend', `<div class="cookies" id="cookies" role="dialog" aria-label="Aviso de cookies">${ic('cookie')}
-    <div><b>Aviso de cookies y almacenamiento</b><p>Esta app guarda tus quizzes y preferencias solo en este navegador; no usa cookies de seguimiento ni de publicidad. Para funcionar se conecta a servicios externos (Google Fonts, PeerJS y, si una diapositiva tiene un video, YouTube) que pueden usar sus propias cookies.</p></div>
-    <div class="botones"><button data-a="cookiesInfo">Más información</button><button class="pri" data-a="cookiesOk">Entendido</button></div></div>`);
+    <div><b>${tr('Aviso de cookies y almacenamiento')}</b><p>${tr('Esta app guarda tus quizzes y preferencias solo en este navegador; no usa cookies de seguimiento ni de publicidad. Para funcionar se conecta a servicios externos (Google Fonts, PeerJS y, si una diapositiva tiene un video, YouTube) que pueden usar sus propias cookies.')}</p></div>
+    <div class="botones"><button data-a="cookiesInfo">${tr('Más información')}</button><button class="pri" data-a="cookiesOk">${tr('Entendido')}</button></div></div>`);
 }
 Object.assign(GLOBAL, {
   cookiesOk: () => { try { localStorage.setItem('quiziglesia.cookies', '1'); } catch (_) { } $('#cookies')?.remove(); $('#capaCookies')?.remove(); if (tourPendiente) { const n = tourPendiente; tourPendiente = null; setTimeout(() => tour(n), 300); } },
   cookiesInfo: () => {
     if ($('#capaCookies')) return;
     document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capaCookies"><div class="card imp">
-      <div class="imp-cab"><h2>${ic('cookie')} Cookies y privacidad</h2><button data-a="cookiesCerrar" aria-label="Cerrar">${ic('close')}</button></div>
-      <p><b>En este navegador (sin cookies de seguimiento):</b> la app guarda tus quizzes, la lista «Mis quizzes», tu nombre y personaje de jugador y preferencias como el sonido o el tutorial. Usa el almacenamiento local del navegador (IndexedDB y localStorage). Esta información no se envía a ningún servidor de la app y puedes borrarla desde la configuración de tu navegador.</p>
-      <p><b>Servicios externos que usa la app:</b></p>
+      <div class="imp-cab"><h2>${ic('cookie')} ${tr('Cookies y privacidad')}</h2><button data-a="cookiesCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+      <p>${tr('<b>En este navegador (sin cookies de seguimiento):</b> la app guarda tus quizzes, la lista «Mis quizzes», tu nombre y personaje de jugador y preferencias como el sonido o el tutorial. Usa el almacenamiento local del navegador (IndexedDB y localStorage). Esta información no se envía a ningún servidor de la app y puedes borrarla desde la configuración de tu navegador.')}</p>
+      <p>${tr('<b>Servicios externos que usa la app:</b>')}</p>
       <ul class="lista-priv">
-        <li><b>Google Fonts</b> (fonts.googleapis.com): tipografías e íconos.</li>
-        <li><b>PeerJS</b> (0.peerjs.com) y servidores STUN/TURN: conectan los teléfonos con la pantalla. Solo pasan los datos del juego (nombre, personaje, respuestas).</li>
-        <li><b>unpkg, jsDelivr y cdnjs</b>: entregan las librerías de la app (conexión, QR, lectura de PowerPoint/PDF).</li>
-        <li><b>YouTube</b> (modo de privacidad mejorada, youtube-nocookie.com): solo si una diapositiva tiene un video. YouTube puede mostrar anuncios y usar sus propias cookies; <b>la app no se hace responsable de los anuncios ni del contenido que muestre YouTube</b>.</li>
+        <li>${tr('<b>Google Fonts</b> (fonts.googleapis.com): tipografías e íconos.')}</li>
+        <li>${tr('<b>PeerJS</b> (0.peerjs.com) y servidores STUN/TURN: conectan los teléfonos con la pantalla. Solo pasan los datos del juego (nombre, personaje, respuestas).')}</li>
+        <li>${tr('<b>unpkg, jsDelivr y cdnjs</b>: entregan las librerías de la app (conexión, QR, lectura de PowerPoint/PDF).')}</li>
+        <li>${tr('<b>YouTube</b> (modo de privacidad mejorada, youtube-nocookie.com): solo si una diapositiva tiene un video. YouTube puede mostrar anuncios y usar sus propias cookies; <b>la app no se hace responsable de los anuncios ni del contenido que muestre YouTube</b>.')}</li>
       </ul>
-      <p class="muted">Estos servicios tienen sus propias políticas de privacidad.</p>
-      <div class="botones"><button class="pri" data-a="cookiesOk">Entendido</button></div></div></div>`);
+      <p class="muted">${tr('Estos servicios tienen sus propias políticas de privacidad.')}</p>
+      <div class="botones"><button class="pri" data-a="cookiesOk">${tr('Entendido')}</button></div></div></div>`);
   },
   cookiesCerrar: () => $('#capaCookies')?.remove(),
 });
@@ -1632,7 +1772,7 @@ function iniciar() {
 
 /* =================== INICIO =================== */
 function vistaInicio() {
-  detenerHost();
+  detenerHost(); ponerIdioma('es');
   document.onkeydown = null;
   const nP = quiz.items.filter(esPregunta).length;
   const org = quiz.config.organizacion;
@@ -1719,6 +1859,7 @@ function etiqueta(it) { return it.tipo === 'diapositiva' ? (textoDiapo(it) || '(
 function objActual() { return edSel === -1 ? quiz.config : quiz.items[edSel]; }
 
 function vistaEditor() {
+  ponerIdioma('es');
   if (edSel >= quiz.items.length) edSel = quiz.items.length - 1;
   app.innerHTML = `<div class="editor vista-${edVista}" style="--c:${esc(quiz.config.color)}">
     <header class="bar"><button data-a="home" title="Inicio">${ic('arrow_back')}<span class="lbl">Inicio</span></button>
@@ -1902,6 +2043,8 @@ function renderFormCampos() {
       ${fTxt('Título', 'titulo', c.titulo)}${fTxt('Iglesia / grupo (opcional)', 'organizacion', c.organizacion)}
       <div class="fila"><label class="fld sm"><span>Color principal</span><input type="color" data-f="color" value="${esc(c.color)}"></label>
       ${fNum('Tiempo por pregunta (seg)', 'tiempo', c.tiempo)}${fNum('Puntos por respuesta correcta', 'puntos', c.puntos)}</div>
+      <div class="fila"><label class="fld sm ancho"><span>🌐 Idioma para los participantes (pantalla y teléfonos)</span><select data-f="idioma">${IDIOMAS.map(([v, n]) => `<option value="${v}" ${c.idioma === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label></div>
+      <p class="muted" style="margin-top:-6px">Cambia los textos de la app que ven los participantes (botones, avisos, ranking, teléfono). Las preguntas y diapositivas se muestran tal como las escribas.</p>
       ${fChk('Dar más puntos a quien responde más rápido', 'bonusVelocidad', c.bonusVelocidad)}
       <div class="fila"><label class="fld sm ancho"><span>Mostrar ranking</span><select data-f="rankingCada" data-num>
         ${[[1, 'Después de cada pregunta'], [2, 'Cada 2 preguntas'], [3, 'Cada 3 preguntas'], [5, 'Cada 5 preguntas'], [0, 'Solo al final']].map(([v, t]) => `<option value="${v}" ${+c.rankingCada === v ? 'selected' : ''}>${t}</option>`).join('')}
@@ -2129,7 +2272,7 @@ function vistaPrevia(modo) { // esta página está dentro de un iframe de la vis
   document.documentElement.classList.add('modo-vista');
   window.addEventListener('message', e => {
     const d = e.data; if (!d || d.t !== 'vista' || e.source !== window.parent) return;
-    quiz = normalizarQuiz(JSON.parse(d.quiz)); quiz.config.sonidos = false; quiz.config.musica = false;
+    quiz = normalizarQuiz(JSON.parse(d.quiz)); quiz.config.sonidos = false; quiz.config.musica = false; ponerIdioma(quiz.config.idioma);
     clearInterval(P && P.tInt);
     if (modo === 'host') {
       detenerHost(); H = nuevoH(); H.vista = true; H.estado = 'ok'; ACC = {};
@@ -2141,7 +2284,7 @@ function vistaPrevia(modo) { // esta página está dentro de un iframe de la vis
       Object.assign(P, { pid: 'vista', name: 'Vista previa', avatar: '🐑', score: 0, color: quiz.config.color, titulo: quiz.config.titulo, equipos: [],
         conn: { open: true, send: m => { if (m.t === 'ans') setTimeout(() => alRecibirJ({ t: 'recibido' }), 250); } } });
       const it = quiz.items[d.idx];
-      if (!it || !esPregunta(it)) return pantallaJ('👀', 'Mira la pantalla');
+      if (!it || !esPregunta(it)) return pantallaJ('👀', tr('Mira la pantalla'));
       if (d.fase === 'revelar') return alRecibirJ({ t: 'res', ok: TIPOS[it.tipo].sinPuntaje ? null : true, pts: 950, fr: 1, resp: true, score: 950, rank: 1, n: 12, correcta: TIPOS[it.tipo].sinPuntaje ? null : textoCorrecta(it) });
       H = nuevoH(); H.idx = d.idx; H.shuf = barajar(it); H.tiles = null;
       const pl = payload(it, d.idx); H = null;
@@ -2174,6 +2317,7 @@ function abrirExportarPdf() {
   });
 }
 function prepararImpresion(modo, conDiapos) {
+  ponerIdioma(quiz.config.idioma);
   const rev = modo === 'respuesta', previo = H, nPreg = quiz.items.filter(esPregunta).length;
   const fp = quiz.config.fondoPres, conFondo = fp && fp.tipo !== 'ninguno';
   IMPRIMIENDO = true;
@@ -2184,14 +2328,14 @@ function prepararImpresion(modo, conDiapos) {
       const sinP = !!TIPOS[it.tipo].sinPuntaje;
       H = nuevoH(); H.vista = true; H.imprimir = true; H.idx = i; H.t0 = Date.now(); H.fase = rev && !sinP ? 'revelar' : 'pregunta';
       H.shuf = barajar(it); H.tiles = it.tipo === 'revela' ? shuffle([...Array(gridRevela(it).n).keys()]) : null;
-      const cuerpo = hostPregunta(rev && !sinP), resp = rev && !sinP ? (it.tipo === 'pin' ? 'el lugar marcado con el círculo verde en la imagen' : textoCorrecta(it)) : '';
+      const cuerpo = hostPregunta(rev && !sinP), resp = rev && !sinP ? (it.tipo === 'pin' ? tr('el lugar marcado con el círculo verde en la imagen') : textoCorrecta(it)) : '';
       paginas.push(`<section class="pag"><div class="host${conFondo ? ' con-fondo' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
-        <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>Pregunta ${numPregunta(i)} de ${nPreg}</small></div></div>
-          <div class="pills">${rev ? '<span class="badge cyan"><span class="dot"></span>Modo respuesta</span>' : ''}</div></div></header>
+        <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>${tr('Pregunta {a} de {b}', { a: numPregunta(i), b: nPreg })}</small></div></div>
+          <div class="pills">${rev ? `<span class="badge cyan"><span class="dot"></span>${tr('Modo respuesta')}</span>` : ''}</div></div></header>
         <main class="stage"><div class="esc">${cuerpo}</div></main>
-        ${resp ? `<div class="pie-resp">${ic('check_circle', 'fill')}<span><b>Respuesta:</b> ${esc(resp)}</span></div>` : ''}</div></section>`);
+        ${resp ? `<div class="pie-resp">${ic('check_circle', 'fill')}<span><b>${tr('Respuesta:')}</b> ${esc(resp)}</span></div>` : ''}</div></section>`);
     });
-  } finally { H = previo; IMPRIMIENDO = false; }
+  } finally { H = previo; IMPRIMIENDO = false; ponerIdioma('es'); }
   $('#impresion')?.remove();
   document.body.insertAdjacentHTML('beforeend', `<div id="impresion">
     <div class="imp-barra"><b>${ic('picture_as_pdf')} ${esc(quiz.config.titulo)} · ${rev ? 'modo respuesta' : 'modo pregunta'} · ${paginas.length} hoja${paginas.length === 1 ? '' : 's'}</b><span class="sp"></span>
@@ -2921,7 +3065,7 @@ function vistaPresentar() {
   $('#cookies')?.remove(); // no mostrar el aviso en el proyector (vuelve a aparecer en el Inicio)
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
-  detenerHost();
+  detenerHost(); ponerIdioma(quiz.config.idioma);
   H = nuevoH();
   iniciarPeerHost();
   SND.musicaIniciar('lobby');
@@ -2945,15 +3089,15 @@ function vistaPresentar() {
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
     cerrarModal: () => { H.modal = null; renderHost(); },
     nuevoEnlace: () => { H.token = nid() + nid(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
-    salir: () => { if (confirm('¿Salir de la presentación? Se perderá el puntaje.')) vistaInicio(); },
+    salir: () => { if (confirm(tr('¿Salir de la presentación? Se perderá el puntaje.'))) vistaInicio(); },
     fs: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(),
-    kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm('¿Sacar a ' + p.name + ' de la sala?')) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
+    kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm(tr('¿Sacar a {n} de la sala?', { n: p.name }))) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
     csv: descargarResultados,
     rOk: el => marcarRapido(el.dataset.pid, true), rNo: el => marcarRapido(el.dataset.pid, false),
     muroOk: el => { H.muroOk.add(el.dataset.pid); renderHost(); },
     audPlay: () => { if (!H.audio) return; if (H.audio.paused) { H.audio.currentTime = H.audio.ended ? 0 : H.audio.currentTime; H.audio.play().catch(() => { }); } else H.audio.pause(); setTimeout(renderHost, 50); },
     aprobar: el => { const p = H.players[el.dataset.pid]; if (p) { p.pendiente = false; enviarEstado(p); renderHost(); } },
-    rechazar: el => { const p = H.players[el.dataset.pid]; if (p) { enviar(p, { t: 'rechazo', msg: 'El presentador no aprobó ese nombre. Elige otro.' }); delete H.players[p.pid]; renderHost(); } },
+    rechazar: el => { const p = H.players[el.dataset.pid]; if (p) { enviar(p, { t: 'rechazo', msg: tr('El presentador no aprobó ese nombre. Elige otro.') }); delete H.players[p.pid]; renderHost(); } },
     ocultar: el => { H.ocultas.add(el.dataset.k); renderHost(); },
     inicio: vistaInicio,
   };
@@ -3000,7 +3144,7 @@ function iniciarPeerHost() {
 function equiposDe() {
   if (!quiz.config.modoEquipos) return [];
   const n = String(quiz.config.nombresEquipos || '').split(',').map(x => x.trim().slice(0, 20)).filter(Boolean).slice(0, 6);
-  return n.length >= 2 ? n : ['Equipo 1', 'Equipo 2'];
+  return n.length >= 2 ? n : [tr('Equipo {n}', { n: 1 }), tr('Equipo {n}', { n: 2 })];
 }
 function asignarEquipo() { // según la configuración: el menos numeroso (elegir), al azar equilibrado o por orden de llegada
   const modo = quiz.config.asignarEquipos;
@@ -3014,7 +3158,7 @@ function asignarEquipo() { // según la configuración: el menos numeroso (elegi
 function mezclarEquipos() { // reparte al azar a todos, equilibrado
   const ps = shuffle(Object.values(H.players).filter(p => !p.pendiente));
   ps.forEach((p, k) => { p.eq = k % H.eq.length; enviarEstado(p); });
-  renderHost(); aviso('🔀 Equipos mezclados', 1500);
+  renderHost(); aviso(tr('🔀 Equipos mezclados'), 1500);
 }
 const equipoMenor = () => H.eq.map((_, i) => [i, Object.values(H.players).filter(p => p.eq === i).length]).sort((a, b) => a[1] - b[1])[0][0];
 function rankingEquipos() {
@@ -3044,15 +3188,15 @@ function alRecibirHost(conn, d) {
   if (d.t === 'join') {
     let p = H.players[d.pid];
     if (!p) {
-      if (H.fase !== 'lobby' && !quiz.config.permitirTarde) { conn.send({ t: 'msg', icono: '🚪', msg: 'El juego ya comenzó. ¡Espera la próxima ronda!' }); return; }
+      if (H.fase !== 'lobby' && !quiz.config.permitirTarde) { conn.send({ t: 'msg', icono: '🚪', msg: tr('El juego ya comenzó. ¡Espera la próxima ronda!') }); return; }
       const f = filtroQuiz();
-      if (f && tieneGroseria(d.name, f)) { conn.send({ t: 'rechazo', msg: 'Ese nombre no está permitido. Elige otro.' }); return; }
+      if (f && tieneGroseria(d.name, f)) { conn.send({ t: 'rechazo', msg: tr('Ese nombre no está permitido. Elige otro.') }); return; }
       SND.efecto('unir');
-      p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
+      p = H.players[d.pid] = { pid: d.pid, name: String(d.name || tr('Jugador')).slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
       if (H.eq.length) p.eq = asignarEquipo();
     }
     p.conn = conn; p.online = true; p.visto = Date.now(); conn.pid = d.pid;
-    enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq, filtro: filtroQuiz() });
+    enviar(p, { t: 'welcome', idioma: IDIOMA, titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq, filtro: filtroQuiz() });
     enviarEstado(p);
     if (H.fase === 'lobby') renderHost(); else actualizarContador();
   } else if (d.t === 'team') {
@@ -3082,24 +3226,25 @@ function alRecibirHost(conn, d) {
 const turnoActual = () => H.cola.find(pid => !H.rNo.has(pid));
 function buzz(p) {
   H.cola.push(p.pid);
-  if (turnoActual() === p.pid) { enviar(p, { t: 'msg', icono: '🎤', msg: '¡Te toca! Responde en voz alta', bg: '#A21CAF' }); SND.efecto('unir'); }
-  else enviar(p, { t: 'msg', icono: '✋', msg: `Estás en la fila: lugar ${H.cola.filter(x => !H.rNo.has(x)).indexOf(p.pid) + 1}` });
+  if (turnoActual() === p.pid) { enviar(p, { t: 'msg', icono: '🎤', msg: tr('¡Te toca! Responde en voz alta'), bg: '#A21CAF' }); SND.efecto('unir'); }
+  else enviar(p, { t: 'msg', icono: '✋', msg: tr('Estás en la fila: lugar {n}', { n: H.cola.filter(x => !H.rNo.has(x)).indexOf(p.pid) + 1 }) });
 }
 function marcarRapido(pid, ok) {
   if (!H || H.fase !== 'pregunta' || turnoActual() !== pid) return;
   const p = H.players[pid];
   if (ok) { H.ganador = pid; return revelar(); }
-  H.rNo.add(pid); if (p) enviar(p, { t: 'msg', icono: '😮', msg: 'No era esa… ¡Atento a la próxima!', bg: '#BA1A1A' });
-  const sig = turnoActual(); if (sig && H.players[sig]) enviar(H.players[sig], { t: 'msg', icono: '🎤', msg: '¡Te toca! Responde en voz alta', bg: '#A21CAF' });
+  H.rNo.add(pid); if (p) enviar(p, { t: 'msg', icono: '😮', msg: tr('No era esa… ¡Atento a la próxima!'), bg: '#BA1A1A' });
+  const sig = turnoActual(); if (sig && H.players[sig]) enviar(H.players[sig], { t: 'msg', icono: '🎤', msg: tr('¡Te toca! Responde en voz alta'), bg: '#A21CAF' });
   renderHost();
 }
 function enviarEstado(p) {
-  if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: 'Esperando que el presentador apruebe tu nombre…' });
-  else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq, fijo: quiz.config.asignarEquipos !== 'elegir' } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
+  if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: tr('Esperando que el presentador apruebe tu nombre…') });
+  else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq, fijo: quiz.config.asignarEquipos !== 'elegir' } : { t: 'msg', icono: '✅', msg: tr('¡Estás dentro! Espera a que comience.') });
   else if (H.fase === 'pregunta' && !H.resp[p.pid]) { enviar(p, { ...H.payload, tiempo: tiempoH(), restante: restanteH() }); if (H.pausa) enviar(p, { t: 'pausa', on: true }); }
-  else enviar(p, { t: 'msg', icono: '👀', msg: 'Mira la pantalla', score: p.score });
+  else enviar(p, { t: 'msg', icono: '👀', msg: tr('Mira la pantalla'), score: p.score });
 }
-function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = H.fase === 'pregunta' || H.fase === 'revelar' ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`; }
+function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = textoContador(); }
+const textoContador = () => H.fase === 'pregunta' || H.fase === 'revelar' ? tr('{a} / {b} respuestas', { a: Object.keys(H.resp).length, b: conectados().length }) : tr('{n} jugadores', { n: conectados().length });
 function payload(it, idx) {
   const b = { t: 'q', idx, tipo: it.tipo, pregunta: it.pregunta, tiempo: tiempoDe(it) };
   if (CON_OPCIONES.includes(it.tipo)) b.opciones = opcionesValidas(it.opciones);
@@ -3131,7 +3276,7 @@ function avanzar() {
     case 'revelar': {
       const it = quiz.items[H.idx], cada = +quiz.config.rankingCada, hay = Object.keys(H.players).length;
       const ultima = !quiz.items.slice(H.idx + 1).some(esPregunta);
-      if (hay && !TIPOS[it.tipo].sinPuntaje && cada > 0 && !ultima && numPregunta(H.idx) % cada === 0) { H.fase = 'ranking'; SND.efecto('redoble'); difundir({ t: 'msg', icono: '🏆', msg: 'Mira el ranking' }); renderHost(); }
+      if (hay && !TIPOS[it.tipo].sinPuntaje && cada > 0 && !ultima && numPregunta(H.idx) % cada === 0) { H.fase = 'ranking'; SND.efecto('redoble'); difundir({ t: 'msg', icono: '🏆', msg: tr('Mira el ranking') }); renderHost(); }
       else irA(H.idx + 1);
       break;
     }
@@ -3142,7 +3287,7 @@ function irA(i) {
   if (i >= quiz.items.length) return fin();
   H.idx = i; const it = quiz.items[i]; H.pausa = false; H.extra = 0; H.ultLeft = null;
   if (H.audio) { H.audio.pause(); H.audio = null; }
-  if (!esPregunta(it)) { H.fase = 'slide'; SND.musicaParar(); SND.efecto('transicion'); difundir({ t: 'msg', icono: '👀', msg: 'Mira la pantalla' }); renderHost(); return; }
+  if (!esPregunta(it)) { H.fase = 'slide'; SND.musicaParar(); SND.efecto('transicion'); difundir({ t: 'msg', icono: '👀', msg: tr('Mira la pantalla') }); renderHost(); return; }
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
   if (!['audio', 'dibujo', 'muro'].includes(it.tipo)) SND.musicaIniciar('pregunta'); else SND.musicaParar();
   H.shuf = barajar(it);
@@ -3193,7 +3338,7 @@ function alternarPausa() {
   renderHost();
 }
 function masTiempo(seg = 10) { if (!H || H.fase !== 'pregunta') return; H.extra = (H.extra || 0) + seg; difundir({ t: 'tiempo', restante: restanteH(), total: tiempoH() }); renderHost(); aviso(`+${seg} segundos`, 1200); }
-function saltar() { if (!H || H.fase !== 'pregunta') return; clearInterval(H.timer); H.pausa = false; SND.musicaParar(); difundir({ t: 'msg', icono: '⏭', msg: 'Pregunta saltada' }); irA(H.idx + 1); }
+function saltar() { if (!H || H.fase !== 'pregunta') return; clearInterval(H.timer); H.pausa = false; SND.musicaParar(); difundir({ t: 'msg', icono: '⏭', msg: tr('Pregunta saltada') }); irA(H.idx + 1); }
 function anteriorDiapo() { // volver a la diapositiva anterior (solo diapositivas, para no repetir preguntas)
   if (!H || !['slide', 'lobby', 'ranking'].includes(H.fase)) return -1;
   const i = H.idx - 1; return i >= 0 && !esPregunta(quiz.items[i]) ? i : -1;
@@ -3236,30 +3381,31 @@ function fin() {
   renderHost();
 }
 function descargarResultados() {
-  let filas = [['Posición', 'Nombre', 'Puntaje', 'Aciertos'].concat(H.eq.length ? ['Equipo'] : [])]
+  let filas = [['Posición', 'Nombre', 'Puntaje', 'Aciertos'].concat(H.eq.length ? ['Equipo'] : []).map(x => tr(x))]
     .concat(ranking().map((p, k) => [k + 1, p.name, p.score, p.aciertos].concat(H.eq.length ? [H.eq[p.eq] || ''] : [])));
-  if (H.eq.length) filas = filas.concat([[], ['Posición', 'Equipo', 'Puntaje', 'Integrantes']], rankingEquipos().map((e, k) => [k + 1, e.nombre, e.score, e.n]));
+  if (H.eq.length) filas = filas.concat([[], ['Posición', 'Equipo', 'Puntaje', 'Integrantes'].map(x => tr(x))], rankingEquipos().map((e, k) => [k + 1, e.nombre, e.score, e.n]));
   bajar('resultados-' + (slug(quiz.config.titulo) || 'quiz') + '.csv', '﻿' + filas.map(f => f.map(x => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n'), 'text/csv');
 }
 
 /* ----- Vistas de la pantalla principal ----- */
 function renderHost() {
   if (!H) return;
-  let c = '', btn = `Siguiente ${ic('arrow_forward')}`;
+  let c = '', btn = `${tr('Siguiente')} ${ic('arrow_forward')}`;
   switch (H.fase) {
-    case 'lobby': c = hostLobby(); btn = `${ic('play_circle', 'fill')} Comenzar`; break;
+    case 'lobby': c = hostLobby(); btn = `${ic('play_circle', 'fill')} ${tr('Comenzar')}`; break;
     case 'slide': c = hostSlide(); break;
-    case 'pregunta': c = hostPregunta(false); btn = `${ic('visibility', 'fill')} Mostrar respuesta`; break;
+    case 'pregunta': c = hostPregunta(false); btn = `${ic('visibility', 'fill')} ${tr('Mostrar respuesta')}`; break;
     case 'revelar': c = hostPregunta(true); break;
     case 'ranking': c = hostRanking(); break;
     case 'fin': c = hostFin(); break;
   }
   const nPreg = quiz.items.filter(esPregunta).length, enPreg = H.fase === 'pregunta' || H.fase === 'revelar';
-  const sub = { lobby: 'Sala de espera', slide: `Diapositiva · ${H.idx + 1} de ${quiz.items.length}`, pregunta: `Pregunta ${numPregunta(H.idx)} de ${nPreg}`,
-    revelar: `Pregunta ${numPregunta(H.idx)} de ${nPreg} · respuesta`, ranking: 'Ranking', fin: 'Resultados finales' }[H.fase];
-  const ayuda = { lobby: `Los jugadores entran desde el celular con el código ${H.code}.`, slide: videosEn(quiz.items[H.idx]) ? 'Video de YouTube: los anuncios que muestre YouTube no dependen de esta app.' : 'Presiona Siguiente o la barra espaciadora para avanzar.',
-    pregunta: `Los jugadores eligen su respuesta en el celular con el código ${H.code}.`, revelar: 'Respuesta revelada. Sigue cuando todos la hayan visto.',
-    ranking: '¡Así va la competencia!', fin: '¡Gracias por jugar!' }[H.fase];
+  const ab = { a: numPregunta(H.idx), b: nPreg };
+  const sub = { lobby: tr('Sala de espera'), slide: tr('Diapositiva · {a} de {b}', { a: H.idx + 1, b: quiz.items.length }), pregunta: tr('Pregunta {a} de {b}', ab),
+    revelar: tr('Pregunta {a} de {b} · respuesta', ab), ranking: tr('Ranking'), fin: tr('Resultados finales') }[H.fase];
+  const ayuda = { lobby: tr('Los jugadores entran desde el celular con el código {c}.', { c: H.code }), slide: videosEn(quiz.items[H.idx]) ? tr('Video de YouTube: los anuncios que muestre YouTube no dependen de esta app.') : tr('Presiona Siguiente o la barra espaciadora para avanzar.'),
+    pregunta: tr('Los jugadores eligen su respuesta en el celular con el código {c}.', { c: H.code }), revelar: tr('Respuesta revelada. Sigue cuando todos la hayan visto.'),
+    ranking: tr('¡Así va la competencia!'), fin: tr('¡Gracias por jugar!') }[H.fase];
   const pct = H.fase === 'lobby' ? 0 : H.fase === 'fin' ? 100 : (H.idx + 1) / quiz.items.length * 100;
   const clave = H.fase === 'revelar' ? 'pregunta:' + H.idx : H.fase + ':' + H.idx; // la transición se ve solo al cambiar de pantalla
   const misma = clave === H.ultClave; if (!misma) H.vidPlay = false;
@@ -3269,18 +3415,18 @@ function renderHost() {
   const conVideo = H.fase === 'slide' && videosEn(it0);
   const html = `<div class="host${conFondo ? ' con-fondo' : ''}${H.vista ? ' en-vista' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
     <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>${sub}</small></div></div>
-      <div class="pills"><span class="badge cyan"><span class="dot"></span>Sala ${H.code}</span>
-        <span class="badge ind">${ic('group')}<span id="nResp">${enPreg ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`}</span></span>
-        <button class="ibtn" id="bSonido" data-a="sonido" title="Sonido (M)" aria-label="Sonido">${ic(SND.silencio ? 'volume_off' : 'volume_up')}</button>
-        <button class="ibtn ${H.remotos.size ? 'on' : ''}" data-a="remoto" title="Control remoto desde el celular" aria-label="Control remoto">${ic('settings_remote')}</button>
-        <button class="ibtn" data-a="fs" title="Pantalla completa" aria-label="Pantalla completa">${ic('fullscreen')}</button></div></div>
+      <div class="pills"><span class="badge cyan"><span class="dot"></span>${tr('Sala {c}', { c: H.code })}</span>
+        <span class="badge ind">${ic('group')}<span id="nResp">${textoContador()}</span></span>
+        <button class="ibtn" id="bSonido" data-a="sonido" title="${tr('Sonido (M)')}" aria-label="${tr('Sonido (M)')}">${ic(SND.silencio ? 'volume_off' : 'volume_up')}</button>
+        <button class="ibtn ${H.remotos.size ? 'on' : ''}" data-a="remoto" title="${tr('Control remoto desde el celular')}" aria-label="${tr('Control remoto')}">${ic('settings_remote')}</button>
+        <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic('fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
-    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>En pausa</b><span>Presiona P o Seguir para continuar</span></div>` : ''}
+    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
-      ${H.fase === 'pregunta' ? `<button data-a="pausa" title="Pausar (P)">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="mas" title="Agregar 10 segundos (+)">+10 s</button><button data-a="saltar" title="Saltar sin puntaje">${ic('skip_next')} Saltar</button>` : ''}
-      ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="Diapositiva anterior (←)">${ic('arrow_back')}</button>` : ''}
-      ${conVideo ? `<button data-a="vid" title="Reproducir / pausar video (K)">${ic(H.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${H.vidPlay ? 'Pausar video' : 'Reproducir video'}</button><button data-a="vidIni" title="Volver al inicio del video">${ic('replay')}</button>` : ''}
-      <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : ''}</div>`;
+      ${H.fase === 'pregunta' ? `<button data-a="pausa" title="${tr('Pausar (P)')}">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="mas" title="${tr('Agregar 10 segundos (+)')}">+10 s</button><button data-a="saltar" title="${tr('Saltar sin puntaje')}">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}
+      ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="${tr('Diapositiva anterior (←)')}">${ic('arrow_back')}</button>` : ''}
+      ${conVideo ? `<button data-a="vid" title="${tr('Reproducir / pausar video (K)')}">${ic(H.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${H.vidPlay ? tr('Pausar video') : tr('Reproducir video')}</button><button data-a="vidIni" title="${tr('Volver al inicio del video')}">${ic('replay')}</button>` : ''}
+      <button data-a="salir">${tr('Salir')}</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : ''}</div>`;
   const raiz = app.firstElementChild, stageV = raiz && raiz.classList.contains('host') && raiz.querySelector('.stage');
   if (misma && stageV && stageV.querySelector('iframe.yt')) { // actualizar todo menos el escenario, para no recargar el video
     const tmp = document.createElement('div'); tmp.innerHTML = html; const nueva = tmp.firstElementChild;
@@ -3289,23 +3435,23 @@ function renderHost() {
     let antes = true; [...nueva.children].forEach(ch => { if (ch.classList.contains('stage')) { antes = false; return; } antes ? raiz.insertBefore(ch, stageV) : raiz.appendChild(ch); });
   } else app.innerHTML = html;
   tickHost();
-  actualizarRemotos(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente', sub);
+  actualizarRemotos(tr(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente'), sub);
 }
 const videosEn = it => it && it.tipo === 'diapositiva' && (it.els || []).some(e => e.t === 'video' && ytId(e.url));
 function comandoVideo(func) { // API de YouTube por postMessage (enablejsapi=1)
   document.querySelectorAll('.stage iframe.yt').forEach(f => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*'); } catch (_) { } });
   if (H) { H.vidPlay = func === 'playVideo'; renderHost(); }
 }
-function urlRemoto() { return location.origin + location.pathname + '?remoto=' + H.code + '&k=' + H.token; }
+function urlRemoto() { return location.origin + location.pathname + '?remoto=' + H.code + '&k=' + H.token + (IDIOMA !== 'es' ? '&l=' + IDIOMA : ''); }
 function modalRemoto() {
   let qr = '';
-  try { const q = qrcode(0, 'M'); q.addData(urlRemoto()); q.make(); qr = q.createSvgTag(5, 2); } catch (e) { qr = '<p>(QR no disponible)</p>'; }
+  try { const q = qrcode(0, 'M'); q.addData(urlRemoto()); q.make(); qr = q.createSvgTag(5, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
   return `<div class="modal" data-a="cerrarModal"><div class="card modal-in" data-a="nada">
-    <h2>${ic('settings_remote')} Control remoto</h2>
-    <p class="muted">Escanea este código con <b>tu</b> celular para avanzar, pausar o saltar desde cualquier parte de la sala. No lo dejes a la vista de los jugadores.</p>
+    <h2>${ic('settings_remote')} ${tr('Control remoto')}</h2>
+    <p class="muted">${tr('Escanea este código con <b>tu</b> celular para avanzar, pausar o saltar desde cualquier parte de la sala. No lo dejes a la vista de los jugadores.')}</p>
     <div class="qr">${qr}</div>
-    <p class="muted">${H.remotos.size ? `<span class="badge cyan"><span class="dot"></span>${H.remotos.size} control${H.remotos.size > 1 ? 'es' : ''} conectado${H.remotos.size > 1 ? 's' : ''}</span>` : 'Ningún control conectado'}</p>
-    <div class="botones"><button data-a="nuevoEnlace">${ic('autorenew')} Nuevo enlace</button><button class="pri" data-a="cerrarModal">Listo</button></div></div></div>`;
+    <p class="muted">${H.remotos.size ? `<span class="badge cyan"><span class="dot"></span>${tr('Controles conectados: {n}', { n: H.remotos.size })}</span>` : tr('Ningún control conectado')}</p>
+    <div class="botones"><button data-a="nuevoEnlace">${ic('autorenew')} ${tr('Nuevo enlace')}</button><button class="pri" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
 }
 function actualizarRemotos(btn, sub) {
   if (!H || !H.remotos.size) return;
@@ -3320,33 +3466,34 @@ function comandoRemoto(cmd) {
 function resumenConexion(ps) {
   const on = ps.filter(p => p.online), off = ps.length - on.length, r = on.filter(p => p.via === 'respaldo').length;
   if (!ps.length) return '';
-  return `<p class="conex">${ic('wifi')} ${on.length} conectado${on.length === 1 ? '' : 's'}${r ? ` · ${r} por servidor de respaldo` : ''}${off ? ` · <b>${off} sin señal</b>` : ''}</p>`;
+  return `<p class="conex">${ic('wifi')} ${tr('Conectados: {n}', { n: on.length })}${r ? ` · ${tr('{n} por servidor de respaldo', { n: r })}` : ''}${off ? ` · <b>${tr('{n} sin señal', { n: off })}</b>` : ''}</p>`;
 }
 function porAprobar() { // nombres esperando aprobación (en el lobby y si alguien entra tarde)
   const pend = Object.values(H.players).filter(p => p.pendiente && p.online);
-  return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} Por aprobar:</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
-    <button class="ok" data-a="aprobar" data-pid="${esc(p.pid)}" title="Aprobar">${ic('check')}</button><button class="no" data-a="rechazar" data-pid="${esc(p.pid)}" title="Rechazar">${ic('close')}</button></span>`).join('')}</div>` : '';
+  return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} ${tr('Por aprobar:')}</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
+    <button class="ok" data-a="aprobar" data-pid="${esc(p.pid)}" title="${tr('Aprobar')}">${ic('check')}</button><button class="no" data-a="rechazar" data-pid="${esc(p.pid)}" title="${tr('Rechazar')}">${ic('close')}</button></span>`).join('')}</div>` : '';
 }
-function urlUnirse() { return location.origin + location.pathname + '?join=' + H.code; }
+function urlUnirse() { return location.origin + location.pathname + '?join=' + H.code + (IDIOMA !== 'es' ? '&l=' + IDIOMA : ''); }
 function hostLobby() {
   let qr = '';
-  try { const q = qrcode(0, 'M'); q.addData(urlUnirse()); q.make(); qr = q.createSvgTag(6, 2); } catch (e) { qr = '<p>(QR no disponible)</p>'; }
-  const aviso = location.protocol === 'file:' ? '<div class="warn">⚠️ Abriste el archivo directamente desde tu computador. Para que los teléfonos se unan, publica esta página en internet (por ejemplo, GitHub Pages) y presenta desde esa dirección.</div>'
-    : H.estado === 'sinpeer' ? '<div class="warn">⚠️ No se pudo cargar el módulo de conexión (¿sin internet?). Puedes presentar igual, en modo “solo pantalla”.</div>'
-      : H.estado === 'error' ? '<div class="warn">⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.</div>' : '';
+  try { const q = qrcode(0, 'M'); q.addData(urlUnirse()); q.make(); qr = q.createSvgTag(6, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
+  const w = t => `<div class="warn">${tr(t)}</div>`;
+  const aviso = location.protocol === 'file:' ? w('⚠️ Abriste el archivo directamente desde tu computador. Para que los teléfonos se unan, publica esta página en internet (por ejemplo, GitHub Pages) y presenta desde esa dirección.')
+    : H.estado === 'sinpeer' ? w('⚠️ No se pudo cargar el módulo de conexión (¿sin internet?). Puedes presentar igual, en modo “solo pantalla”.')
+      : H.estado === 'error' ? w('⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.') : '';
   const ps = Object.values(H.players);
-  const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="${p.online ? (p.via === 'respaldo' ? 'Conectado por servidor de respaldo' : 'Conectado') : 'Sin señal'} · clic para sacar">${esc(p.avatar)} ${esc(p.name)}${p.online ? '' : ' 📵'}</span>`;
+  const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="${tr(p.online ? (p.via === 'respaldo' ? 'Conectado por servidor de respaldo' : 'Conectado') : 'Sin señal')} · ${tr('clic para sacar')}">${esc(p.avatar)} ${esc(p.name)}${p.online ? '' : ' 📵'}</span>`;
   ps.splice(0, ps.length, ...ps.filter(p => !p.pendiente));
   return `<h1 class="lobby-t">${esc(quiz.config.titulo)}</h1>${quiz.config.organizacion ? `<p class="muted">${esc(quiz.config.organizacion)}</p>` : ''}
     <div class="join card"><div class="qr">${qr}</div>
-      <div><p>Escanea el QR o entra a:</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>y escribe el código</p><div class="code">${H.code}</div>
-      <p>${H.estado === 'ok' ? '<span class="badge cyan"><span class="dot"></span>Sala abierta</span>' : H.estado === 'conectando' ? '⏳ Abriendo sala…' : '🔴 Sin conexión'}</p>${resumenConexion(ps)}</div></div>
+      <div><p>${tr('Escanea el QR o entra a:')}</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>${tr('y escribe el código')}</p><div class="code">${H.code}</div>
+      <p>${H.estado === 'ok' ? `<span class="badge cyan"><span class="dot"></span>${tr('Sala abierta')}</span>` : H.estado === 'conectando' ? tr('⏳ Abriendo sala…') : tr('🔴 Sin conexión')}</p>${resumenConexion(ps)}</div></div>
     ${aviso}
-    ${H.eq.length ? `<p class="eq-modo">${{ elegir: 'Cada uno elige su equipo en el teléfono', aleatorio: 'Equipos asignados al azar', llegada: 'Equipos por orden de llegada' }[quiz.config.asignarEquipos] || ''}${ps.length > 1 ? ` · <button data-a="mezclar">${ic('shuffle')} Mezclar equipos</button>` : ''}</p>` : ''}
+    ${H.eq.length ? `<p class="eq-modo">${tr({ elegir: 'Cada uno elige su equipo en el teléfono', aleatorio: 'Equipos asignados al azar', llegada: 'Equipos por orden de llegada' }[quiz.config.asignarEquipos] || '')}${ps.length > 1 ? ` · <button data-a="mezclar">${ic('shuffle')} ${tr('Mezclar equipos')}</button>` : ''}</p>` : ''}
     ${H.eq.length ? `<div class="equipos-lobby">${H.eq.map((n, i) => {
       const m = ps.filter(p => p.eq === i);
-      return `<div class="eqbox" style="border-color:${COLORES[i % 6]}"><h3 style="background:${COLORES[i % 6]}">${esc(n)} · ${m.length}</h3><div class="players">${m.map(chip).join('') || '<small>Sin integrantes</small>'}</div></div>`;
-    }).join('')}</div>` : `<div class="players">${ps.length ? ps.map(chip).join('') : '<p>Esperando participantes…</p>'}</div>`}`;
+      return `<div class="eqbox" style="border-color:${COLORES[i % 6]}"><h3 style="background:${COLORES[i % 6]}">${esc(n)} · ${m.length}</h3><div class="players">${m.map(chip).join('') || `<small>${tr('Sin integrantes')}</small>`}</div></div>`;
+    }).join('')}</div>` : `<div class="players">${ps.length ? ps.map(chip).join('') : `<p>${tr('Esperando participantes…')}</p>`}</div>`}`;
 }
 function hostSlide() {
   const it = quiz.items[H.idx];
@@ -3356,14 +3503,15 @@ function conteo(fn) { const c = {}; Object.values(H.resp).forEach(r => { const k
 function hostPregunta(rev) {
   const it = quiz.items[H.idx], T = tiempoDe(it), nTot = Object.keys(H.resp).length;
   const left = Math.max(0, Math.ceil(tiempoH() - transcurrido() / 1000));
-  let h = `<section class="card hq-card"><div class="hq-meta"><span class="badge mag">${TIPOS[it.tipo].icono} ${TIPOS[it.tipo].nombre}</span>
-    ${rev ? `<span class="badge cyan">${ic('check_circle', 'fill')} ${nTot} respuestas</span>` : `<span class="timer">${ic('timer')}<span id="tLeft">${left}</span>s</span>`}</div>
+  let h = `<section class="card hq-card"><div class="hq-meta"><span class="badge mag">${TIPOS[it.tipo].icono} ${nombreTipo(it.tipo)}</span>
+    ${rev ? `<span class="badge cyan">${ic('check_circle', 'fill')} ${tr('{n} respuestas', { n: nTot })}</span>` : `<span class="timer">${ic('timer')}<span id="tLeft">${left}</span>s</span>`}</div>
     ${it.pregunta ? `<h1 class="hq-q">${esc(it.pregunta)}</h1>` : ''}</section>`;
   if (it.imagen && !['pin', 'revela', 'zoom'].includes(it.tipo) && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
-  const resumen = txt => H.imprimir ? '' : `<p class="resumen">${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} ${txt}</p>`;
+  const deTot = () => tr('{a} de {b}', { a: Object.values(H.resp).filter(r => evaluar(it, r.val)).length, b: nTot });
+  const resumen = txt => H.imprimir ? '' : `<p class="resumen">${deTot()} ${tr(txt)}</p>`;
   if (it.tipo === 'emoji') h += `<div class="emojis">${esc(it.emojis)}</div>`;
   if (it.tipo === 'zoom') h += `<div class="zoomwrap"><img id="zimg" src="${esc(it.imagen)}" style="transform-origin:${+it.zx}% ${+it.zy}%;transform:scale(${rev ? 1 : +it.zoom || 6})"></div>`;
-  if (it.tipo === 'audio') h += `<div class="audiobox ${H.audio && !H.audio.paused ? 'sonando' : ''}"><button class="pri big" data-a="audPlay">${ic(H.audio && !H.audio.paused ? 'pause' : 'play_arrow', 'fill')} ${H.audio && !H.audio.paused ? 'Pausar audio' : 'Reproducir audio'}</button><div class="ondas">${'<i></i>'.repeat(12)}</div></div>`;
+  if (it.tipo === 'audio') h += `<div class="audiobox ${H.audio && !H.audio.paused ? 'sonando' : ''}"><button class="pri big" data-a="audPlay">${ic(H.audio && !H.audio.paused ? 'pause' : 'play_arrow', 'fill')} ${H.audio && !H.audio.paused ? tr('Pausar audio') : tr('Reproducir audio')}</button><div class="ondas">${'<i></i>'.repeat(12)}</div></div>`;
   if (it.tipo === 'revela') h += `<div class="revela"><img src="${esc(it.imagen)}">${rev ? '' : `<div class="tiles" style="grid-template-columns:repeat(${gridRevela(it).cols},1fr);grid-template-rows:repeat(${gridRevela(it).filas},1fr)">${H.tiles.map((_, k) => `<i data-k="${k}"></i>`).join('')}</div>`}</div>`;
   switch (it.tipo) {
     case 'alternativas': case 'encuesta': case 'emoji': case 'revela': case 'zoom': case 'audio': {
@@ -3376,7 +3524,7 @@ function hostPregunta(rev) {
     }
     case 'vf': {
       const c = conteo(v => String(v));
-      h += `<div class="opts">${[[true, 'Verdadero', '#059669', 'V'], [false, 'Falso', '#BA1A1A', 'F']].map(([v, t, col, f]) =>
+      h += `<div class="opts">${[[true, tr('Verdadero'), '#059669', tr('V')], [false, tr('Falso'), '#BA1A1A', tr('F')]].map(([v, t, col, f]) =>
         `<div class="opt ${rev && it.correcta !== v ? 'dim' : ''} ${rev && it.correcta === v ? 'ok' : ''}" style="--oc:${col}"><span class="f">${f}</span>${t}${rev ? `<span class="cnt">${it.correcta === v ? '✔ ' : ''}${c[String(v)] || 0}</span>` : ''}</div>`).join('')}</div>`; break;
     }
     case 'completar': {
@@ -3386,17 +3534,17 @@ function hostPregunta(rev) {
       break;
     }
     case 'nube':
-      h += rev ? nube() : '<p style="font-size:1.6rem">✍️ Escribe tu respuesta en el teléfono</p>'; break;
+      h += rev ? nube() : `<p style="font-size:1.6rem">${tr('✍️ Escribe tu respuesta en el teléfono')}</p>`; break;
     case 'pin': {
       h += `<div class="pinhost"><img src="${esc(it.imagen)}">${rev ? `<div class="tgt" style="left:${it.x}%;top:${it.y}%;width:${it.radio * 2}%"></div>` +
         Object.entries(H.resp).map(([pid, r]) => `<span class="pp" style="left:${+r.val.x}%;top:${+r.val.y}%" title="${esc(H.players[pid]?.name)}">${esc(H.players[pid]?.avatar || '📍')}</span>`).join('') : ''}</div>`;
-      if (rev && !H.imprimir) h += `<p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo encontraron</p>`;
+      if (rev && !H.imprimir) h += `<p>${deTot()} ${tr('lo encontraron')}</p>`;
       break;
     }
     case 'ordenar':
       if (!rev) h += `<div class="lista-ord">${H.shuf.map(x => `<div>${esc(x.o)}</div>`).join('')}</div>`;
       else h += `<div class="lista-ord">${opcionesValidas(it.elementos).map((x, k) => `<div><b>${k + 1}</b>${esc(x.o)}</div>`).join('')}</div>
-        ${H.imprimir ? '' : `<p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo ordenaron bien</p>`}`;
+        ${H.imprimir ? '' : `<p>${deTot()} ${tr('lo ordenaron bien')}</p>`}`;
       break;
     case 'parejas': {
       const p = paresValidos(it);
@@ -3410,7 +3558,7 @@ function hostPregunta(rev) {
       break;
     case 'quiensoy':
       h += `<ol class="pistas">${pistasValidas(it).map(t => `<li class="${rev ? '' : 'off'}">${esc(t)}</li>`).join('')}</ol>`;
-      if (rev) h += `<div class="frase">Soy <span class="bien">${esc(String(it.aceptadas).split(',')[0].trim())}</span></div>` + topRespuestas(v => aceptadas(it).includes(norm(v)));
+      if (rev) h += `<div class="frase">${tr('Soy')} <span class="bien">${esc(String(it.aceptadas).split(',')[0].trim())}</span></div>` + topRespuestas(v => aceptadas(it).includes(norm(v)));
       break;
     case 'clasificar': {
       const cats = catsDe(it), el = clasifValidos(it);
@@ -3450,13 +3598,13 @@ function hostPregunta(rev) {
       h += `<div class="opts">${opcionesValidas(it.opciones).map(({ o, i }) => { const okI = it.correctas.includes(i);
         return `<div class="opt ${rev && !okI ? 'dim' : ''} ${rev && okI ? 'ok' : ''}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}
           ${rev ? `<span class="cnt">${okI ? '✔ ' : ''}${c[i] || 0}</span><span class="barra" style="width:${(c[i] || 0) / max * 100}%"></span>` : ''}</div>`; }).join('')}</div>`;
-      if (rev) h += resumen('marcaron todas bien'); else h += '<p class="resumen">☑️ Puede haber más de una correcta</p>';
+      if (rev) h += resumen('marcaron todas bien'); else h += `<p class="resumen">${tr('☑️ Puede haber más de una correcta')}</p>`;
       break;
     }
     case 'rafaga': {
       const a = afirmValidas(it), n = Object.keys(H.resp).length;
       h += `<div class="lista-ord rafaga">${a.map((x, k) => { const bien = Object.values(H.resp).filter(r => Array.isArray(r.val) && r.val[k] === !!x.v).length;
-        return `<div><b>${k + 1}</b>${esc(x.t)}${rev ? `<span class="vfb ${x.v ? 'v' : 'f'}">${x.v ? 'V' : 'F'}</span><small>${n ? Math.round(bien / n * 100) : 0}% bien</small>` : ''}</div>`; }).join('')}</div>`;
+        return `<div><b>${k + 1}</b>${esc(x.t)}${rev ? `<span class="vfb ${x.v ? 'v' : 'f'}">${x.v ? tr('V') : tr('F')}</span><small>${tr('{n}% bien', { n: n ? Math.round(bien / n * 100) : 0 })}</small>` : ''}</div>`; }).join('')}</div>`;
       if (rev) h += resumen('acertaron todas');
       break;
     }
@@ -3471,7 +3619,7 @@ function hostPregunta(rev) {
       const pm = paresMem(it), n = pm.length;
       if (!rev) {
         const prog = Object.values(H.players).filter(p => !p.pendiente).map(p => ({ p, h: H.resp[p.pid] ? n : +(H.prog[p.pid] || {}).hechos || 0 })).sort((a, b) => b.h - a.h).slice(0, 8);
-        h += `<div class="cartas-deco">${'<i></i>'.repeat(Math.min(16, n * 2))}</div><p class="resumen">🃏 ¡Encuentren las parejas en su teléfono!</p>
+        h += `<div class="cartas-deco">${'<i></i>'.repeat(Math.min(16, n * 2))}</div><p class="resumen">${tr('🃏 ¡Encuentren las parejas en su teléfono!')}</p>
           ${prog.length ? `<div class="tops">${prog.map(x => `<div><span>${esc(x.p.avatar)} ${esc(x.p.name)}</span><b>${x.h === n ? '✔ ' : ''}${x.h} / ${n}</b></div>`).join('')}</div>` : ''}`;
       } else h += `<div class="parejas sol">${pm.map(x => `<div class="pz">${esc(x.a)}</div><div class="flecha">=</div><div class="pz der">${esc(x.b)}</div>`).join('')}</div>` + resumen('completaron el tablero');
       break;
@@ -3480,37 +3628,37 @@ function hostPregunta(rev) {
       const t = H.cola.length ? turnoActual() : null;
       if (!rev) h += H.cola.length ? `<div class="cola">${H.cola.map((pid, k) => { const p = H.players[pid]; if (!p) return '';
           const no = H.rNo.has(pid), act = pid === t;
-          return `<div class="${no ? 'no' : act ? 'act' : ''}"><span class="pos">${k + 1}</span><span class="nm">${esc(p.avatar)} ${esc(p.name)}</span>${act ? `<button class="ok" data-a="rOk" data-pid="${esc(pid)}">${ic('check')} Correcto</button><button class="no" data-a="rNo" data-pid="${esc(pid)}">${ic('close')} Incorrecto</button>` : no ? '<span>✘</span>' : ''}</div>`; }).join('')}</div>`
-        : '<div class="buzz-espera">🔔</div><p class="resumen">¡Toca el botón en tu teléfono si sabes la respuesta!</p>';
-      else if (H.imprimir) h += `<div class="frase">Respuesta: <span class="bien">${esc(it.respuesta || '—')}</span></div>`;
-      else { const g = H.ganador && H.players[H.ganador]; h += `<div class="frase">${g ? `🏅 ${esc(g.avatar)} ${esc(g.name)} respondió bien` : 'Nadie acertó esta vez'}</div>${it.respuesta ? `<p class="resumen">Respuesta: <b>${esc(it.respuesta)}</b></p>` : ''}`; }
+          return `<div class="${no ? 'no' : act ? 'act' : ''}"><span class="pos">${k + 1}</span><span class="nm">${esc(p.avatar)} ${esc(p.name)}</span>${act ? `<button class="ok" data-a="rOk" data-pid="${esc(pid)}">${ic('check')} ${tr('Correcto')}</button><button class="no" data-a="rNo" data-pid="${esc(pid)}">${ic('close')} ${tr('Incorrecto')}</button>` : no ? '<span>✘</span>' : ''}</div>`; }).join('')}</div>`
+        : `<div class="buzz-espera">🔔</div><p class="resumen">${tr('¡Toca el botón en tu teléfono si sabes la respuesta!')}</p>`;
+      else if (H.imprimir) h += `<div class="frase">${tr('Respuesta:')} <span class="bien">${esc(it.respuesta || '—')}</span></div>`;
+      else { const g = H.ganador && H.players[H.ganador]; h += `<div class="frase">${g ? tr('🏅 {n} respondió bien', { n: `${esc(g.avatar)} ${esc(g.name)}` }) : tr('Nadie acertó esta vez')}</div>${it.respuesta ? `<p class="resumen">${tr('Respuesta:')} <b>${esc(it.respuesta)}</b></p>` : ''}`; }
       break;
     }
     case 'dibujo': {
       const dib = Object.entries(H.resp).filter(([pid, r]) => r.val && !H.ocultas.has('d:' + pid));
-      if (!rev) h += `<p class="resumen">🎨 Dibujando… ${Object.keys(H.resp).length} de ${conectados().length} listos</p>`;
-      h += dib.length ? `<div class="galeria">${dib.slice(0, 30).map(([pid, r]) => `<figure data-a="ocultar" data-k="d:${esc(pid)}" title="Clic para ocultar"><img src="${esc(r.val)}" alt=""><figcaption>${esc(H.players[pid]?.avatar || '')} ${esc(H.players[pid]?.name || '')}</figcaption></figure>`).join('')}</div>` : rev ? '<p>No llegaron dibujos 😅</p>' : '';
+      if (!rev) h += `<p class="resumen">${tr('🎨 Dibujando… {a} de {b} listos', { a: Object.keys(H.resp).length, b: conectados().length })}</p>`;
+      h += dib.length ? `<div class="galeria">${dib.slice(0, 30).map(([pid, r]) => `<figure data-a="ocultar" data-k="d:${esc(pid)}" title="${tr('Clic para ocultar')}"><img src="${esc(r.val)}" alt=""><figcaption>${esc(H.players[pid]?.avatar || '')} ${esc(H.players[pid]?.name || '')}</figcaption></figure>`).join('')}</div>` : rev ? `<p>${tr('No llegaron dibujos 😅')}</p>` : '';
       break;
     }
     case 'muro': {
       const msgs = Object.entries(H.resp).filter(([pid, r]) => String(r.val || '').trim() && !H.ocultas.has('m:' + pid));
       const vis = msgs.filter(([pid]) => !it.moderar || H.muroOk.has(pid)), pend = it.moderar ? msgs.filter(([pid]) => !H.muroOk.has(pid)) : [];
-      h += vis.length ? `<div class="muro">${vis.map(([pid, r], k) => `<div class="nota-m" data-a="ocultar" data-k="m:${esc(pid)}" title="Clic para ocultar" style="--rot:${(k % 5 - 2) * 1.2}deg">${esc(r.val)}<small>${esc(H.players[pid]?.name || '')}</small></div>`).join('')}</div>` : '<p class="resumen">✍️ Escriban su mensaje en el teléfono</p>';
-      if (pend.length) h += `<div class="pend-bar"><b>${ic('rate_review')} Por revisar (${pend.length}):</b>${pend.map(([pid, r]) => `<span class="chip pend">${esc(String(r.val).slice(0, 60))}
+      h += vis.length ? `<div class="muro">${vis.map(([pid, r], k) => `<div class="nota-m" data-a="ocultar" data-k="m:${esc(pid)}" title="${tr('Clic para ocultar')}" style="--rot:${(k % 5 - 2) * 1.2}deg">${esc(r.val)}<small>${esc(H.players[pid]?.name || '')}</small></div>`).join('')}</div>` : `<p class="resumen">${tr('✍️ Escriban su mensaje en el teléfono')}</p>`;
+      if (pend.length) h += `<div class="pend-bar"><b>${ic('rate_review')} ${tr('Por revisar ({n}):', { n: pend.length })}</b>${pend.map(([pid, r]) => `<span class="chip pend">${esc(String(r.val).slice(0, 60))}
         <button class="ok" data-a="muroOk" data-pid="${esc(pid)}">${ic('check')}</button><button class="no" data-a="ocultar" data-k="m:${esc(pid)}">${ic('close')}</button></span>`).join('')}</div>`;
       break;
     }
     case 'escala': {
       const et = `<div class="escala-et"><span>1 = ${esc(it.etiquetaMin)}</span><span>5 = ${esc(it.etiquetaMax)}</span></div>`;
-      if (!rev) { h += et + '<p class="resumen">📱 Responde en tu teléfono</p>'; break; }
+      if (!rev) { h += et + `<p class="resumen">${tr('📱 Responde en tu teléfono')}</p>`; break; }
       const c = conteo(v => Number(v)), mx = Math.max(1, ...Object.values(c)), vals = Object.values(H.resp).map(r => Number(r.val)).filter(v => v >= 1 && v <= 5);
       h += `<div class="escala">${[1, 2, 3, 4, 5].map(v => `<div><span>${c[v] || 0}</span><div class="eb" style="height:${(c[v] || 0) / mx * 200}px;background:${ESCALA[v - 1]}"></div><b>${v}</b></div>`).join('')}</div>${et}
-        ${vals.length ? `<p class="resumen">Promedio: ${(vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1).replace('.', ',')}</p>` : ''}`;
+        ${vals.length ? `<p class="resumen">${tr('Promedio: {n}', { n: (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1).replace('.', IDIOMA === 'en' ? '.' : ',') })}</p>` : ''}`;
       break;
     }
     case 'numero': {
       const mn = +it.min, mx = +it.max, pos = v => Math.max(0, Math.min(100, (v - mn) / ((mx - mn) || 1) * 100));
-      h += `<p style="font-size:1.5rem">Entre ${mn} y ${mx} ${esc(it.unidad)}</p>`;
+      h += `<p style="font-size:1.5rem">${tr('Entre {a} y {b}', { a: mn, b: mx })} ${esc(it.unidad)}</p>`;
       if (rev) h += `<div class="linea"><div class="eje"></div><span class="mm" style="left:0">${mn}</span><span class="mm" style="right:0">${mx}</span>
         ${Object.entries(H.resp).map(([pid, r]) => `<span class="d" style="left:${pos(+r.val)}%">${esc(H.players[pid]?.avatar || '•')}</span>`).join('')}
         <div class="ok" style="left:${pos(+it.correcta)}%"></div><span class="okl" style="left:${pos(+it.correcta)}%">${esc(it.correcta)} ${esc(it.unidad)}</span></div>`;
@@ -3524,71 +3672,73 @@ function topRespuestas(esOk) {
   const c = {}, orig = {};
   Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k || H.ocultas.has(k)) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val); });
   const top = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 6);
-  return top.length ? `<div class="tops">${top.map(([k, n]) => `<div data-a="ocultar" data-k="${esc(k)}" title="Clic para ocultar esta respuesta"><span>${esOk(orig[k]) ? '✔' : '✘'} ${esc(orig[k])}</span><b>${n}</b></div>`).join('')}</div>` : '<p>Nadie respondió 😅</p>';
+  return top.length ? `<div class="tops">${top.map(([k, n]) => `<div data-a="ocultar" data-k="${esc(k)}" title="${tr('Clic para ocultar esta respuesta')}"><span>${esOk(orig[k]) ? '✔' : '✘'} ${esc(orig[k])}</span><b>${n}</b></div>`).join('')}</div>` : `<p>${tr('Nadie respondió 😅')}</p>`;
 }
 function nube() {
   const c = {}, orig = {};
   Object.values(H.resp).forEach(r => { const k = norm(r.val); if (!k || H.ocultas.has(k)) return; c[k] = (c[k] || 0) + 1; orig[k] = orig[k] || String(r.val).trim(); });
-  const e = shuffle(Object.entries(c)); if (!e.length) return '<p>Nadie respondió 😅</p>';
+  const e = shuffle(Object.entries(c)); if (!e.length) return `<p>${tr('Nadie respondió 😅')}</p>`;
   const max = Math.max(...e.map(x => x[1])), cols = ['#180157', '#006780', '#A21CAF', '#7C3AED', '#D97706'];
-  return `<div class="nube">${e.map(([k, n], i) => `<span data-a="ocultar" data-k="${esc(k)}" title="Clic para ocultar" style="font-size:${1.2 + 3.3 * n / max}rem;color:${cols[i % cols.length]}">${esc(orig[k])}</span>`).join('')}</div>`;
+  return `<div class="nube">${e.map(([k, n], i) => `<span data-a="ocultar" data-k="${esc(k)}" title="${tr('Clic para ocultar')}" style="font-size:${1.2 + 3.3 * n / max}rem;color:${cols[i % cols.length]}">${esc(orig[k])}</span>`).join('')}</div>`;
 }
 function hostRanking() {
   if (H.eq.length) {
     const rk = rankingEquipos(), max = Math.max(1, rk[0].score);
-    return `<h1>🏆 Ranking por equipos</h1><div class="rank">${rk.map((e, k) => `<div class="rk" style="background:linear-gradient(90deg,var(--on-primary-container) ${e.score / max * 100}%,#fff 0)"><span class="pos">${k + 1}</span><span class="eqc" style="background:${COLORES[e.i % 6]}"></span>
+    return `<h1>${tr('🏆 Ranking por equipos')}</h1><div class="rank">${rk.map((e, k) => `<div class="rk" style="background:linear-gradient(90deg,var(--on-primary-container) ${e.score / max * 100}%,#fff 0)"><span class="pos">${k + 1}</span><span class="eqc" style="background:${COLORES[e.i % 6]}"></span>
       <span class="nm">${esc(e.nombre)} <small>(${e.n})</small></span>${e.plus ? `<span class="plus">+${e.plus}</span>` : ''}<span>${e.score}</span></div>`).join('')}</div>`;
   }
   const rk = ranking().slice(0, 8), max = Math.max(1, rk[0]?.score || 1);
-  return `<h1>🏆 Ranking</h1><div class="rank">${rk.map((p, k) => `<div class="rk" style="background:linear-gradient(90deg,var(--on-primary-container) ${p.score / max * 100}%,#fff 0)"><span class="pos">${k + 1}</span><span>${esc(p.avatar)}</span><span class="nm">${esc(p.name)}</span>
+  return `<h1>${tr('🏆 Ranking')}</h1><div class="rank">${rk.map((p, k) => `<div class="rk" style="background:linear-gradient(90deg,var(--on-primary-container) ${p.score / max * 100}%,#fff 0)"><span class="pos">${k + 1}</span><span>${esc(p.avatar)}</span><span class="nm">${esc(p.name)}</span>
     ${H.ult[p.pid]?.pts ? `<span class="plus">+${H.ult[p.pid].pts}</span>` : ''}<span>${p.score}</span></div>`).join('')}</div>`;
 }
 function hostFin() {
   const rk = H.eq.length
     ? rankingEquipos().map(e => ({ av: `<span class="eqc big" style="background:${COLORES[e.i % 6]}"></span>`, name: e.nombre, score: e.score }))
     : ranking().map(p => ({ av: esc(p.avatar), name: p.name, score: p.score }));
-  if (!Object.keys(H.players).length) return `<h1>¡Fin! 🎉</h1><p>${esc(quiz.config.titulo)}</p><button class="big" data-a="inicio">Volver al inicio</button>`;
+  if (!Object.keys(H.players).length) return `<h1>${tr('¡Fin! 🎉')}</h1><p>${esc(quiz.config.titulo)}</p><button class="big" data-a="inicio">${tr('Volver al inicio')}</button>`;
   const orden = [rk[1], rk[0], rk[2]], alt = [180, 250, 130], med = ['🥈', '🥇', '🥉'];
-  return `<h1>🎉 ¡Felicitaciones! 🎉</h1>
-    <div class="podio">${orden.map((p, k) => p ? `<div class="col"><span class="av">${p.av}</span><span>${esc(p.name)}</span><span>${p.score} pts</span><div class="blk" style="height:${alt[k]}px">${med[k]}</div></div>` : '<div class="col"></div>').join('')}</div>
+  return `<h1>${tr('🎉 ¡Felicitaciones! 🎉')}</h1>
+    <div class="podio">${orden.map((p, k) => p ? `<div class="col"><span class="av">${p.av}</span><span>${esc(p.name)}</span><span>${tr('{n} pts', { n: p.score })}</span><div class="blk" style="height:${alt[k]}px">${med[k]}</div></div>` : '<div class="col"></div>').join('')}</div>
     ${rk.length > 3 ? `<div class="rank" style="max-width:600px">${rk.slice(3, 10).map((p, k) => `<div class="rk"><span class="pos">${k + 4}</span><span>${p.av}</span><span class="nm">${esc(p.name)}</span><span>${p.score}</span></div>`).join('')}</div>` : ''}
-    <div class="botones"><button class="big" data-a="csv">${ic('download')} Descargar resultados</button><button class="pri big" data-a="inicio">${ic('home')} Volver al inicio</button></div>`;
+    <div class="botones"><button class="big" data-a="csv">${ic('download')} ${tr('Descargar resultados')}</button><button class="pri big" data-a="inicio">${ic('home')} ${tr('Volver al inicio')}</button></div>`;
 }
 
 /* =================== CONTROL REMOTO (celular del presentador) =================== */
 let R = null;
 function vistaRemoto(code, k) {
-  document.title = 'Control remoto · Quiz Iglesia';
+  ponerIdioma(idiomaInicialTel());
+  document.title = tr('Control remoto') + ' · Quiz Iglesia';
   R = { code, k, st: null };
   ACC = { rc: el => { try { R.conn.send({ t: 'rcmd', c: el.dataset.c }); } catch (_) { } navigator.vibrate?.(30); }, reintentar: () => location.reload() };
   setTimeout(avisoCookies, 300);
-  pintarRemoto('⏳ Conectando con la pantalla…');
-  if (!window.Peer) return pintarRemoto('📵 No se pudo cargar la conexión.');
+  pintarRemoto(tr('⏳ Conectando con la pantalla…'));
+  if (!window.Peer) return pintarRemoto(tr('📵 No se pudo cargar la conexión.'));
   R.peer = new Peer(opcionesPeer());
   R.peer.on('open', () => {
     const c = R.peer.connect(PREFIJO + code, { reliable: true }); R.conn = c;
     c.on('open', () => c.send({ t: 'remoto', k }));
-    c.on('data', d => { if (d.t === 'rstate') { R.st = d; pintarRemoto(); } else if (d.t === 'rerror') { R.fin = true; pintarRemoto('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.'); } });
-    c.on('close', () => { if (!R.fin) { pintarRemoto('🔄 Reconectando…'); setTimeout(() => location.reload(), 2500); } });
+    c.on('data', d => { if (d.t === 'rstate') { R.st = d; pintarRemoto(); } else if (d.t === 'rerror') { R.fin = true; pintarRemoto(tr('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.')); } });
+    c.on('close', () => { if (!R.fin) { pintarRemoto(tr('🔄 Reconectando…')); setTimeout(() => location.reload(), 2500); } });
   });
-  R.peer.on('error', e => pintarRemoto(e.type === 'peer-unavailable' ? '🔍 No se encontró la presentación. ¿Sigue abierta?' : '📵 Problema de conexión'));
+  R.peer.on('error', e => pintarRemoto(tr(e.type === 'peer-unavailable' ? '🔍 No se encontró la presentación. ¿Sigue abierta?' : '📵 Problema de conexión')));
   if ('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(() => { });
 }
 function pintarRemoto(msg) {
   const st = R.st;
-  app.innerHTML = `<div class="jug remoto"><header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>Control remoto</b><small>Sala ${esc(R.code)}</small></div></div></header>
-    <div class="cuerpo">${msg || !st ? `<h2>${esc(msg || '⏳ Conectando…')}</h2>${msg && !R.fin ? '' : ''}<button data-a="reintentar">Reintentar</button>` : `
+  app.innerHTML = `<div class="jug remoto"><header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>${tr('Control remoto')}</b><small>${tr('Sala {c}', { c: esc(R.code) })}</small></div></div></header>
+    <div class="cuerpo">${msg || !st ? `<h2>${esc(msg || tr('⏳ Conectando…'))}</h2><button data-a="reintentar">${tr('Reintentar')}</button>` : `
       <div class="jq"><span class="badge mag">${esc(st.sub || '')}</span><p>${esc(st.titulo || '')}</p></div>
-      <p class="muted">${st.fase === 'pregunta' ? `${st.resp} / ${st.jug} respuestas` : `${st.jug} jugador${st.jug === 1 ? '' : 'es'} conectado${st.jug === 1 ? '' : 's'}`}${st.pausa ? ' · <b>en pausa</b>' : ''}</p>
-      ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : '<h2>¡Fin del quiz! 🎉</h2>'}
-      <div class="r-fila">${st.video ? `<button data-a="rc" data-c="vid">${ic(st.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${st.vidPlay ? 'Pausar video' : 'Reproducir video'}</button>` : ''}${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} Anterior</button>` : ''}
-        ${st.fase === 'pregunta' ? `<button data-a="rc" data-c="pausa">${ic(st.pausa ? 'play_arrow' : 'pause')} ${st.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="rc" data-c="mas">+10 s</button><button data-a="rc" data-c="saltar">${ic('skip_next')} Saltar</button>` : ''}</div>`}
+      <p class="muted">${st.fase === 'pregunta' ? tr('{a} / {b} respuestas', { a: st.resp, b: st.jug }) : tr('Jugadores conectados: {n}', { n: st.jug })}${st.pausa ? ` · <b>${tr('en pausa')}</b>` : ''}</p>
+      ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : `<h2>${tr('¡Fin del quiz! 🎉')}</h2>`}
+      <div class="r-fila">${st.video ? `<button data-a="rc" data-c="vid">${ic(st.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${st.vidPlay ? tr('Pausar video') : tr('Reproducir video')}</button>` : ''}${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} ${tr('Anterior')}</button>` : ''}
+        ${st.fase === 'pregunta' ? `<button data-a="rc" data-c="pausa">${ic(st.pausa ? 'play_arrow' : 'pause')} ${st.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="rc" data-c="mas">+10 s</button><button data-a="rc" data-c="saltar">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}</div>`}
     </div></div>`;
 }
 
 /* =================== JUGADOR (teléfono) =================== */
 let P = null;
 function vistaJugador(code, error) {
+  ponerIdioma(P && P.idioma || idiomaInicialTel());
   P = { code, pid: localStorage.getItem('quiziglesia.pid') || (Math.random().toString(36).slice(2) + Date.now().toString(36)),
     name: localStorage.getItem('quiziglesia.name') || '', avatar: localStorage.getItem('quiziglesia.avatar') || AVATARES[Math.floor(Math.random() * AVATARES.length)], score: 0 };
   localStorage.setItem('quiziglesia.pid', P.pid);
@@ -3596,16 +3746,16 @@ function vistaJugador(code, error) {
     av: el => { P.avatar = el.dataset.v; app.querySelectorAll('.avs button').forEach(b => b.classList.toggle('on', b === el)); },
     entrar: () => {
       const n = $('#jname').value.trim(); if (!n) { $('#jname').focus(); return; }
-      if (tieneGroseria(n, [])) { const a = $('#jerrnom'); a.textContent = 'Ese nombre no está permitido. Elige otro.'; a.hidden = false; $('#jname').focus(); return; }
+      if (tieneGroseria(n, [])) { const a = $('#jerrnom'); a.textContent = tr('Ese nombre no está permitido. Elige otro.'); a.hidden = false; $('#jname').focus(); return; }
       P.name = n; localStorage.setItem('quiziglesia.name', n); localStorage.setItem('quiziglesia.avatar', P.avatar);
-      pantallaJ('⏳', 'Conectando…'); conectarJugador();
+      pantallaJ('⏳', tr('Conectando…')); conectarJugador();
     },
     jv: el => responder(el.dataset.v),
     jenviar: () => {
       const q = P.q; if (!q) return;
       if (TEXTO_LIBRE.includes(q.tipo)) {
         const v = $('#jtxt').value.trim(); if (!v) return;
-        if (P.filtro && tieneGroseria(v, P.filtro)) { const a = $('#javiso'); if (a) { a.textContent = 'Esa palabra no está permitida, intenta otra 🙂'; a.hidden = false; } $('#jtxt').select(); return; }
+        if (P.filtro && tieneGroseria(v, P.filtro)) { const a = $('#javiso'); if (a) { a.textContent = tr('Esa palabra no está permitida, intenta otra 🙂'); a.hidden = false; } $('#jtxt').select(); return; }
         responder(v.slice(0, q.tipo === 'muro' ? 140 : 40));
       }
       else if (q.tipo === 'huecos') { if (P.huecos.some(x => x != null)) responder(P.huecos.map(i => i == null ? '' : q.banco[i])); }
@@ -3638,43 +3788,43 @@ function vistaJugador(code, error) {
     jborrar: () => { P.dib.trazos = []; redibujar(); },
     jeq: el => { P.eq = +el.dataset.i; P.conn.send({ t: 'team', eq: P.eq }); renderEquipos(); },
   };
-  app.innerHTML = `<div class="jug"><header class="top"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>Quiz Iglesia</b><small>Sala ${esc(code)}</small></div></div></header>
+  app.innerHTML = `<div class="jug"><header class="top"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>Quiz Iglesia</b><small>${tr('Sala {c}', { c: esc(code) })}</small></div></div></header>
     <div class="cuerpo"><div class="card">
-    <span class="badge cyan"><span class="dot"></span>Sala ${esc(code)}</span>
-    <h2>¡Únete al juego!</h2>
-    <label class="fld"><span>Tu nombre</span><input id="jname" maxlength="16" value="${esc(P.name)}" placeholder="Ej: Sofi" autocomplete="off"></label>
+    <span class="badge cyan"><span class="dot"></span>${tr('Sala {c}', { c: esc(code) })}</span>
+    <h2>${tr('¡Únete al juego!')}</h2>
+    <label class="fld"><span>${tr('Tu nombre')}</span><input id="jname" maxlength="16" value="${esc(P.name)}" placeholder="${tr('Ej: Sofi')}" autocomplete="off"></label>
     <p class="aviso" id="jerrnom" ${error ? '' : 'hidden'}>${esc(error || '')}</p>
-    <div class="fld"><span>Elige tu personaje</span><div class="avs">${AVATARES.map(a => `<button data-a="av" data-v="${a}" class="${a === P.avatar ? 'on' : ''}">${a}</button>`).join('')}</div></div>
-    <button class="sec big" style="width:100%" data-a="entrar">Entrar al juego ${ic('arrow_forward')}</button></div></div></div>`;
+    <div class="fld"><span>${tr('Elige tu personaje')}</span><div class="avs">${AVATARES.map(a => `<button data-a="av" data-v="${a}" class="${a === P.avatar ? 'on' : ''}">${a}</button>`).join('')}</div></div>
+    <button class="sec big" style="width:100%" data-a="entrar">${tr('Entrar al juego')} ${ic('arrow_forward')}</button></div></div></div>`;
   avisoCookies();
 }
 function marcoJ(cuerpo, bg, preg) {
-  const eq = P.equipos && P.equipos[P.eq] ? 'Equipo ' + P.equipos[P.eq] : (P.titulo || 'Sala ' + P.code);
+  const eq = P.equipos && P.equipos[P.eq] ? tr('Equipo {n}', { n: P.equipos[P.eq] }) : (P.titulo || tr('Sala {c}', { c: P.code }));
   app.innerHTML = `<div class="jug ${bg ? 'est' : ''} ${preg ? 'preg' : ''}" style="--c:${esc(P.color || '#180157')};${bg ? `--bgc:${bg}` : ''}">
     <header class="top"><span class="yo"><span class="av">${esc(P.avatar)}</span><span><b>${esc(P.name)}</b><small>${esc(eq)}</small></span></span>
-      ${preg ? `<span class="jtimer">${ic('timer')}<span id="jt"></span></span>` : ''}<span class="pts">${P.score} pts</span></header>
+      ${preg ? `<span class="jtimer">${ic('timer')}<span id="jt"></span></span>` : ''}<span class="pts">${tr('{n} pts', { n: P.score })}</span></header>
     ${preg ? '<div class="jprog"><i id="jbar"></i></div>' : ''}<div class="cuerpo">${cuerpo}</div></div>`;
 }
 function pantallaJ(icono, msg, bg, extra = '') { clearInterval(P.tInt); marcoJ(`<div class="estado-big">${icono}</div><h2>${msg}</h2>${extra}`, bg); }
 function conectarJugador() {
-  if (!window.Peer) return pantallaJ('📵', 'No se pudo cargar la conexión. Revisa tu internet.', '#484550', '<button data-a="reintentar">Reintentar</button>');
+  if (!window.Peer) return pantallaJ('📵', tr('No se pudo cargar la conexión. Revisa tu internet.'), '#484550', `<button data-a="reintentar">${tr('Reintentar')}</button>`);
   P.peer = new Peer(opcionesPeer());
   P.peer.on('open', conectarConn);
   pedirPantallaEncendida();
   P.peer.on('error', e => {
-    if (e.type === 'peer-unavailable') pantallaJ('🔍', 'No se encontró la sala ' + esc(P.code) + '. Revisa el código.', '#484550', '<button data-a="reintentar">Reintentar</button>');
-    else if (!P.conn || !P.conn.open) pantallaJ('📵', 'Problema de conexión', '#484550', AYUDA_RED);
+    if (e.type === 'peer-unavailable') pantallaJ('🔍', tr('No se encontró la sala {c}. Revisa el código.', { c: esc(P.code) }), '#484550', `<button data-a="reintentar">${tr('Reintentar')}</button>`);
+    else if (!P.conn || !P.conn.open) pantallaJ('📵', tr('Problema de conexión'), '#484550', ayudaRed());
   });
   P.peer.on('disconnected', () => { try { P.peer.reconnect(); } catch (e) { } });
 }
-const AYUDA_RED = `<div class="ayuda-red"><b>¿No conecta?</b><ul><li>Revisa que el código sea el de la pantalla.</li><li>Prueba cambiando de wifi a datos móviles (o al revés).</li>
-  <li>En el wifi de la iglesia, algunas redes bloquean la conexión entre equipos.</li></ul></div><button class="pri big" data-a="reintentar">Reintentar</button>`;
+const ayudaRed = () => `<div class="ayuda-red"><b>${tr('¿No conecta?')}</b><ul><li>${tr('Revisa que el código sea el de la pantalla.')}</li><li>${tr('Prueba cambiando de wifi a datos móviles (o al revés).')}</li>
+  <li>${tr('En el wifi de la iglesia, algunas redes bloquean la conexión entre equipos.')}</li></ul></div><button class="pri big" data-a="reintentar">${tr('Reintentar')}</button>`;
 function conectarConn() {
   if (P.kicked || P.fin) return;
   const c = P.peer.connect(PREFIJO + P.code, { reliable: true });
   P.conn = c; P.visto = Date.now();
   clearTimeout(P.tCon);
-  P.tCon = setTimeout(() => { if (P.conn === c && !c.open) { P.intentos = (P.intentos || 0) + 1; pantallaJ('📵', 'No se pudo conectar', '#484550', AYUDA_RED); } }, 15000);
+  P.tCon = setTimeout(() => { if (P.conn === c && !c.open) { P.intentos = (P.intentos || 0) + 1; pantallaJ('📵', tr('No se pudo conectar'), '#484550', ayudaRed()); } }, 15000);
   c.on('open', () => { clearTimeout(P.tCon); P.intentos = 0; P.visto = Date.now(); c.send({ t: 'join', pid: P.pid, name: P.name, avatar: P.avatar }); });
   c.on('data', alRecibirJ);
   c.on('error', e => console.warn('conexión', e));
@@ -3688,7 +3838,7 @@ function conectarConn() {
 function reconectarJ(c) {
   if (P.kicked || P.fin || c !== P.conn || P.reconectando) return;
   P.reconectando = true;
-  pantallaJ('🔄', 'Reconectando…', '#484550');
+  pantallaJ('🔄', tr('Reconectando…'), '#484550');
   setTimeout(() => {
     P.reconectando = false;
     if (!P.peer || P.peer.destroyed) return;
@@ -3708,12 +3858,12 @@ function alRecibirJ(d) {
   if (d.t === 'ping') { try { P.conn.send({ t: 'pong' }); } catch (_) { } return; }
   if (d.score != null) P.score = d.score;
   switch (d.t) {
-    case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
+    case 'welcome': if (d.idioma) { P.idioma = d.idioma; ponerIdioma(d.idioma); try { localStorage.setItem('quiziglesia.idioma', d.idioma); } catch (_) { } } P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
     case 'rechazo': P.kicked = true; try { P.peer.destroy(); } catch (e) { } vistaJugador(P.code, d.msg); break;
     case 'equipos': P.equipos = d.equipos; P.eq = d.eq; P.eqFijo = !!d.fijo; renderEquipos(); break;
     case 'msg': pantallaJ(d.icono || '👀', esc(d.msg), d.bg); break;
     case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
-    case 'recibido': pantallaJ('⏳', '¡Respuesta enviada!<br><small>Espera a los demás…</small>'); break;
+    case 'recibido': pantallaJ('⏳', `${tr('¡Respuesta enviada!')}<br><small>${tr('Espera a los demás…')}</small>`); break;
     case 'pausa':
       if (d.on) { P.pausa = true; P.restPausa = P.limite - Date.now(); }
       else { P.pausa = false; P.limite = Date.now() + (d.restante ? d.restante * 1000 : P.restPausa || 0); if (P.q && d.total) P.q.tiempo = d.total; }
@@ -3721,17 +3871,17 @@ function alRecibirJ(d) {
     case 'tiempo': P.limite = Date.now() + d.restante * 1000; if (P.q && d.total) P.q.tiempo = d.total; break;
     case 'res': {
       if (d.ok !== null && navigator.vibrate) navigator.vibrate(d.ok ? 80 : d.fr > 0 ? [60, 40, 60] : [150, 80, 150]);
-      const corr = d.correcta ? `<p>Respuesta: <b>${esc(d.correcta)}</b></p>` : '';
-      const pos = d.equipo ? `<p>Tu equipo <b>${esc(d.equipo)}</b> va en el lugar <b>${d.rank}</b> de ${d.n}</p>` : `<p>Vas en el lugar <b>${d.rank}</b> de ${d.n}</p>`;
-      if (d.ok === null) pantallaJ('🙌', '¡Gracias por participar!', '#A21CAF');
-      else if (!d.resp) pantallaJ('⏰', 'Se acabó el tiempo', '#484550', corr + pos);
-      else if (d.ok) pantallaJ('🎉', `¡Correcto!<br>+${d.pts}`, '#059669', pos);
-      else if (d.fr > 0) pantallaJ('👍', `¡Casi! ${Math.round(d.fr * 100)} % bien<br>+${d.pts}`, '#D97706', corr + pos);
-      else pantallaJ('😮', 'Incorrecto', '#BA1A1A', corr + pos);
+      const corr = d.correcta ? `<p>${tr('Respuesta:')} <b>${esc(d.correcta)}</b></p>` : '';
+      const pos = `<p>${d.equipo ? tr('Tu equipo <b>{e}</b> va en el lugar <b>{r}</b> de {n}', { e: esc(d.equipo), r: d.rank, n: d.n }) : tr('Vas en el lugar <b>{r}</b> de {n}', { r: d.rank, n: d.n })}</p>`;
+      if (d.ok === null) pantallaJ('🙌', tr('¡Gracias por participar!'), '#A21CAF');
+      else if (!d.resp) pantallaJ('⏰', tr('Se acabó el tiempo'), '#484550', corr + pos);
+      else if (d.ok) pantallaJ('🎉', `${tr('¡Correcto!')}<br>+${d.pts}`, '#059669', pos);
+      else if (d.fr > 0) pantallaJ('👍', `${tr('¡Casi! {n} % bien', { n: Math.round(d.fr * 100) })}<br>+${d.pts}`, '#D97706', corr + pos);
+      else pantallaJ('😮', tr('Incorrecto'), '#BA1A1A', corr + pos);
       break;
     }
-    case 'fin': P.fin = true; pantallaJ(d.rank <= 3 ? ['🥇', '🥈', '🥉'][d.rank - 1] : '🎉', d.equipo ? `¡Terminó!<br>Tu equipo ${esc(d.equipo)} quedó en el lugar ${d.rank} de ${d.n}` : `¡Terminó!<br>Quedaste en el lugar ${d.rank} de ${d.n}`, 'var(--c)', `<p>${d.score} puntos</p>`); break;
-    case 'kick': P.kicked = true; pantallaJ('🚪', 'El presentador te sacó de la sala.', '#484550'); try { P.peer.destroy(); } catch (e) { } break;
+    case 'fin': P.fin = true; pantallaJ(d.rank <= 3 ? ['🥇', '🥈', '🥉'][d.rank - 1] : '🎉', `${tr('¡Terminó!')}<br>${d.equipo ? tr('Tu equipo {e} quedó en el lugar {r} de {n}', { e: esc(d.equipo), r: d.rank, n: d.n }) : tr('Quedaste en el lugar {r} de {n}', { r: d.rank, n: d.n })}`, 'var(--c)', `<p>${tr('{n} puntos', { n: d.score })}</p>`); break;
+    case 'kick': P.kicked = true; pantallaJ('🚪', tr('El presentador te sacó de la sala.'), '#484550'); try { P.peer.destroy(); } catch (e) { } break;
   }
 }
 function responder(v) {
@@ -3740,71 +3890,71 @@ function responder(v) {
   if (q.tipo === 'vf') v = v === 'true';
   P.conn.send({ t: 'ans', idx: q.idx, val: v });
   P.q = null;
-  pantallaJ('📨', 'Enviando…');
+  pantallaJ('📨', tr('Enviando…'));
 }
 function renderJPregunta(soloLista) {
   const q = P.q; if (!q) return;
   if (soloLista) { $('#jord').innerHTML = filasOrden(); return; }
   const T = TIPOS[q.tipo] || {};
-  let h = `<div class="jq"><span class="badge mag">${T.icono || ''} ${T.nombre || ''}</span>${q.pregunta ? `<p>${esc(q.pregunta)}</p>` : ''}</div>`;
+  let h = `<div class="jq"><span class="badge mag">${T.icono || ''} ${nombreTipo(q.tipo)}</span>${q.pregunta ? `<p>${esc(q.pregunta)}</p>` : ''}</div>`;
   switch (q.tipo) {
     case 'alternativas': case 'encuesta': case 'emoji': case 'revela': case 'zoom': case 'audio':
       if (q.emojis) h += `<div class="jemojis">${esc(q.emojis)}</div>`;
-      if (q.tipo === 'revela' || q.tipo === 'zoom') h += '<p>👀 Mira la imagen en la pantalla</p>';
-      if (q.tipo === 'audio') h += '<p>🔊 Escucha el audio de la pantalla</p>';
+      if (q.tipo === 'revela' || q.tipo === 'zoom') h += `<p>${tr('👀 Mira la imagen en la pantalla')}</p>`;
+      if (q.tipo === 'audio') h += `<p>${tr('🔊 Escucha el audio de la pantalla')}</p>`;
       h += `<div class="jopts">${q.opciones.map(({ o, i }) => `<button data-a="jv" data-v="${i}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}</button>`).join('')}</div>`; break;
     case 'vf':
-      h += `<div class="jopts"><button data-a="jv" data-v="true" style="--oc:#059669"><span class="f">V</span>Verdadero</button><button data-a="jv" data-v="false" style="--oc:#BA1A1A"><span class="f">F</span>Falso</button></div>`; break;
+      h += `<div class="jopts"><button data-a="jv" data-v="true" style="--oc:#059669"><span class="f">${tr('V')}</span>${tr('Verdadero')}</button><button data-a="jv" data-v="false" style="--oc:#BA1A1A"><span class="f">${tr('F')}</span>${tr('Falso')}</button></div>`; break;
     case 'completar': case 'nube':
       if (q.frase) h += `<div class="jq sub">${esc(q.frase).replace(/_{3,}/, '<b>_____</b>')}</div>`;
-      h += `<input id="jtxt" maxlength="40" autocomplete="off" placeholder="Escribe aquí…" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<input id="jtxt" maxlength="40" autocomplete="off" placeholder="${tr('Escribe aquí…')}" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'numero':
       h += `<div class="jnum" id="jval">${Math.round((q.min + q.max) / 2)}</div><div>${esc(q.unidad || '')}</div>
         <input type="range" id="jrange" min="${q.min}" max="${q.max}" step="${q.paso}" value="${Math.round((q.min + q.max) / 2)}">
-        <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+        <button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'pin':
       h += `<div class="jpin" data-a="jpin"><img src="${esc(q.imagen)}"><span class="m" id="jm" style="display:none">📍</span></div>
-        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Confirmar</button>`; break;
+        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>${tr('Confirmar')}</button>`; break;
     case 'ordenar':
-      h += `<div class="jord" id="jord">${filasOrden()}</div><button class="pri big jbtn" data-a="jenviar">Enviar orden</button>`; break;
+      h += `<div class="jord" id="jord">${filasOrden()}</div><button class="pri big jbtn" data-a="jenviar">${tr('Enviar orden')}</button>`; break;
     case 'parejas':
-      h += `<p class="muted">Arrastra (o toca) desde la izquierda hasta su pareja</p><div class="jpar2" id="jpar2"><svg class="jlineas" id="jlineas"></svg>
+      h += `<p class="muted">${tr('Arrastra (o toca) desde la izquierda hasta su pareja')}</p><div class="jpar2" id="jpar2"><svg class="jlineas" id="jlineas"></svg>
         <div class="col">${q.izq.map((x, k) => `<div class="nodo" data-lado="i" data-k="${k}">${ladoPar(x.t, x.i)}</div>`).join('')}</div>
         <div class="col">${q.der.map((x, j) => `<div class="nodo" data-lado="d" data-k="${j}">${ladoPar(x.t, x.i)}</div>`).join('')}</div></div>
-        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Enviar</button>`; break;
+        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>${tr('Enviar')}</button>`; break;
     case 'versiculo':
-      h += `<div class="jarm" id="jarm"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<div class="jarm" id="jarm"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'quiensoy':
       h += `<ol class="jpistas" id="jpistas">${q.pistas.map(t => `<li class="off">${esc(t)}</li>`).join('')}</ol>
-        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Quién es?" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="${tr('¿Quién es?')}" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'clasificar':
       h += `<div class="jclas">${q.items.map(e => `<div><span>${esc(e.t)}</span><div>${q.categorias.map((c, ci) => `<button data-a="jcl" data-i="${e.i}" data-c="${ci}" style="--cc:${COLORES[ci % 6]}">${esc(c)}</button>`).join('')}</div></div>`).join('')}</div>
-        <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+        <button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'error':
-      h += `<p>Toca la palabra equivocada:</p><div class="jerr">${q.tokens.map((w, k) => `<button data-a="jerr" data-k="${k}">${esc(w)}</button>`).join('')}</div>
-        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Confirmar</button>`; break;
+      h += `<p>${tr('Toca la palabra equivocada:')}</p><div class="jerr">${q.tokens.map((w, k) => `<button data-a="jerr" data-k="${k}">${esc(w)}</button>`).join('')}</div>
+        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>${tr('Confirmar')}</button>`; break;
     case 'linea':
-      h += `<div class="jq sub">❓ ${esc(q.hecho)}</div><div class="jlinea">${q.fijos.map((f, k) => `<button class="slot" data-a="jslot" data-k="${k}">⬇ Aquí</button><div class="fijo">${esc(f)}</div>`).join('')}
-        <button class="slot" data-a="jslot" data-k="${q.fijos.length}">⬇ Aquí</button></div>
-        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Confirmar</button>`; break;
+      h += `<div class="jq sub">❓ ${esc(q.hecho)}</div><div class="jlinea">${q.fijos.map((f, k) => `<button class="slot" data-a="jslot" data-k="${k}">${tr('⬇ Aquí')}</button><div class="fijo">${esc(f)}</div>`).join('')}
+        <button class="slot" data-a="jslot" data-k="${q.fijos.length}">${tr('⬇ Aquí')}</button></div>
+        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>${tr('Confirmar')}</button>`; break;
     case 'huecos':
-      h += `<div class="jq sub" id="jfrase"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<div class="jq sub" id="jfrase"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'multiple':
-      h += `<p>Marca todas las correctas</p><div class="jopts multi">${q.opciones.map(({ o, i }) => `<button data-a="jtog" data-v="${i}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}<span class="ms chk-m">check_box_outline_blank</span></button>`).join('')}</div>
-        <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<p>${tr('Marca todas las correctas')}</p><div class="jopts multi">${q.opciones.map(({ o, i }) => `<button data-a="jtog" data-v="${i}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}<span class="ms chk-m">check_box_outline_blank</span></button>`).join('')}</div>
+        <button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'rafaga': h += '<div id="jraf" class="jraf"></div>'; break;
     case 'palabra':
       h += `<div class="mascara chica" id="jmasc"></div>${q.pista ? `<p>💡 ${esc(q.pista)}</p>` : ''}
-        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Qué palabra es?" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
-    case 'memoria': h += `<p id="jmemc">Parejas: 0 / ${q.cartas.length / 2}</p><div class="jmem" id="jmem"></div>`; break;
-    case 'rapido': h += `<button class="buzz" data-a="jv" data-v="buzz">🔔<br>¡Yo sé!</button>`; break;
+        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="${tr('¿Qué palabra es?')}" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
+    case 'memoria': h += `<p id="jmemc">${tr('Parejas: {a} / {b}', { a: 0, b: q.cartas.length / 2 })}</p><div class="jmem" id="jmem"></div>`; break;
+    case 'rapido': h += `<button class="buzz" data-a="jv" data-v="buzz">🔔<br>${tr('¡Yo sé!')}</button>`; break;
     case 'dibujo':
       h += `<div class="jdib"><canvas id="jcanvas" width="480" height="360"></canvas></div>
         <div class="jdib-bar">${['#1C1B20', '#BA1A1A', '#F59E0B', '#059669', '#006780', '#7C3AED', '#A21CAF', '#8B5A2B', '#FFFFFF'].map(c => `<button class="sw ${c === '#1C1B20' ? 'on' : ''}" style="background:${c}" data-a="jcol" data-v="${c}"></button>`).join('')}
           <button data-a="jgros" data-v="4">·</button><button data-a="jgros" data-v="10">●</button><button data-a="jgros" data-v="22">⬤</button><button data-a="jdeshacer">${ic('undo')}</button><button data-a="jborrar">${ic('delete')}</button></div>
-        <button class="pri big jbtn" data-a="jenviar">Enviar dibujo</button>`; break;
+        <button class="pri big jbtn" data-a="jenviar">${tr('Enviar dibujo')}</button>`; break;
     case 'muro':
-      h += `<textarea id="jtxt" maxlength="140" rows="4" placeholder="Escribe tu mensaje…" style="max-width:480px;font-size:1.15rem"></textarea><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<textarea id="jtxt" maxlength="140" rows="4" placeholder="${tr('Escribe tu mensaje…')}" style="max-width:480px;font-size:1.15rem"></textarea><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">${tr('Enviar')}</button>`; break;
     case 'escala':
       h += `<div class="jescala">${[1, 2, 3, 4, 5].map(v => `<button data-a="jv" data-v="${v}" style="background:${ESCALA[v - 1]}">${v}</button>`).join('')}</div>
         <div class="jescala-et"><span>1 = ${esc(q.min)}</span><span>5 = ${esc(q.max)}</span></div>`; break;
@@ -3891,8 +4041,8 @@ function renderHuecos() {
 }
 function renderRafaga() {
   const q = P.q, k = P.raf.length; if (!q) return;
-  $('#jraf').innerHTML = `<p class="muted">${k + 1} de ${q.afirm.length}</p><div class="jq sub raf-af">${esc(q.afirm[k])}</div>
-    <div class="jopts"><button data-a="jrf" data-v="1" style="--oc:#059669"><span class="f">V</span>Verdadero</button><button data-a="jrf" data-v="0" style="--oc:#BA1A1A"><span class="f">F</span>Falso</button></div>`;
+  $('#jraf').innerHTML = `<p class="muted">${tr('{a} de {b}', { a: k + 1, b: q.afirm.length })}</p><div class="jq sub raf-af">${esc(q.afirm[k])}</div>
+    <div class="jopts"><button data-a="jrf" data-v="1" style="--oc:#059669"><span class="f">${tr('V')}</span>${tr('Verdadero')}</button><button data-a="jrf" data-v="0" style="--oc:#BA1A1A"><span class="f">${tr('F')}</span>${tr('Falso')}</button></div>`;
 }
 function pintarMascara() {
   const q = P.q, el = $('#jmasc'); if (!q || !el) return;
@@ -3903,7 +4053,7 @@ function renderMemoria() {
   const q = P.q, m = P.mem; if (!q) return;
   $('#jmem').innerHTML = q.cartas.map((c, i) => { const vis = m.abiertas.includes(i) || m.hechas.has(c.k);
     return `<button class="carta ${vis ? 'vis' : ''} ${m.hechas.has(c.k) ? 'hecha' : ''}" data-a="jmc" data-i="${i}">${vis ? esc(c.t) : '?'}</button>`; }).join('');
-  $('#jmemc').textContent = `Parejas: ${m.hechas.size} / ${q.cartas.length / 2}`;
+  $('#jmemc').textContent = tr('Parejas: {a} / {b}', { a: m.hechas.size, b: q.cartas.length / 2 });
 }
 function voltearCarta(i) {
   const q = P.q, m = P.mem; if (!q || m.bloqueo) return;
@@ -3937,21 +4087,21 @@ function redibujar() {
 const exportarDibujo = () => { const cv = $('#jcanvas'); return cv ? cv.toDataURL('image/jpeg', 0.7) : ''; };
 function overlayPausa() {
   const j = $('.jug'), o = $('#jpausa');
-  if (P.pausa && P.q && j && !o) j.insertAdjacentHTML('beforeend', `<div id="jpausa" class="jpausa">${ic('pause_circle', 'fill')}<b>Pausa</b><span>Espera un momento…</span></div>`);
+  if (P.pausa && P.q && j && !o) j.insertAdjacentHTML('beforeend', `<div id="jpausa" class="jpausa">${ic('pause_circle', 'fill')}<b>${tr('Pausa')}</b><span>${tr('Espera un momento…')}</span></div>`);
   else if (!P.pausa && o) o.remove();
 }
 function renderArmado() {
   const q = P.q; if (!q) return;
-  $('#jarm').innerHTML = P.armado.length ? P.armado.map((i, k) => `<button data-a="jvq" data-k="${k}">${esc(q.palabras[i])}</button>`).join('') : '<span class="ph">Toca las palabras en orden…</span>';
+  $('#jarm').innerHTML = P.armado.length ? P.armado.map((i, k) => `<button data-a="jvq" data-k="${k}">${esc(q.palabras[i])}</button>`).join('') : `<span class="ph">${tr('Toca las palabras en orden…')}</span>`;
   $('#jbanco').innerHTML = q.palabras.map((w, i) => P.armado.includes(i) ? '' : `<button data-a="jvp" data-i="${i}">${esc(w)}</button>`).join('');
 }
 function renderEquipos() {
   clearInterval(P.tInt);
-  if (P.eqFijo) return marcoJ(`<div class="estado-big">✅</div><h2>¡Estás dentro!</h2><p class="muted">Tu equipo es:</p>
-    <div class="jeq"><button class="on" style="background:${COLORES[P.eq % 6]}">${esc(P.equipos[P.eq] || '')}</button></div><p class="muted">Espera a que comience.</p>`);
-  marcoJ(`<div class="estado-big">✅</div><h2>¡Estás dentro!</h2><p class="muted">Elige tu equipo:</p>
+  if (P.eqFijo) return marcoJ(`<div class="estado-big">✅</div><h2>${tr('¡Estás dentro!')}</h2><p class="muted">${tr('Tu equipo es:')}</p>
+    <div class="jeq"><button class="on" style="background:${COLORES[P.eq % 6]}">${esc(P.equipos[P.eq] || '')}</button></div><p class="muted">${tr('Espera a que comience.')}</p>`);
+  marcoJ(`<div class="estado-big">✅</div><h2>${tr('¡Estás dentro!')}</h2><p class="muted">${tr('Elige tu equipo:')}</p>
     <div class="jeq">${P.equipos.map((n, i) => `<button data-a="jeq" data-i="${i}" class="${P.eq === i ? 'on' : ''}" style="background:${COLORES[i % 6]}">${P.eq === i ? '✔ ' : ''}${esc(n)}</button>`).join('')}</div>
-    <p class="muted">Espera a que comience.</p>`);
+    <p class="muted">${tr('Espera a que comience.')}</p>`);
 }
 function filasOrden() {
   return P.orden.map((x, k) => `<div><b>${k + 1}</b><span>${esc(x.o)}</span><button data-a="jmov" data-i="${k}" data-d="-1">▲</button><button data-a="jmov" data-i="${k}" data-d="1">▼</button></div>`).join('');
