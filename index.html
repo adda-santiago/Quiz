@@ -348,6 +348,63 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .ayuda-red ul{margin:6px 0 0;padding-left:18px}
 details.avanzado{margin:16px 0;padding:10px 14px;border:1px solid var(--outline-var);border-radius:var(--r-lg);background:var(--s-lowest)}
 details.avanzado summary{cursor:pointer;font-weight:600;color:var(--c)}
+/* ---------- Tipos de pregunta (bloque 4) ---------- */
+.blank small{font-family:var(--mono);font-size:.5em;color:var(--outline);vertical-align:middle}
+.lista-ord.rafaga div{display:flex;align-items:center;gap:12px}
+.lista-ord.rafaga small{margin-left:auto;font-size:.9rem;color:var(--on-s-var)}
+.vfb{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:700;flex:none}
+.vfb.v{background:var(--success)}.vfb.f{background:var(--error)}
+.mascara{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1100px}
+.mascara span{width:clamp(44px,6vw,84px);height:clamp(56px,7.5vw,100px);border-radius:var(--r-md);background:var(--s-lowest);border:2px solid var(--outline-var);display:grid;place-items:center;font:700 clamp(1.6rem,4vw,3.2rem) var(--mono);color:var(--c);box-shadow:var(--sombra);transition:background .3s,transform .3s}
+.mascara span.on{background:#FEF3C7;border-color:var(--gold);transform:translateY(-3px)}
+.mascara span.fija{background:var(--s);border-style:dashed}
+.mascara i{width:28px}
+.mascara.chica{gap:5px}.mascara.chica span{width:34px;height:44px;font-size:1.3rem;border-radius:10px}.mascara.chica i{width:12px}
+.zoomwrap{height:clamp(170px,calc(100vh - 560px),520px);height:clamp(170px,calc(100dvh - 560px),520px);max-width:100%;aspect-ratio:16/10;overflow:hidden;border-radius:var(--r-xl);box-shadow:var(--sombra);background:#000}
+.zoomwrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s linear}
+.zmark{position:absolute;width:28px;height:28px;border:3px solid var(--gold);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 3px #0006}
+.audiobox{display:flex;flex-direction:column;align-items:center;gap:16px}
+.ondas{display:flex;gap:6px;align-items:flex-end;height:70px}
+.ondas i{width:10px;height:20%;background:var(--cyan);border-radius:5px}
+.audiobox.sonando .ondas i{animation:onda 1s ease-in-out infinite}
+.ondas i:nth-child(odd){animation-delay:.2s!important;background:var(--tertiary)}.ondas i:nth-child(3n){animation-delay:.45s!important}
+@keyframes onda{0%,100%{height:20%}50%{height:100%}}
+.cartas-deco{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:700px}
+.cartas-deco i{width:64px;height:84px;border-radius:12px;background:linear-gradient(135deg,var(--c),var(--tertiary));box-shadow:var(--sombra)}
+.cola{display:flex;flex-direction:column;gap:10px;width:min(820px,92vw)}
+.cola>div{display:flex;align-items:center;gap:14px;background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);padding:10px 16px;font-size:1.4rem;font-weight:600;box-shadow:var(--sombra)}
+.cola>div.act{border:3px solid var(--tertiary);background:var(--tertiary-container)}
+.cola>div.no{opacity:.45;text-decoration:line-through}
+.cola .pos{font-family:var(--mono);color:var(--c);width:30px}
+.cola .nm{flex:1;text-align:left}
+.cola button.ok{background:var(--success);border-color:var(--success);color:#fff}
+.cola button.no{background:var(--error);border-color:var(--error);color:#fff}
+.buzz-espera{font-size:7rem;animation:anZoom 1s ease-in-out infinite alternate}
+.galeria{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;width:100%}
+.galeria figure{margin:0;background:#fff;border-radius:var(--r-lg);padding:8px;box-shadow:var(--sombra);cursor:pointer}
+.galeria img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.galeria figcaption{font-weight:600;padding:6px 4px 0;text-align:left}
+.muro{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;width:100%}
+.nota-m{background:#FEF3C7;border:1px solid #FCD34D;border-radius:6px 6px 18px 6px;padding:16px 18px;width:250px;min-height:130px;font-size:1.2rem;font-weight:600;text-align:left;box-shadow:var(--sombra);transform:rotate(var(--rot));display:flex;flex-direction:column;gap:8px;cursor:pointer;animation:anZoom .4s}
+.nota-m:nth-child(3n){background:var(--tertiary-container);border-color:#F0ABFC}.nota-m:nth-child(3n+1){background:#DDF4FF;border-color:#76DCFF}
+.nota-m small{margin-top:auto;color:var(--on-s-var);font-weight:600}
+.jfrase,#jfrase{line-height:2.1}
+.hueco{display:inline-flex;align-items:center;justify-content:center;min-width:56px;padding:2px 10px;margin:0 3px;border-bottom:3px solid var(--gold);color:var(--outline);font-family:var(--mono);font-size:.85rem}
+button.hueco.lleno{background:var(--c);color:#fff;border:0;border-radius:10px;font-family:var(--sans);font-size:1rem;padding:.3em .7em}
+.jopts.multi button.on{border-color:var(--oc);background:#F7F2F9}
+.chk-m{margin-left:auto;color:var(--c)}
+.raf-af{font-size:1.4rem!important;text-align:center;min-height:90px;display:grid;place-items:center}
+.jmem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:480px}
+.carta{aspect-ratio:3/4;padding:4px;font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--c),var(--tertiary));color:#fff;border:0;border-radius:12px;overflow:hidden;word-break:break-word}
+.carta.vis{background:var(--s-lowest);color:var(--on-s);border:2px solid var(--outline-var)}
+.carta.hecha{background:var(--success-container);border-color:var(--success);color:#065F46}
+.buzz{width:min(78vw,320px);aspect-ratio:1;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#F0ABFC,var(--tertiary) 55%,#701A75);color:#fff;font-size:2.4rem;font-weight:700;box-shadow:0 12px 0 #4A044E,0 18px 30px #0004;margin-top:12px}
+.buzz:active{transform:translateY(8px);box-shadow:0 4px 0 #4A044E}
+.jdib{width:100%;max-width:480px;background:#fff;border-radius:var(--r-lg);border:1px solid var(--outline-var);overflow:hidden}
+.jdib canvas{width:100%;display:block;touch-action:none;aspect-ratio:4/3}
+.jdib-bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:480px}
+.jdib-bar .sw{width:32px;height:32px}.jdib-bar .sw.on{box-shadow:0 0 0 3px var(--c)}
+.jdib-bar button:not(.sw){padding:.4em .7em}
 /* ---------- Transiciones y animaciones ---------- */
 @keyframes anFundido{from{opacity:0}}
 @keyframes anDeslizar{from{opacity:0;transform:translateX(90px)}}
@@ -554,12 +611,24 @@ const TIPOS = {
   error: { nombre: 'Encontrar el error', icono: '🔍' },
   emoji: { nombre: 'Emoji-historia', icono: '😀' },
   linea: { nombre: 'Línea de tiempo', icono: '⏳' },
+  huecos: { nombre: 'Completar con palabras', icono: '🧩' },
+  multiple: { nombre: 'Marca todas las correctas', icono: '☑️' },
+  rafaga: { nombre: 'Ráfaga de V/F', icono: '⚡' },
+  palabra: { nombre: 'Palabra misteriosa', icono: '🔤' },
+  zoom: { nombre: 'Imagen con zoom', icono: '🔎' },
+  audio: { nombre: 'Escucha y responde', icono: '🔊' },
+  memoria: { nombre: 'Memoria', icono: '🃏' },
+  rapido: { nombre: 'El más rápido', icono: '🔔' },
+  dibujo: { nombre: 'Dibuja (sin puntaje)', icono: '🎨', sinPuntaje: true },
+  muro: { nombre: 'Muro de mensajes (sin puntaje)', icono: '🙏', sinPuntaje: true },
   encuesta: { nombre: 'Encuesta (sin puntaje)', icono: '📊', sinPuntaje: true },
   nube: { nombre: 'Nube de palabras', icono: '☁️', sinPuntaje: true },
   escala: { nombre: 'Escala 1 a 5 (sin puntaje)', icono: '🌡️', sinPuntaje: true },
 };
-const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela']; // se responden tocando una opción de color
-const CON_CORRECTAS = ['alternativas', 'emoji', 'revela'];
+const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela', 'zoom', 'audio']; // se responden tocando una opción
+const CON_CORRECTAS = ['alternativas', 'emoji', 'revela', 'zoom', 'audio'];
+const TEXTO_LIBRE = ['completar', 'nube', 'quiensoy', 'palabra', 'muro']; // respuestas escritas: pasan por el filtro de palabras
+const EN_VIVO = ['muro', 'dibujo', 'rapido', 'memoria']; // la pantalla se actualiza con cada respuesta
 const ESCALA = ['#2D1E6B', '#006780', '#059669', '#D97706', '#A21CAF'];
 const NTILES = 24; // cuadros que tapan la imagen que se revela (6 × 4)
 
@@ -591,6 +660,16 @@ function nuevoItem(tipo) {
     case 'emoji': return { ...b, pregunta: '¿Qué historia es?', emojis: '', opciones: ['', '', '', ''], correctas: [0], imagen: '', tiempo: null, mult: 1 };
     case 'linea': return { ...b, pregunta: '¿Dónde va en la línea de tiempo?', elementos: ['', '', '', ''], ubicar: 1, imagen: '', tiempo: null, mult: 1 };
     case 'escala': return { ...b, pregunta: '', etiquetaMin: 'Nada', etiquetaMax: 'Muchísimo', imagen: '', tiempo: null };
+    case 'huecos': return { ...b, pregunta: 'Completa con las palabras correctas', frase: '', palabras: '', distractores: '', imagen: '', tiempo: 40, mult: 1 };
+    case 'multiple': return { ...b, pregunta: '', opciones: ['', '', '', ''], correctas: [0, 1], imagen: '', tiempo: null, mult: 1 };
+    case 'rafaga': return { ...b, pregunta: '¡Ráfaga! ¿Verdadero o falso?', afirmaciones: [{ t: '', v: true }, { t: '', v: false }, { t: '', v: true }], imagen: '', tiempo: 40, mult: 1 };
+    case 'palabra': return { ...b, pregunta: 'Adivina la palabra', palabra: '', pista: '', aceptadas: '', imagen: '', tiempo: 40, mult: 1 };
+    case 'zoom': return { ...b, pregunta: '¿Qué es?', imagen: '', zx: 50, zy: 50, zoom: 6, opciones: ['', '', '', ''], correctas: [0], tiempo: 30, mult: 1 };
+    case 'audio': return { ...b, pregunta: 'Escucha y responde', audio: '', opciones: ['', '', '', ''], correctas: [0], imagen: '', tiempo: 30, mult: 1 };
+    case 'memoria': return { ...b, pregunta: '¡Encuentra las parejas!', pares: [{ a: '', b: '' }, { a: '', b: '' }, { a: '', b: '' }, { a: '', b: '' }], imagen: '', tiempo: 60, mult: 1 };
+    case 'rapido': return { ...b, pregunta: '', respuesta: '', imagen: '', tiempo: 30, mult: 1 };
+    case 'dibujo': return { ...b, pregunta: 'Dibuja tu parte favorita de la historia', imagen: '', tiempo: 90 };
+    case 'muro': return { ...b, pregunta: 'Escribe una petición de oración 🙏', moderar: true, imagen: '', tiempo: 90 };
   }
 }
 function normalizarQuiz(q) {
@@ -939,6 +1018,16 @@ function ejemploQuiz() {
       I('clasificar', { elementos: [{ t: 'Moisés', c: 0 }, { t: 'Pedro', c: 1 }, { t: 'David', c: 0 }, { t: 'Pablo', c: 1 }, { t: 'Ester', c: 0 }, { t: 'Zaqueo', c: 1 }] }),
       I('error', { pregunta: 'Encuentra la palabra que está mal (Juan 3:16)', texto: 'Porque de tal manera amó Dios al *pueblo*, que ha dado a su Hijo unigénito', correctaTxt: 'mundo' }),
       I('linea', { pregunta: 'Ubica el hecho en la línea de tiempo', elementos: ['La creación', 'El diluvio', 'Moisés cruza el mar Rojo', 'El rey David', 'El nacimiento de Jesús'], ubicar: 2 }),
+      { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'imagen', imagen: 'fondos/fondo-14.jpg', oscurecer: 0.25 }, els: [elTexto({ texto: '¡Tercera ronda!', y: 26, h: 26, fs: 110, sombra: true }), elTexto({ texto: 'Memoria, dibujos, el más rápido y mucho más ✨', x: 12, y: 56, w: 76, h: 12, fs: 34, font: 'sans', fill: rellenoDef('color', '#180157B3'), rad: 60 })] },
+      I('huecos', { frase: 'Porque de tal manera amó ___ al ___, que ha dado a su Hijo unigénito', palabras: 'Dios, mundo', distractores: 'Pedro, cielo, pueblo' }),
+      I('multiple', { pregunta: '¿Quiénes fueron discípulos de Jesús?', opciones: ['Pedro', 'Juan', 'Moisés', 'Andrés'], correctas: [0, 1, 3] }),
+      I('rafaga', { afirmaciones: [{ t: 'David venció a Goliat', v: true }, { t: 'Noé construyó una torre', v: false }, { t: 'Jesús nació en Belén', v: true }, { t: 'Jonás fue tragado por un león', v: false }] }),
+      I('palabra', { palabra: 'Galilea', pista: 'El mar donde Jesús caminó sobre el agua' }),
+      I('zoom', { pregunta: '¿Qué escena es?', imagen: IMG_ARCA, zx: 79, zy: 20, zoom: 7, opciones: ['El arca de Noé', 'Jonás y el gran pez', 'La creación', 'Belén'], correctas: [0] }),
+      I('memoria', { pares: [{ a: 'Noé', b: '🌈' }, { a: 'David', b: '🪨' }, { a: 'Jonás', b: '🐋' }, { a: 'Daniel', b: '🦁' }] }),
+      I('rapido', { pregunta: '¿Cuántos libros tiene la Biblia?', respuesta: '66 libros' }),
+      I('dibujo', { pregunta: 'Dibuja tu parte favorita de la historia de Noé 🌈' }),
+      I('muro', { pregunta: 'Escribe una petición de oración 🙏', moderar: true }),
       I('escala', { pregunta: '¿Cuánto te gustó el quiz de hoy?', etiquetaMin: 'Poco', etiquetaMax: '¡Mucho!' }),
       { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'imagen', imagen: 'fondos/fondo-20.jpg', oscurecer: 0.25 }, els: [elTexto({ texto: '¡Gracias por jugar! 🎉', y: 16, h: 24, fs: 96, sombra: true }), elTexto({ texto: 'Dios les bendiga', x: 25, y: 42, w: 50, h: 12, fs: 40, font: 'sans', color: '#180157', b: true, fill: rellenoDef('color', '#FEF3C7'), rad: 60 })] },
     ]
@@ -1108,6 +1197,15 @@ function abrirArchivo(cb) {
   };
   i.click();
 }
+function leerAudio(cb) {
+  const i = document.createElement('input'); i.type = 'file'; i.accept = 'audio/*';
+  i.onchange = () => {
+    const f = i.files[0]; if (!f) return;
+    if (f.size > 3e6 && !confirm(`El audio pesa ${(f.size / 1e6).toFixed(1)} MB y hará más pesado el archivo del quiz. ¿Usarlo igual?`)) return;
+    const r = new FileReader(); r.onload = () => cb(r.result); r.readAsDataURL(f);
+  };
+  i.click();
+}
 function leerImagen(cb, max = 1200) {
   const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
   i.onchange = () => {
@@ -1154,12 +1252,19 @@ function lineaDe(it) { // hechos fijos (en orden) + el hecho que hay que ubicar 
   let u = v.findIndex(x => x.i === +it.ubicar); if (u < 0) u = 0;
   return { hecho: v[u] ? v[u].o : '', fijos: v.filter((_, k) => k !== u).map(x => x.o), pos: u };
 }
+const palabrasHuecos = it => String(it.palabras || '').split(',').map(x => x.trim()).filter(Boolean);
+const nHuecos = it => (String(it.frase || '').match(/_{3,}/g) || []).length;
+const afirmValidas = it => (it.afirmaciones || []).filter(a => String(a.t).trim());
+const paresMem = it => (it.pares || []).filter(x => String(x.a).trim()).map(x => ({ a: String(x.a).trim(), b: String(x.b || '').trim() || String(x.a).trim() }));
+const aceptadasPalabra = it => [norm(it.palabra)].concat(aceptadas(it)).filter(Boolean);
+const letrasPalabra = w => [...String(w || '').toUpperCase()].map((c, i) => /\p{L}|\p{N}/u.test(c) ? i : -1).filter(i => i >= 0);
+const letrasVisibles = (n, ms, T) => n ? Math.max(0, Math.min(n - 1, Math.floor(Math.max(0, ms) / (T * 0.85) * n))) : 0;
 const pistasVisibles = (n, ms, T) => n ? Math.min(n, 1 + Math.floor(Math.max(0, ms) / (T / n))) : 0;
 // Fracción correcta de una respuesta (0 a 1). La mayoría es todo o nada; parejas y clasificar dan puntaje parcial.
 function fraccion(it, v) {
   try {
     switch (it.tipo) {
-      case 'alternativas': case 'emoji': case 'revela': return it.correctas.includes(Number(v)) ? 1 : 0;
+      case 'alternativas': case 'emoji': case 'revela': case 'zoom': case 'audio': return it.correctas.includes(Number(v)) ? 1 : 0;
       case 'vf': return v === it.correcta ? 1 : 0;
       case 'completar': case 'quiensoy': return aceptadas(it).includes(norm(v)) ? 1 : 0;
       case 'pin': { const dx = v.x - it.x, dy = (v.y - it.y) * (it.ar || 1); return Math.hypot(dx, dy) <= it.radio ? 1 : 0; }
@@ -1174,6 +1279,15 @@ function fraccion(it, v) {
       }
       case 'error': return Number(v) === tokensError(it).idx ? 1 : 0;
       case 'linea': return Number(v) === lineaDe(it).pos ? 1 : 0;
+      case 'huecos': { const ok = palabrasHuecos(it); return Array.isArray(v) && ok.length ? ok.filter((w, k) => norm(v[k]) === norm(w)).length / ok.length : 0; }
+      case 'multiple': {
+        const val = opcionesValidas(it.opciones).map(x => x.i), ok = new Set(it.correctas.filter(i => val.includes(i))), sel = new Set((Array.isArray(v) ? v : []).map(Number));
+        let bien = 0, mal = 0; sel.forEach(i => ok.has(i) ? bien++ : mal++);
+        return ok.size ? Math.max(0, bien - mal) / ok.size : 0;
+      }
+      case 'rafaga': { const a = afirmValidas(it); return Array.isArray(v) && a.length ? a.filter((x, k) => v[k] === !!x.v).length / a.length : 0; }
+      case 'palabra': return aceptadasPalabra(it).includes(norm(v)) ? 1 : 0;
+      case 'memoria': { const n = paresMem(it).length; return n && v ? Math.min(1, Math.max(0, +v.hechos || 0) / n) : 0; }
     }
   } catch (e) { }
   return 0;
@@ -1192,6 +1306,12 @@ function problemasQuiz() {
       case 'clasificar': if (!clasifValidos(it).length) m('no tiene elementos'); break;
       case 'linea': if (opcionesValidas(it.elementos).length < 3) m('necesita al menos 3 hechos'); break;
       case 'emoji': if (!String(it.emojis || '').trim()) m('faltan los emojis'); break;
+      case 'huecos': if (!nHuecos(it) || nHuecos(it) !== palabrasHuecos(it).length) m(`la frase tiene ${nHuecos(it)} espacio(s) ___ y hay ${palabrasHuecos(it).length} palabra(s) correcta(s)`); break;
+      case 'rafaga': if (afirmValidas(it).length < 2) m('necesita al menos 2 afirmaciones'); break;
+      case 'palabra': if (!letrasPalabra(it.palabra).length) m('falta la palabra'); break;
+      case 'zoom': if (!it.imagen) m('falta la imagen'); break;
+      case 'audio': if (!it.audio) m('falta el audio'); break;
+      case 'memoria': if (paresMem(it).length < 2) m('necesita al menos 2 parejas'); break;
     }
   });
   return pr;
@@ -1204,6 +1324,13 @@ function textoCorrecta(it) {
     case 'versiculo': return textoVersiculo(it) + (it.referencia ? ' (' + it.referencia + ')' : '');
     case 'clasificar': return catsDe(it).map((c, ci) => c + ': ' + clasifValidos(it).filter(e => e.c === ci).map(e => e.t).join(', ')).join(' · ');
     case 'error': { const t = tokensError(it); return `«${t.palabra}»` + (it.correctaTxt ? ` debía decir «${it.correctaTxt}»` : ''); }
+    case 'huecos': return palabrasHuecos(it).join(' · ');
+    case 'multiple': return it.correctas.map(i => it.opciones[i]).filter(Boolean).join(' + ');
+    case 'rafaga': return afirmValidas(it).map((a, k) => `${k + 1}: ${a.v ? 'V' : 'F'}`).join(' · ');
+    case 'palabra': return it.palabra;
+    case 'zoom': case 'audio': return it.correctas.map(i => it.opciones[i]).join(' / ');
+    case 'memoria': return paresMem(it).map(x => x.a === x.b ? x.a : x.a + ' = ' + x.b).join(' · ');
+    case 'rapido': return it.respuesta || '';
     case 'linea': { const l = lineaDe(it); return l.pos === 0 ? 'Antes de: ' + l.fijos[0] : 'Después de: ' + l.fijos[l.pos - 1]; }
     case 'vf': return it.correcta ? 'Verdadero' : 'Falso';
     case 'completar': return String(it.aceptadas).split(',')[0].trim();
@@ -1317,6 +1444,7 @@ function vistaEditor() {
     } else if (el.dataset.arr) it[el.dataset.arr][+el.dataset.i] = el.value;
     else if (el.dataset.par != null) it.pares[+el.dataset.par][el.dataset.lado] = el.value;
     else if (el.dataset.cl != null) it.elementos[+el.dataset.cl].t = el.value;
+    else if (el.dataset.rf != null) it.afirmaciones[+el.dataset.rf].t = el.value;
     if (it.tipo === 'error') { const a = $('#avisoErr'); if (a) a.hidden = tokensError(it).idx >= 0; }
     guardarLocal(); renderLista();
   };
@@ -1351,6 +1479,12 @@ function vistaEditor() {
     cldel: el => { objActual().elementos.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
     clcat: el => { objActual().elementos[+el.dataset.i].c = +el.dataset.c; guardarLocal(); renderForm(); },
     ubicar: el => { objActual().ubicar = +el.dataset.i; guardarLocal(); renderForm(); },
+    rfadd: () => { objActual().afirmaciones.push({ t: '', v: true }); guardarLocal(); renderForm(); },
+    rfdel: el => { objActual().afirmaciones.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
+    rfv: el => { objActual().afirmaciones[+el.dataset.i].v = el.dataset.v === '1'; guardarLocal(); renderForm(); },
+    zfoco: (el, e) => { const r = el.getBoundingClientRect(), it = objActual(); it.zx = +((e.clientX - r.left) / r.width * 100).toFixed(1); it.zy = +((e.clientY - r.top) / r.height * 100).toFixed(1); guardarLocal(); renderForm(); },
+    audfile: () => leerAudio(d => { objActual().audio = d; guardarLocal(); renderForm(); }),
+    auddel: () => { objActual().audio = ''; guardarLocal(); renderForm(); },
     corr: el => { const it = objActual(), i = +el.dataset.i; it.correctas = it.correctas.includes(i) ? it.correctas.filter(c => c !== i) : [...it.correctas, i]; if (!it.correctas.length) it.correctas = [i]; guardarLocal(); renderForm(); },
     vf: el => { objActual().correcta = el.dataset.v === 'true'; guardarLocal(); renderForm(); },
     ...accionesDiapositiva(),
@@ -1389,7 +1523,7 @@ function imgField(it, titulo = 'Imagen (opcional)') {
   return `<div class="fld"><span>${titulo}</span><div class="imgrow">
     <input data-f="imagen" value="${String(it.imagen).startsWith('data:') ? '' : esc(it.imagen)}" placeholder="${String(it.imagen).startsWith('data:') ? 'Imagen subida (guardada dentro del archivo)' : 'Pega la URL de una imagen…'}">
     <button data-a="imgfile">📁 Subir</button>${it.imagen ? '<button data-a="imgdel">Quitar</button>' : ''}</div>
-    ${it.imagen && it.tipo !== 'pin' ? `<img class="thumb" src="${esc(it.imagen)}">` : ''}</div>`;
+    ${it.imagen && !['pin', 'zoom'].includes(it.tipo) ? `<img class="thumb" src="${esc(it.imagen)}">` : ''}</div>`;
 }
 function listaEditable(it, arr, conColor, conCorrecta, max, ph, conUbicar) {
   const a = it[arr];
@@ -1492,6 +1626,43 @@ function renderFormCampos() {
     case 'linea':
       h += `<div class="fld"><span>Hechos en orden cronológico — marca con ⭐ el que deben ubicar</span>${listaEditable(it, 'elementos', false, false, 8, 'Hecho', true)}</div>
         <p class="hint">Los demás hechos se muestran en orden y los jugadores eligen dónde va el marcado.</p>`; break;
+    case 'huecos':
+      h += fArea('Frase con espacios', 'frase', it.frase, 'Porque de tal manera amó ___ al ___') + '<p class="hint">Escribe ___ (tres guiones bajos) en cada espacio. Los jugadores tocan palabras para completarla, sin escribir.</p>' +
+        fTxt('Palabras correctas, en orden (separadas por coma)', 'palabras', it.palabras, 'Dios, mundo') + fTxt('Palabras de distracción (opcional)', 'distractores', it.distractores, 'Pedro, cielo') +
+        '<p class="hint">Si aciertan solo algunos espacios, ganan puntos en proporción.</p>'; break;
+    case 'multiple': h += `<div class="fld"><span>Opciones — marca con ✔ TODAS las correctas</span>${listaEditable(it, 'opciones', true, true, 6)}</div><p class="hint">Los jugadores marcan varias. Cada correcta suma y cada incorrecta resta.</p>`; break;
+    case 'rafaga':
+      h += `<div class="fld"><span>Afirmaciones (aparecen de a una, rápido)</span>${it.afirmaciones.map((a, k) => `<div class="optrow"><span class="sh" style="background:var(--outline)">${k + 1}</span>
+        <input data-rf="${k}" value="${esc(a.t)}" placeholder="Afirmación ${k + 1}">
+        <button class="clb ${a.v ? 'on' : ''}" style="--cc:#059669" data-a="rfv" data-i="${k}" data-v="1">V</button><button class="clb ${a.v ? '' : 'on'}" style="--cc:#BA1A1A" data-a="rfv" data-i="${k}" data-v="0">F</button>
+        ${it.afirmaciones.length > 2 ? `<button data-a="rfdel" data-i="${k}">✕</button>` : ''}</div>`).join('')}
+        ${it.afirmaciones.length < 10 ? '<button data-a="rfadd">+ Agregar afirmación</button>' : ''}</div>`; break;
+    case 'palabra':
+      h += fTxt('Palabra o nombre a adivinar', 'palabra', it.palabra, 'Galilea') + fTxt('Pista (opcional, se muestra desde el inicio)', 'pista', it.pista, 'El mar donde Jesús caminó sobre el agua') +
+        fTxt('Otras respuestas aceptadas (opcional)', 'aceptadas', it.aceptadas, 'mar de Galilea') +
+        '<p class="hint">Las letras aparecen de a una, como en el ahorcado. Quien adivina con menos letras a la vista gana más puntos.</p>'; break;
+    case 'zoom':
+      h += imgField(it, 'Imagen') + (it.imagen ? `<p class="hint">Toca la imagen para elegir el detalle donde empieza el zoom.</p>
+        <div class="pinprev" data-a="zfoco"><img src="${esc(it.imagen)}"><div class="zmark" style="left:${+it.zx}%;top:${+it.zy}%"></div></div>
+        <label class="fld"><span>Acercamiento inicial: ${+it.zoom}×</span><input type="range" min="2" max="12" data-f="zoom" data-num value="${+it.zoom}"></label>` : '') + opcAlt(); break;
+    case 'audio':
+      h += `<div class="fld"><span>Audio (canción, sonido, lectura)</span><div class="imgrow"><input data-f="audio" value="${String(it.audio).startsWith('data:') ? '' : esc(it.audio)}" placeholder="${String(it.audio).startsWith('data:') ? 'Audio subido (guardado dentro del archivo)' : 'Pega la URL de un audio (mp3)…'}">
+        <button data-a="audfile">${ic('upload')} Subir</button>${it.audio ? '<button data-a="auddel">Quitar</button>' : ''}</div>
+        ${it.audio ? `<audio controls src="${esc(it.audio)}" style="width:100%;margin-top:8px"></audio>` : ''}</div>
+        <p class="hint">Se reproduce en la pantalla grande al empezar la pregunta. Usa audios cortos (menos de 1 MB).</p>` + opcAlt(); break;
+    case 'memoria':
+      h += `<div class="fld"><span>Parejas (cada una se convierte en 2 cartas)</span>${it.pares.map((x, k) => `<div class="optrow parrow">
+        <input data-par="${k}" data-lado="a" value="${esc(x.a)}" placeholder="${['Noé', 'David', 'Jonás', 'Daniel', '🐑', '⭐'][k] || 'Carta A'}"><span>=</span>
+        <input data-par="${k}" data-lado="b" value="${esc(x.b)}" placeholder="${['🌈', '🪨', '🐋', '🦁', '(igual)', '(igual)'][k] || 'Carta B'}">
+        ${it.pares.length > 2 ? `<button data-a="pardel" data-i="${k}">✕</button>` : ''}</div>`).join('')}
+        ${it.pares.length < 8 ? '<button data-a="paradd">+ Agregar pareja</button>' : ''}</div><p class="hint">Si dejas la carta B vacía, las dos cartas son iguales (ideal para emojis). Cada uno juega en su teléfono; si se acaba el tiempo, cuentan las parejas encontradas.</p>`; break;
+    case 'rapido':
+      h += fTxt('Respuesta correcta (se muestra al final)', 'respuesta', it.respuesta, '66 libros') +
+        '<p class="hint">Los teléfonos muestran un botón gigante. El primero en tocarlo responde en voz alta y tú marcas ✔ o ✘ en la pantalla. Si falla, le toca al siguiente.</p>'; break;
+    case 'dibujo': h += '<p class="hint">Cada uno dibuja en su teléfono. Al final se muestran todos los dibujos en una galería (puedes tocar uno para ocultarlo). No da puntos.</p>'; break;
+    case 'muro':
+      h += fChk('Revisar cada mensaje antes de mostrarlo en la pantalla', 'moderar', it.moderar) +
+        '<p class="hint">Peticiones de oración, agradecimientos o lo que aprendieron. Los mensajes pasan por el filtro de palabras. No da puntos.</p>'; break;
     case 'escala':
       h += `<div class="fila"><label class="fld sm ancho"><span>Qué significa 1</span><input data-f="etiquetaMin" value="${esc(it.etiquetaMin)}" placeholder="Nada"></label>
         <label class="fld sm ancho"><span>Qué significa 5</span><input data-f="etiquetaMax" value="${esc(it.etiquetaMax)}" placeholder="Muchísimo"></label></div>
@@ -1511,7 +1682,7 @@ function renderFormCampos() {
         <label class="fld"><span>Tolerancia (tamaño del círculo)</span><input type="range" min="2" max="30" data-f="radio" data-num value="${it.radio}"></label>` : ''); break;
     case 'nube': h += '<p class="hint">Los participantes escriben una palabra o frase corta. Se muestran todas en una nube: las más repetidas, más grandes.</p>'; break;
   }
-  if (it.tipo !== 'pin' && it.tipo !== 'revela') h += imgField(it);
+  if (!['pin', 'revela', 'zoom'].includes(it.tipo)) h += imgField(it);
   h += `<div class="fila">${fNum('Tiempo (seg)', 'tiempo', it.tiempo, 'Por defecto: ' + quiz.config.tiempo)}
     ${T.sinPuntaje ? '' : `<label class="fld sm"><span>Puntaje</span><select data-f="mult" data-num>${[[1, 'Normal'], [2, 'Doble'], [0, 'Sin puntos (práctica)']].map(([v, t]) => `<option value="${v}" ${+it.mult === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>`}</div>`;
   form.innerHTML = h;
@@ -1528,7 +1699,7 @@ function actualizarPinMark() {
 
 /* =================== PRESENTAR (pantalla principal) =================== */
 let H = null;
-function detenerHost() { SND.musicaParar(0.2); if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
+function detenerHost() { SND.musicaParar(0.2); if (H && H.audio) H.audio.pause(); if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
 function latidoHost() {
   if (!H) return;
   const ahora = Date.now(); let cambio = false;
@@ -1565,6 +1736,9 @@ function vistaPresentar() {
     fs: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(),
     kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm('¿Sacar a ' + p.name + ' de la sala?')) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
     csv: descargarResultados,
+    rOk: el => marcarRapido(el.dataset.pid, true), rNo: el => marcarRapido(el.dataset.pid, false),
+    muroOk: el => { H.muroOk.add(el.dataset.pid); renderHost(); },
+    audPlay: () => { if (!H.audio) return; if (H.audio.paused) { H.audio.currentTime = H.audio.ended ? 0 : H.audio.currentTime; H.audio.play().catch(() => { }); } else H.audio.pause(); setTimeout(renderHost, 50); },
     aprobar: el => { const p = H.players[el.dataset.pid]; if (p) { p.pendiente = false; enviarEstado(p); renderHost(); } },
     rechazar: el => { const p = H.players[el.dataset.pid]; if (p) { enviar(p, { t: 'rechazo', msg: 'El presentador no aprobó ese nombre. Elige otro.' }); delete H.players[p.pid]; renderHost(); } },
     ocultar: el => { H.ocultas.add(el.dataset.k); renderHost(); },
@@ -1661,13 +1835,36 @@ function alRecibirHost(conn, d) {
   } else if (d.t === 'ans') {
     const pid = conn.pid, p = H.players[pid];
     if (!p || p.pendiente || H.pausa || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
-    let val = d.val; const f = filtroQuiz();
-    if (f && typeof val === 'string' && tieneGroseria(val, f)) val = ''; // se cuenta como respuesta vacía y no se muestra
+    let val = d.val; const f = filtroQuiz(), tipo = quiz.items[H.idx].tipo;
+    if (f && TEXTO_LIBRE.includes(tipo) && typeof val === 'string' && tieneGroseria(val, f)) val = ''; // se cuenta como respuesta vacía y no se muestra
+    if (tipo === 'dibujo' && !(typeof val === 'string' && /^data:image\/(jpeg|png);base64,/.test(val) && val.length < 400000)) val = '';
     H.resp[pid] = { val, ms: Date.now() - H.t0 };
     enviar(p, { t: 'recibido' });
+    if (tipo === 'rapido') buzz(p);
     actualizarContador();
-    if (conectados().every(x => H.resp[x.pid])) revelar();
+    if (EN_VIVO.includes(tipo)) renderHost();
+    if (tipo !== 'rapido' && conectados().every(x => H.resp[x.pid])) revelar();
+  } else if (d.t === 'prog') { // progreso parcial (memoria, ráfaga): cuenta si se acaba el tiempo
+    const p = H.players[conn.pid];
+    if (!p || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[conn.pid]) return;
+    H.prog[conn.pid] = d.val;
+    if (EN_VIVO.includes(quiz.items[H.idx].tipo)) renderHost();
   }
+}
+/* ----- El más rápido: fila de quienes tocaron el botón ----- */
+const turnoActual = () => H.cola.find(pid => !H.rNo.has(pid));
+function buzz(p) {
+  H.cola.push(p.pid);
+  if (turnoActual() === p.pid) { enviar(p, { t: 'msg', icono: '🎤', msg: '¡Te toca! Responde en voz alta', bg: '#A21CAF' }); SND.efecto('unir'); }
+  else enviar(p, { t: 'msg', icono: '✋', msg: `Estás en la fila: lugar ${H.cola.filter(x => !H.rNo.has(x)).indexOf(p.pid) + 1}` });
+}
+function marcarRapido(pid, ok) {
+  if (!H || H.fase !== 'pregunta' || turnoActual() !== pid) return;
+  const p = H.players[pid];
+  if (ok) { H.ganador = pid; return revelar(); }
+  H.rNo.add(pid); if (p) enviar(p, { t: 'msg', icono: '😮', msg: 'No era esa… ¡Atento a la próxima!', bg: '#BA1A1A' });
+  const sig = turnoActual(); if (sig && H.players[sig]) enviar(H.players[sig], { t: 'msg', icono: '🎤', msg: '¡Te toca! Responde en voz alta', bg: '#A21CAF' });
+  renderHost();
 }
 function enviarEstado(p) {
   if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: 'Esperando que el presentador apruebe tu nombre…' });
@@ -1687,6 +1884,11 @@ function payload(it, idx) {
   if (it.tipo === 'error') b.tokens = tokensError(it).tokens;
   if (it.tipo === 'linea') { const l = lineaDe(it); b.hecho = l.hecho; b.fijos = l.fijos; }
   if (it.tipo === 'escala') { b.min = it.etiquetaMin; b.max = it.etiquetaMax; }
+  if (it.tipo === 'huecos') { b.frase = it.frase; b.banco = H.shuf; }
+  if (it.tipo === 'multiple') b.opciones = opcionesValidas(it.opciones);
+  if (it.tipo === 'rafaga') b.afirm = afirmValidas(it).map(a => a.t);
+  if (it.tipo === 'palabra') { b.palabra = String(it.palabra).toUpperCase(); b.orden = H.shuf; b.pista = it.pista; }
+  if (it.tipo === 'memoria') b.cartas = H.shuf;
   if (it.tipo === 'completar') b.frase = it.frase;
   if (it.tipo === 'pin') b.imagen = it.imagen;
   if (it.tipo === 'ordenar') b.elementos = H.shuf;
@@ -1712,11 +1914,14 @@ function irA(i) {
   clearInterval(H.timer);
   if (i >= quiz.items.length) return fin();
   H.idx = i; const it = quiz.items[i]; H.pausa = false; H.extra = 0; H.ultLeft = null;
+  if (H.audio) { H.audio.pause(); H.audio = null; }
   if (!esPregunta(it)) { H.fase = 'slide'; SND.musicaParar(); SND.efecto('transicion'); difundir({ t: 'msg', icono: '👀', msg: 'Mira la pantalla' }); renderHost(); return; }
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
-  SND.musicaIniciar('pregunta');
+  if (!['audio', 'dibujo', 'muro'].includes(it.tipo)) SND.musicaIniciar('pregunta'); else SND.musicaParar();
   H.shuf = barajar(it);
   H.tiles = it.tipo === 'revela' ? shuffle([...Array(NTILES).keys()]) : null; // orden en que se destapa cada cuadro
+  H.prog = {}; H.cola = []; H.rNo = new Set(); H.ganador = null; H.muroOk = new Set();
+  if (it.tipo === 'audio' && it.audio) { SND.musicaParar(0.1); H.audio = new Audio(it.audio); setTimeout(() => H && H.audio && H.audio.play().catch(() => { }), 400); }
   H.payload = payload(it, i);
   difundir(H.payload);
   renderHost();
@@ -1736,6 +1941,9 @@ function barajar(it) { // mezcla evitando, si se puede, que quede igual al orden
     case 'parejas': return mezcla(paresValidos(it).map((_, k) => k));
     case 'versiculo': return mezcla(palabrasVersiculo(it));
     case 'clasificar': return shuffle(clasifValidos(it));
+    case 'huecos': return mezcla(palabrasHuecos(it).concat(String(it.distractores || '').split(',').map(x => x.trim()).filter(Boolean)));
+    case 'palabra': return shuffle(letrasPalabra(it.palabra));
+    case 'memoria': return shuffle(paresMem(it).flatMap((x, k) => [{ k, t: x.a }, { k, t: x.b }]));
   }
   return null;
 }
@@ -1743,6 +1951,8 @@ function tickHost() { // animaciones que dependen del tiempo: imagen que se reve
   if (!H || H.fase !== 'pregunta') return;
   const it = quiz.items[H.idx], ms = transcurrido(), T = tiempoH() * 1000;
   if (it.tipo === 'revela') { const n = Math.floor(ms / T * NTILES); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
+  if (it.tipo === 'palabra') { const k = letrasVisibles(H.shuf.length, ms, T); document.querySelectorAll('.mascara span[data-o]').forEach(sp => { const on = +sp.dataset.o < k; sp.classList.toggle('on', on); sp.textContent = on ? sp.dataset.l : ''; }); }
+  if (it.tipo === 'zoom') { const z = +it.zoom || 6, img = $('#zimg'); if (img) img.style.transform = `scale(${Math.max(1, z - (z - 1) * Math.min(1, ms / (T * 0.9)))})`; }
   if (it.tipo === 'quiensoy') { const k = pistasVisibles(pistasValidas(it).length, ms, T); document.querySelectorAll('.pistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
 }
 function ranking() { return Object.values(H.players).filter(p => !p.pendiente).sort((a, b) => b.score - a.score); }
@@ -1767,22 +1977,25 @@ function revelar() {
   if (H.fase !== 'pregunta') return;
   if (H.pausa) { H.t0 += Date.now() - H.pausaIni; H.pausa = false; }
   SND.musicaParar(); SND.efecto('revelar');
+  Object.entries(H.prog || {}).forEach(([pid, v]) => { if (!H.resp[pid]) H.resp[pid] = { val: v, ms: tiempoH() * 1000, parcial: true }; });
   const it = quiz.items[H.idx], sinP = TIPOS[it.tipo].sinPuntaje;
   const T = tiempoH() * 1000, base = (+quiz.config.puntos || 0) * (it.mult ?? 1);
   H.fase = 'revelar'; H.ult = {};
   for (const p of Object.values(H.players)) {
     const r = H.resp[p.pid]; let ok = null, pts = 0, fr = 0;
     if (!sinP) {
-      fr = r ? fraccion(it, r.val) : 0; ok = fr >= 1;
+      fr = it.tipo === 'rapido' ? (p.pid === H.ganador ? 1 : 0) : r ? fraccion(it, r.val) : 0; ok = fr >= 1;
       if (ok) p.aciertos++;
       if (fr > 0) {
         let f = 1;
         if (it.tipo === 'quiensoy') { const n = pistasValidas(it).length || 1; f = (n - pistasVisibles(n, r.ms, T) + 1) / n; } // menos pistas, más puntos
-        else if (quiz.config.bonusVelocidad || it.tipo === 'revela') f = 1 - 0.5 * Math.min(r.ms, T) / T;
+        else if (it.tipo === 'palabra') { const n = letrasPalabra(it.palabra).length || 1; f = Math.max(0.2, 1 - letrasVisibles(n, r.ms, T) / n); } // menos letras, más puntos
+        else if (it.tipo === 'rapido') f = 1;
+        else if (quiz.config.bonusVelocidad || it.tipo === 'revela' || it.tipo === 'zoom') f = 1 - 0.5 * Math.min(r.ms, T) / T;
         pts = Math.round(base * fr * f);
       }
     }
-    p.score += pts; H.ult[p.pid] = { ok, pts, fr, resp: !!r };
+    p.score += pts; H.ult[p.pid] = { ok, pts, fr, resp: !!r || (it.tipo === 'rapido' && H.cola.includes(p.pid)) };
   }
   const rk = ranking();
   rk.forEach((p, k) => enviar(p, { t: 'res', ...H.ult[p.pid], score: p.score, ...posicion(p, k, rk.length), correcta: quiz.config.mostrarCorrectaTelefono && !sinP ? textoCorrecta(it) : null }));
@@ -1790,6 +2003,7 @@ function revelar() {
 }
 function fin() {
   H.fase = 'fin'; clearInterval(H.timer); SND.musicaParar(); SND.efecto('fanfarria');
+  if (H.audio) { H.audio.pause(); H.audio = null; }
   const rk = ranking();
   rk.forEach((p, k) => enviar(p, { t: 'fin', ...posicion(p, k, rk.length), score: p.score }));
   renderHost();
@@ -1901,12 +2115,14 @@ function hostPregunta(rev) {
   let h = `<section class="card hq-card"><div class="hq-meta"><span class="badge mag">${TIPOS[it.tipo].icono} ${TIPOS[it.tipo].nombre}</span>
     ${rev ? `<span class="badge cyan">${ic('check_circle', 'fill')} ${nTot} respuestas</span>` : `<span class="timer">${ic('timer')}<span id="tLeft">${left}</span>s</span>`}</div>
     ${it.pregunta ? `<h1 class="hq-q">${esc(it.pregunta)}</h1>` : ''}</section>`;
-  if (it.imagen && it.tipo !== 'pin' && it.tipo !== 'revela' && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
+  if (it.imagen && !['pin', 'revela', 'zoom'].includes(it.tipo) && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
   const resumen = txt => `<p class="resumen">${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} ${txt}</p>`;
   if (it.tipo === 'emoji') h += `<div class="emojis">${esc(it.emojis)}</div>`;
+  if (it.tipo === 'zoom') h += `<div class="zoomwrap"><img id="zimg" src="${esc(it.imagen)}" style="transform-origin:${+it.zx}% ${+it.zy}%;transform:scale(${rev ? 1 : +it.zoom || 6})"></div>`;
+  if (it.tipo === 'audio') h += `<div class="audiobox ${H.audio && !H.audio.paused ? 'sonando' : ''}"><button class="pri big" data-a="audPlay">${ic(H.audio && !H.audio.paused ? 'pause' : 'play_arrow', 'fill')} ${H.audio && !H.audio.paused ? 'Pausar audio' : 'Reproducir audio'}</button><div class="ondas">${'<i></i>'.repeat(12)}</div></div>`;
   if (it.tipo === 'revela') h += `<div class="revela"><img src="${esc(it.imagen)}">${rev ? '' : `<div class="tiles">${H.tiles.map((_, k) => `<i data-k="${k}"></i>`).join('')}</div>`}</div>`;
   switch (it.tipo) {
-    case 'alternativas': case 'encuesta': case 'emoji': case 'revela': {
+    case 'alternativas': case 'encuesta': case 'emoji': case 'revela': case 'zoom': case 'audio': {
       const c = conteo(v => v), max = Math.max(1, ...Object.values(c)), conOk = CON_CORRECTAS.includes(it.tipo);
       h += `<div class="opts">${opcionesValidas(it.opciones).map(({ o, i }) => {
         const dim = rev && conOk && !it.correctas.includes(i);
@@ -1976,6 +2192,67 @@ function hostPregunta(rev) {
         const full = l.fijos.map(t => ({ t })); full.splice(l.pos, 0, { t: l.hecho, h: 1 });
         h += `<div class="tl">${full.map(x => `<div class="${x.h ? 'h' : ''}">${esc(x.t)}</div>`).join('<i>→</i>')}</div>` + resumen('lo ubicaron bien');
       }
+      break;
+    }
+    case 'huecos': {
+      const ok = palabrasHuecos(it); let k = 0;
+      h += `<div class="frase">${esc(it.frase).replace(/_{3,}/g, () => `<span class="blank">${rev ? esc(ok[k++] || '') : `<small>${++k}</small>`}</span>`)}</div>`;
+      h += rev ? resumen('completaron todo bien') : `<div class="chips">${H.shuf.map(w => `<span>${esc(w)}</span>`).join('')}</div>`;
+      break;
+    }
+    case 'multiple': {
+      const c = {}; Object.values(H.resp).forEach(r => (Array.isArray(r.val) ? r.val : []).forEach(i => c[i] = (c[i] || 0) + 1));
+      const max = Math.max(1, ...Object.values(c));
+      h += `<div class="opts">${opcionesValidas(it.opciones).map(({ o, i }) => { const okI = it.correctas.includes(i);
+        return `<div class="opt ${rev && !okI ? 'dim' : ''} ${rev && okI ? 'ok' : ''}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}
+          ${rev ? `<span class="cnt">${okI ? '✔ ' : ''}${c[i] || 0}</span><span class="barra" style="width:${(c[i] || 0) / max * 100}%"></span>` : ''}</div>`; }).join('')}</div>`;
+      if (rev) h += resumen('marcaron todas bien'); else h += '<p class="resumen">☑️ Puede haber más de una correcta</p>';
+      break;
+    }
+    case 'rafaga': {
+      const a = afirmValidas(it), n = Object.keys(H.resp).length;
+      h += `<div class="lista-ord rafaga">${a.map((x, k) => { const bien = Object.values(H.resp).filter(r => Array.isArray(r.val) && r.val[k] === !!x.v).length;
+        return `<div><b>${k + 1}</b>${esc(x.t)}${rev ? `<span class="vfb ${x.v ? 'v' : 'f'}">${x.v ? 'V' : 'F'}</span><small>${n ? Math.round(bien / n * 100) : 0}% bien</small>` : ''}</div>`; }).join('')}</div>`;
+      if (rev) h += resumen('acertaron todas');
+      break;
+    }
+    case 'palabra': {
+      const w = [...String(it.palabra).toUpperCase()], rank = {}; H.shuf.forEach((ix, k) => rank[ix] = k);
+      h += `<div class="mascara">${w.map((c, i) => c === ' ' ? '<i></i>' : rank[i] == null ? `<span class="on fija">${esc(c)}</span>` : `<span data-o="${rank[i]}" data-l="${esc(c)}" class="${rev ? 'on' : ''}">${rev ? esc(c) : ''}</span>`).join('')}</div>`;
+      if (it.pista) h += `<p class="resumen">💡 ${esc(it.pista)}</p>`;
+      if (rev) h += topRespuestas(v => aceptadasPalabra(it).includes(norm(v)));
+      break;
+    }
+    case 'memoria': {
+      const pm = paresMem(it), n = pm.length;
+      if (!rev) {
+        const prog = Object.values(H.players).filter(p => !p.pendiente).map(p => ({ p, h: H.resp[p.pid] ? n : +(H.prog[p.pid] || {}).hechos || 0 })).sort((a, b) => b.h - a.h).slice(0, 8);
+        h += `<div class="cartas-deco">${'<i></i>'.repeat(Math.min(16, n * 2))}</div><p class="resumen">🃏 ¡Encuentren las parejas en su teléfono!</p>
+          ${prog.length ? `<div class="tops">${prog.map(x => `<div><span>${esc(x.p.avatar)} ${esc(x.p.name)}</span><b>${x.h === n ? '✔ ' : ''}${x.h} / ${n}</b></div>`).join('')}</div>` : ''}`;
+      } else h += `<div class="parejas sol">${pm.map(x => `<div class="pz">${esc(x.a)}</div><div class="flecha">=</div><div class="pz der">${esc(x.b)}</div>`).join('')}</div>` + resumen('completaron el tablero');
+      break;
+    }
+    case 'rapido': {
+      const t = H.cola.length ? turnoActual() : null;
+      if (!rev) h += H.cola.length ? `<div class="cola">${H.cola.map((pid, k) => { const p = H.players[pid]; if (!p) return '';
+          const no = H.rNo.has(pid), act = pid === t;
+          return `<div class="${no ? 'no' : act ? 'act' : ''}"><span class="pos">${k + 1}</span><span class="nm">${esc(p.avatar)} ${esc(p.name)}</span>${act ? `<button class="ok" data-a="rOk" data-pid="${esc(pid)}">${ic('check')} Correcto</button><button class="no" data-a="rNo" data-pid="${esc(pid)}">${ic('close')} Incorrecto</button>` : no ? '<span>✘</span>' : ''}</div>`; }).join('')}</div>`
+        : '<div class="buzz-espera">🔔</div><p class="resumen">¡Toca el botón en tu teléfono si sabes la respuesta!</p>';
+      else { const g = H.ganador && H.players[H.ganador]; h += `<div class="frase">${g ? `🏅 ${esc(g.avatar)} ${esc(g.name)} respondió bien` : 'Nadie acertó esta vez'}</div>${it.respuesta ? `<p class="resumen">Respuesta: <b>${esc(it.respuesta)}</b></p>` : ''}`; }
+      break;
+    }
+    case 'dibujo': {
+      const dib = Object.entries(H.resp).filter(([pid, r]) => r.val && !H.ocultas.has('d:' + pid));
+      if (!rev) h += `<p class="resumen">🎨 Dibujando… ${Object.keys(H.resp).length} de ${conectados().length} listos</p>`;
+      h += dib.length ? `<div class="galeria">${dib.slice(0, 30).map(([pid, r]) => `<figure data-a="ocultar" data-k="d:${esc(pid)}" title="Clic para ocultar"><img src="${esc(r.val)}" alt=""><figcaption>${esc(H.players[pid]?.avatar || '')} ${esc(H.players[pid]?.name || '')}</figcaption></figure>`).join('')}</div>` : rev ? '<p>No llegaron dibujos 😅</p>' : '';
+      break;
+    }
+    case 'muro': {
+      const msgs = Object.entries(H.resp).filter(([pid, r]) => String(r.val || '').trim() && !H.ocultas.has('m:' + pid));
+      const vis = msgs.filter(([pid]) => !it.moderar || H.muroOk.has(pid)), pend = it.moderar ? msgs.filter(([pid]) => !H.muroOk.has(pid)) : [];
+      h += vis.length ? `<div class="muro">${vis.map(([pid, r], k) => `<div class="nota-m" data-a="ocultar" data-k="m:${esc(pid)}" title="Clic para ocultar" style="--rot:${(k % 5 - 2) * 1.2}deg">${esc(r.val)}<small>${esc(H.players[pid]?.name || '')}</small></div>`).join('')}</div>` : '<p class="resumen">✍️ Escriban su mensaje en el teléfono</p>';
+      if (pend.length) h += `<div class="pend-bar"><b>${ic('rate_review')} Por revisar (${pend.length}):</b>${pend.map(([pid, r]) => `<span class="chip pend">${esc(String(r.val).slice(0, 60))}
+        <button class="ok" data-a="muroOk" data-pid="${esc(pid)}">${ic('check')}</button><button class="no" data-a="ocultar" data-k="m:${esc(pid)}">${ic('close')}</button></span>`).join('')}</div>`;
       break;
     }
     case 'escala': {
@@ -2079,11 +2356,14 @@ function vistaJugador(code, error) {
     jv: el => responder(el.dataset.v),
     jenviar: () => {
       const q = P.q; if (!q) return;
-      if (['completar', 'nube', 'quiensoy'].includes(q.tipo)) {
+      if (TEXTO_LIBRE.includes(q.tipo)) {
         const v = $('#jtxt').value.trim(); if (!v) return;
         if (P.filtro && tieneGroseria(v, P.filtro)) { const a = $('#javiso'); if (a) { a.textContent = 'Esa palabra no está permitida, intenta otra 🙂'; a.hidden = false; } $('#jtxt').select(); return; }
-        responder(v.slice(0, 40));
+        responder(v.slice(0, q.tipo === 'muro' ? 140 : 40));
       }
+      else if (q.tipo === 'huecos') { if (P.huecos.some(x => x != null)) responder(P.huecos.map(i => i == null ? '' : q.banco[i])); }
+      else if (q.tipo === 'multiple') { if (P.multi.size) responder([...P.multi]); }
+      else if (q.tipo === 'dibujo') responder(exportarDibujo());
       else if (q.tipo === 'parejas') responder(q.izq.map((_, k) => { const s = $(`[data-jp="${k}"]`).value; return s === '' ? -1 : Number(s); }));
       else if (q.tipo === 'versiculo') { if (P.armado.length) responder(P.armado.map(i => q.palabras[i])); }
       else if (q.tipo === 'clasificar') responder(Object.entries(P.clas).map(([i, c]) => [+i, +c]));
@@ -2100,6 +2380,15 @@ function vistaJugador(code, error) {
     jcl: el => { P.clas[el.dataset.i] = +el.dataset.c; el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); },
     jerr: el => { P.sel = +el.dataset.k; app.querySelectorAll('.jerr button').forEach(b => b.classList.toggle('on', b === el)); $('#jsend').disabled = false; },
     jslot: el => { P.sel = +el.dataset.k; app.querySelectorAll('.jlinea .slot').forEach(b => b.classList.toggle('on', b === el)); $('#jsend').disabled = false; },
+    jhb: el => { const i = +el.dataset.i, k = P.huecos.indexOf(null); if (k >= 0) { P.huecos[k] = i; renderHuecos(); } },
+    jhq: el => { P.huecos[+el.dataset.k] = null; renderHuecos(); },
+    jtog: el => { const i = +el.dataset.v; P.multi.has(i) ? P.multi.delete(i) : P.multi.add(i); el.classList.toggle('on', P.multi.has(i)); el.querySelector('.chk-m').textContent = P.multi.has(i) ? 'check_box' : 'check_box_outline_blank'; },
+    jrf: el => { if (!P.q) return; P.raf.push(el.dataset.v === '1'); navigator.vibrate?.(20); try { P.conn.send({ t: 'prog', idx: P.q.idx, val: P.raf.slice() }); } catch (_) { } if (P.raf.length >= P.q.afirm.length) responder(P.raf.slice()); else renderRafaga(); },
+    jmc: el => voltearCarta(+el.dataset.i),
+    jcol: el => { P.dib.color = el.dataset.v; app.querySelectorAll('[data-a=jcol]').forEach(b => b.classList.toggle('on', b === el)); },
+    jgros: el => { P.dib.grosor = +el.dataset.v; },
+    jdeshacer: () => { P.dib.trazos.pop(); redibujar(); },
+    jborrar: () => { P.dib.trazos = []; redibujar(); },
     jeq: el => { P.eq = +el.dataset.i; P.conn.send({ t: 'team', eq: P.eq }); renderEquipos(); },
   };
   app.innerHTML = `<div class="jug"><header class="top"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>Quiz Iglesia</b><small>Sala ${esc(code)}</small></div></div></header>
@@ -2174,7 +2463,7 @@ function alRecibirJ(d) {
     case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
     case 'rechazo': P.kicked = true; try { P.peer.destroy(); } catch (e) { } vistaJugador(P.code, d.msg); break;
     case 'equipos': P.equipos = d.equipos; P.eq = d.eq; renderEquipos(); break;
-    case 'msg': pantallaJ(d.icono || '👀', esc(d.msg)); break;
+    case 'msg': pantallaJ(d.icono || '👀', esc(d.msg), d.bg); break;
     case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
     case 'recibido': pantallaJ('⏳', '¡Respuesta enviada!<br><small>Espera a los demás…</small>'); break;
     case 'pausa':
@@ -2211,9 +2500,10 @@ function renderJPregunta(soloLista) {
   const T = TIPOS[q.tipo] || {};
   let h = `<div class="jq"><span class="badge mag">${T.icono || ''} ${T.nombre || ''}</span>${q.pregunta ? `<p>${esc(q.pregunta)}</p>` : ''}</div>`;
   switch (q.tipo) {
-    case 'alternativas': case 'encuesta': case 'emoji': case 'revela':
+    case 'alternativas': case 'encuesta': case 'emoji': case 'revela': case 'zoom': case 'audio':
       if (q.emojis) h += `<div class="jemojis">${esc(q.emojis)}</div>`;
-      if (q.tipo === 'revela') h += '<p>👀 Mira la imagen en la pantalla</p>';
+      if (q.tipo === 'revela' || q.tipo === 'zoom') h += '<p>👀 Mira la imagen en la pantalla</p>';
+      if (q.tipo === 'audio') h += '<p>🔊 Escucha el audio de la pantalla</p>';
       h += `<div class="jopts">${q.opciones.map(({ o, i }) => `<button data-a="jv" data-v="${i}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}</button>`).join('')}</div>`; break;
     case 'vf':
       h += `<div class="jopts"><button data-a="jv" data-v="true" style="--oc:#059669"><span class="f">V</span>Verdadero</button><button data-a="jv" data-v="false" style="--oc:#BA1A1A"><span class="f">F</span>Falso</button></div>`; break;
@@ -2247,6 +2537,24 @@ function renderJPregunta(soloLista) {
       h += `<div class="jq sub">❓ ${esc(q.hecho)}</div><div class="jlinea">${q.fijos.map((f, k) => `<button class="slot" data-a="jslot" data-k="${k}">⬇ Aquí</button><div class="fijo">${esc(f)}</div>`).join('')}
         <button class="slot" data-a="jslot" data-k="${q.fijos.length}">⬇ Aquí</button></div>
         <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Confirmar</button>`; break;
+    case 'huecos':
+      h += `<div class="jq sub" id="jfrase"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+    case 'multiple':
+      h += `<p>Marca todas las correctas</p><div class="jopts multi">${q.opciones.map(({ o, i }) => `<button data-a="jtog" data-v="${i}" style="--oc:${COLORES[i % 6]}"><span class="f">${LETRAS[i % 6]}</span>${esc(o)}<span class="ms chk-m">check_box_outline_blank</span></button>`).join('')}</div>
+        <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+    case 'rafaga': h += '<div id="jraf" class="jraf"></div>'; break;
+    case 'palabra':
+      h += `<div class="mascara chica" id="jmasc"></div>${q.pista ? `<p>💡 ${esc(q.pista)}</p>` : ''}
+        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Qué palabra es?" style="max-width:420px;font-size:1.3rem"><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+    case 'memoria': h += `<p id="jmemc">Parejas: 0 / ${q.cartas.length / 2}</p><div class="jmem" id="jmem"></div>`; break;
+    case 'rapido': h += `<button class="buzz" data-a="jv" data-v="buzz">🔔<br>¡Yo sé!</button>`; break;
+    case 'dibujo':
+      h += `<div class="jdib"><canvas id="jcanvas" width="480" height="360"></canvas></div>
+        <div class="jdib-bar">${['#1C1B20', '#BA1A1A', '#F59E0B', '#059669', '#006780', '#7C3AED', '#A21CAF', '#8B5A2B', '#FFFFFF'].map(c => `<button class="sw ${c === '#1C1B20' ? 'on' : ''}" style="background:${c}" data-a="jcol" data-v="${c}"></button>`).join('')}
+          <button data-a="jgros" data-v="4">·</button><button data-a="jgros" data-v="10">●</button><button data-a="jgros" data-v="22">⬤</button><button data-a="jdeshacer">${ic('undo')}</button><button data-a="jborrar">${ic('delete')}</button></div>
+        <button class="pri big jbtn" data-a="jenviar">Enviar dibujo</button>`; break;
+    case 'muro':
+      h += `<textarea id="jtxt" maxlength="140" rows="4" placeholder="Escribe tu mensaje…" style="max-width:480px;font-size:1.15rem"></textarea><p class="aviso" id="javiso" hidden></p><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
     case 'escala':
       h += `<div class="jescala">${[1, 2, 3, 4, 5].map(v => `<button data-a="jv" data-v="${v}" style="background:${ESCALA[v - 1]}">${v}</button>`).join('')}</div>
         <div class="jescala-et"><span>1 = ${esc(q.min)}</span><span>5 = ${esc(q.max)}</span></div>`; break;
@@ -2254,17 +2562,74 @@ function renderJPregunta(soloLista) {
   marcoJ(h, null, true); overlayPausa();
   const r = $('#jrange'); if (r) r.oninput = () => $('#jval').textContent = r.value;
   if (q.tipo === 'versiculo') renderArmado();
+  if (q.tipo === 'huecos') { P.huecos = Array((String(q.frase).match(/_{3,}/g) || []).length).fill(null); renderHuecos(); }
+  if (q.tipo === 'multiple') P.multi = new Set();
+  if (q.tipo === 'rafaga') { P.raf = []; renderRafaga(); }
+  if (q.tipo === 'memoria') { P.mem = { abiertas: [], hechas: new Set(), bloqueo: false }; renderMemoria(); }
+  if (q.tipo === 'dibujo') iniciarDibujo();
   const t = $('#jtxt'); if (t) { t.focus(); t.onkeydown = e => { if (e.key === 'Enter') ACC.jenviar(); }; }
   clearInterval(P.tInt);
   const tick = () => {
     if (P.pausa) return;
     const s = Math.max(0, Math.ceil((P.limite - Date.now()) / 1000)); const el = $('#jt'); if (el) el.textContent = s + 's';
     const bar = $('#jbar'); if (bar) bar.style.width = Math.max(0, (P.limite - Date.now()) / (q.tiempo * 1000) * 100) + '%';
+    if (q.tipo === 'palabra') pintarMascara();
     if (q.tipo === 'quiensoy') { const T = q.tiempo * 1000, k = pistasVisibles(q.pistas.length, T - (P.limite - Date.now()), T); app.querySelectorAll('#jpistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
     if (s <= 0) { clearInterval(P.tInt); }
   };
   tick(); P.tInt = setInterval(tick, 250);
 }
+function renderHuecos() {
+  const q = P.q; if (!q) return; let k = 0;
+  $('#jfrase').innerHTML = esc(q.frase).replace(/_{3,}/g, () => { const j = k++, i = P.huecos[j]; return i == null ? `<span class="hueco">${j + 1}</span>` : `<button class="hueco lleno" data-a="jhq" data-k="${j}">${esc(q.banco[i])}</button>`; });
+  $('#jbanco').innerHTML = q.banco.map((w, i) => P.huecos.includes(i) ? '' : `<button data-a="jhb" data-i="${i}">${esc(w)}</button>`).join('');
+}
+function renderRafaga() {
+  const q = P.q, k = P.raf.length; if (!q) return;
+  $('#jraf').innerHTML = `<p class="muted">${k + 1} de ${q.afirm.length}</p><div class="jq sub raf-af">${esc(q.afirm[k])}</div>
+    <div class="jopts"><button data-a="jrf" data-v="1" style="--oc:#059669"><span class="f">V</span>Verdadero</button><button data-a="jrf" data-v="0" style="--oc:#BA1A1A"><span class="f">F</span>Falso</button></div>`;
+}
+function pintarMascara() {
+  const q = P.q, el = $('#jmasc'); if (!q || !el) return;
+  const T = q.tiempo * 1000, ms = T - (P.limite - Date.now()), k = letrasVisibles(q.orden.length, ms, T), rank = {}; q.orden.forEach((ix, j) => rank[ix] = j);
+  el.innerHTML = [...q.palabra].map((c, i) => c === ' ' ? '<i></i>' : rank[i] == null ? `<span class="on">${esc(c)}</span>` : `<span class="${rank[i] < k ? 'on' : ''}">${rank[i] < k ? esc(c) : ''}</span>`).join('');
+}
+function renderMemoria() {
+  const q = P.q, m = P.mem; if (!q) return;
+  $('#jmem').innerHTML = q.cartas.map((c, i) => { const vis = m.abiertas.includes(i) || m.hechas.has(c.k);
+    return `<button class="carta ${vis ? 'vis' : ''} ${m.hechas.has(c.k) ? 'hecha' : ''}" data-a="jmc" data-i="${i}">${vis ? esc(c.t) : '?'}</button>`; }).join('');
+  $('#jmemc').textContent = `Parejas: ${m.hechas.size} / ${q.cartas.length / 2}`;
+}
+function voltearCarta(i) {
+  const q = P.q, m = P.mem; if (!q || m.bloqueo) return;
+  const c = q.cartas[i]; if (!c || m.hechas.has(c.k) || m.abiertas.includes(i)) return;
+  m.abiertas.push(i); renderMemoria();
+  if (m.abiertas.length < 2) return;
+  const [a, b] = m.abiertas.map(j => q.cartas[j]);
+  if (a.k === b.k) {
+    m.hechas.add(a.k); m.abiertas = []; navigator.vibrate?.(40); renderMemoria();
+    const val = { hechos: m.hechas.size };
+    if (m.hechas.size >= q.cartas.length / 2) setTimeout(() => responder(val), 300);
+    else try { P.conn.send({ t: 'prog', idx: q.idx, val }); } catch (_) { }
+  } else { m.bloqueo = true; setTimeout(() => { m.abiertas = []; m.bloqueo = false; renderMemoria(); }, 800); }
+}
+function iniciarDibujo() {
+  const cv = $('#jcanvas'); if (!cv) return;
+  P.dib = { color: '#1C1B20', grosor: 10, trazos: [] };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * cv.width, (e.clientY - r.top) / r.height * cv.height]; };
+  cv.onpointerdown = e => { e.preventDefault(); cv.setPointerCapture(e.pointerId); P.dib.trazos.push({ c: P.dib.color, g: P.dib.grosor, p: [pos(e)] }); redibujar(); };
+  cv.onpointermove = e => { const t = P.dib.trazos[P.dib.trazos.length - 1]; if (!t || !e.buttons && e.pointerType === 'mouse') return; if (e.pressure === 0 && e.pointerType !== 'mouse') return; t.p.push(pos(e)); redibujar(); };
+  cv.onpointerup = () => { };
+  redibujar();
+}
+function redibujar() {
+  const cv = $('#jcanvas'); if (!cv) return;
+  const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height); x.lineCap = x.lineJoin = 'round';
+  P.dib.trazos.forEach(t => { x.strokeStyle = t.c; x.fillStyle = t.c; x.lineWidth = t.g;
+    if (t.p.length === 1) { x.beginPath(); x.arc(t.p[0][0], t.p[0][1], t.g / 2, 0, 7); x.fill(); return; }
+    x.beginPath(); x.moveTo(...t.p[0]); t.p.slice(1).forEach(q => x.lineTo(...q)); x.stroke(); });
+}
+const exportarDibujo = () => { const cv = $('#jcanvas'); return cv ? cv.toDataURL('image/jpeg', 0.7) : ''; };
 function overlayPausa() {
   const j = $('.jug'), o = $('#jpausa');
   if (P.pausa && P.q && j && !o) j.insertAdjacentHTML('beforeend', `<div id="jpausa" class="jpausa">${ic('pause_circle', 'fill')}<b>Pausa</b><span>Espera un momento…</span></div>`);

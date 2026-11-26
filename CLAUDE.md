@@ -22,12 +22,20 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Filtro de palabras (`tieneGroseria`, `FILTRO_BASE` + `palabrasBloqueadas` de la config): se revisa en el teléfono antes de enviar y otra vez en el host (nombres rechazados con `rechazo`, respuestas groseras quedan vacías). Opción `aprobarNombres` (barra "Por aprobar" en el host). El host puede tocar respuestas de nube y listas para ocultarlas.
 - Diapositivas tipo PowerPoint: lienzo 16:9 (`it.fondo` + `it.els`). Elementos texto/imagen/forma con x, y, w, h en % del lienzo; tamaño de letra `fs` en px de un lienzo de 1280 px (CSS con `cqw`). Fondo: color, degradado ("combinar colores", 2–3 colores, lineal/radial, `COMBINACIONES`) o imagen con oscurecer. Diseños predefinidos en `DISENOS`. Las diapositivas del formato antiguo (titulo/texto/imagen/fondo) se convierten con `migrarDiapo()`.
 - Galería de fondos: carpeta `fondos/` con 20 imágenes 16:9 generadas en Google Flow (`fondo-01.jpg` … `fondo-20.jpg`, 1365×768, ~100 KB) + `mini/` de miniaturas 384×216, listadas en `fondos/lista.json`. Los prompts están en `fondos/PROMPTS.md` (mismo número que el archivo). El quiz de ejemplo usa fondo-17, 10, 18 y 20. Las rutas son relativas (`fondos/...`): funcionan desde GitHub Pages o con la carpeta junto a index.html.
-- Tipos implementados: diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, encuesta, nube, escala.
-  - `emoji` y `revela` reutilizan opciones de colores (`CON_OPCIONES` / `CON_CORRECTAS`).
+- Tipos implementados (28): diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, huecos, multiple, rafaga, palabra, zoom, audio, memoria, rapido, dibujo, muro, encuesta, nube, escala.
+  - `emoji`, `revela`, `zoom` y `audio` reutilizan las opciones A–F (`CON_OPCIONES` / `CON_CORRECTAS`).
+  - `huecos`: frase con varios ___ + banco de palabras (correctas en orden + distractores), puntaje parcial.
+  - `multiple`: marcar todas las correctas (cada correcta suma, cada incorrecta resta).
+  - `rafaga`: afirmaciones V/F de a una en el teléfono; `palabra`: letras que aparecen de a una (menos letras = más puntos).
+  - `zoom`: imagen que parte ampliada en (zx, zy) y se aleja; `audio`: se reproduce en la pantalla (`H.audio`), sin música de fondo.
+  - `memoria`: cartas en el teléfono; `rapido`: botón en el teléfono, fila `H.cola`, el presentador marca ✔/✘ (`H.ganador`).
+  - `dibujo` (canvas → JPEG) y `muro` (opción `moderar`, el presentador aprueba): sin puntaje, se ven en vivo (`EN_VIVO`).
+  - Progreso parcial: el teléfono manda `prog` (memoria, ráfaga); si se acaba el tiempo, `revelar()` lo cuenta como respuesta.
+  - Filtro de palabras solo en `TEXTO_LIBRE` (completar, nube, quiensoy, palabra, muro).
   - `error`: la palabra equivocada se marca entre *asteriscos* en el texto.
   - `versiculo`: se corta por palabras, o por trozos si el texto tiene "/".
   - `linea`: lista cronológica + índice `ubicar` del hecho que hay que ubicar.
-  - Sin puntaje: encuesta, nube, escala.
+  - Sin puntaje: encuesta, nube, escala, dibujo, muro.
 - Puntaje: puntos base × multiplicador (normal/doble/sin puntos), bonus por velocidad opcional (hasta −50 %).
   - `fraccion(it, v)` devuelve 0–1: parejas y clasificar dan puntaje parcial ("¡Casi!" en el teléfono).
   - ¿Quién soy?: el puntaje depende de cuántas pistas había visibles (no del tiempo). Imagen que se revela: siempre con bonus por velocidad.
