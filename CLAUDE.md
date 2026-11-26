@@ -39,7 +39,9 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Puntaje: puntos base × multiplicador (normal/doble/sin puntos), bonus por velocidad opcional (hasta −50 %).
   - `fraccion(it, v)` devuelve 0–1: parejas y clasificar dan puntaje parcial ("¡Casi!" en el teléfono).
   - ¿Quién soy?: el puntaje depende de cuántas pistas había visibles (no del tiempo). Imagen que se revela: siempre con bonus por velocidad.
-- Modo equipos (config `modoEquipos` + `nombresEquipos`): se elige equipo en el lobby desde el teléfono; ranking, podio y CSV por equipo (suma de integrantes).
+- Modo equipos (config `modoEquipos` + `nombresEquipos` + `asignarEquipos`: 'elegir' | 'aleatorio' (equilibrado) | 'llegada'; `asignarEquipo()`, botón "Mezclar equipos" en el lobby): ranking, podio y CSV por equipo (suma de integrantes).
+- Aviso de cookies (`avisoCookies()`, acciones globales en `GLOBAL`): la primera vez en Inicio, jugador y control remoto (nunca en el proyector ni en navegadores automatizados); el tutorial espera a que se acepte.
+- Editor de diapositivas en escritorio (≥ 1150 px): lienzo a la izquierda y panel de formato fijo a la derecha. En el pin y el zoom el punto se arrastra (`arrastrarPunto`).
 - Al presentar, `problemasQuiz()` avisa de preguntas incompletas.
 - Sonido (`SND`, Web Audio sin archivos): música de sala de espera y de pregunta, tic en los últimos 5 s, revelar, unirse, redoble (ranking), fanfarria (podio), transición. Config `sonidos` y `musica`; botón silenciar (tecla M) guardado en localStorage.
 - Durante la pregunta: pausar (P, congela también los teléfonos), +10 s (+), saltar sin puntaje. Tiempo con `tiempoH()` / `transcurrido()` / `restanteH()`. ← vuelve a la diapositiva anterior (solo diapositivas).
@@ -57,8 +59,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 ## Probado
 - Editor y presentación completos, con jugadores simulados (Playwright, puente directo en vez de PeerJS): todos los tipos, puntaje parcial y modo equipos.
 - Editor usable en teléfono (≤ 760 px: lista o formulario, uno a la vez).
-- Conexión real por PeerJS probada entre dos páginas del navegador (señalización por 0.peerjs.com).
-- Pendiente: probar con teléfonos reales en la red de la iglesia y con datos móviles.
+- Conexión real por PeerJS probada entre dos páginas del navegador y **por el usuario con teléfonos reales** (como participante y como control remoto): funciona.
 
 ## Ideas siguientes
 Sonidos y música de cuenta regresiva.

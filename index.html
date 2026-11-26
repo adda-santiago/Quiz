@@ -130,6 +130,8 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .editor{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .bar{display:flex;gap:8px;align-items:center;padding:10px 16px;background:var(--s-lowest);border-bottom:1px solid var(--outline-var);z-index:2}
 .bar .titulo{max-width:380px;font-weight:600}
+.bar button{white-space:nowrap}
+.sprops .seg{flex-wrap:wrap}
 .bar .ms{color:var(--c);max-width:none}
 .bar .pri .ms{color:var(--gold)}
 .ed-body{flex:1;display:flex;min-height:0}
@@ -165,7 +167,9 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .imgrow input{flex:1}
 .thumb{max-height:160px;max-width:100%;margin-top:8px;border-radius:var(--r-md)}
 .hint{font-size:.85rem;color:var(--on-s-var);margin:4px 0}
-.pinprev{position:relative;display:inline-block;max-width:100%;cursor:crosshair;margin-top:8px}
+.pinprev{position:relative;display:inline-block;max-width:100%;cursor:crosshair;margin-top:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+.pinprev.arrastrando,.pinprev.arrastrando *{cursor:grabbing!important}
+.pinprev .pinmark,.pinprev .zmark{pointer-events:auto;cursor:grab}
 .pinprev img{display:block;max-width:100%;max-height:420px;border-radius:var(--r-md)}
 .pinmark{position:absolute;aspect-ratio:1;border-radius:50%;background:#BA1A1A44;border:3px solid var(--error);transform:translate(-50%,-50%);pointer-events:none}
 .vfbtns{display:flex;gap:10px}
@@ -457,6 +461,22 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
   .vp-cuerpo{padding:8px}.vp-tel{display:none;width:100%}.vp-cuerpo.ver-tel .vp-pant{display:none}.vp-cuerpo.ver-tel .vp-tel{display:flex}
   .misq{padding:18px}
 }
+/* ---------- Editor de diapositivas en escritorio, cookies, equipos ---------- */
+@media (min-width:1150px){
+  #form.ancho-diapo{max-width:none}
+  .ed-diapo{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}
+  .ed-diapo .sprops{position:sticky;top:0;max-height:calc(100vh - 110px);max-height:calc(100dvh - 110px);overflow:auto;margin-top:8px;padding-bottom:12px}
+  .ed-diapo .sp-row input[type=range]{width:120px}
+}
+.cookies{position:fixed;left:16px;right:16px;bottom:16px;z-index:45;max-width:760px;margin:0 auto;background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:var(--r-xl);box-shadow:0 12px 40px #0003;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;animation:anSubir .3s cubic-bezier(.2,0,0,1)}
+.cookies>.ms{font-size:32px;color:var(--gold);max-width:none}
+.cookies>div:not(.botones){flex:1;min-width:220px}
+.cookies p{margin:4px 0 0;color:var(--on-s-var);font-size:.9rem}
+.cookies .botones{margin-left:auto}
+#capaCookies{z-index:50}
+.lista-priv{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--on-s-var)}
+.eq-modo{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;color:var(--on-s-var);margin:0}
+.eq-modo button{padding:.4em .8em;font-size:.88rem}
 /* ---------- Transiciones y animaciones ---------- */
 @keyframes anFundido{from{opacity:0}}
 @keyframes anDeslizar{from{opacity:0;transform:translateX(90px)}}
@@ -687,7 +707,7 @@ const NTILES = 24; // cuadros que tapan la imagen que se revela (6 × 4)
 function configDefecto() {
   return { titulo: 'Mi quiz', organizacion: '', color: '#180157', tiempo: 20, puntos: 1000,
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
-    modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas',
+    modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas', asignarEquipos: 'elegir',
     filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
     sonidos: true, musica: true, transicion: 'fundido',
     fondoPres: { tipo: 'ninguno', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.1 } };
@@ -783,7 +803,7 @@ function migrarDiapo(it) { // diapositivas del formato anterior (título, texto,
   return { tipo: 'diapositiva', fondo, els };
 }
 const HANDLES = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(h => `<i class="h ${h}" data-h="${h}"></i>`).join('');
-const ANIMS = [['', 'Ninguna'], ['aparecer', 'Aparecer'], ['subir', 'Subir'], ['zoom', 'Zoom'], ['izquierda', 'Desde la izquierda'], ['derecha', 'Desde la derecha']];
+const ANIMS = [['', 'Ninguna'], ['aparecer', 'Aparecer'], ['subir', 'Subir'], ['zoom', 'Zoom'], ['izquierda', '← Izquierda'], ['derecha', 'Derecha →']];
 const TRANSICIONES = [['ninguna', 'Ninguna'], ['fundido', 'Fundido'], ['deslizar', 'Deslizar'], ['zoom', 'Zoom'], ['subir', 'Subir']];
 function elHTML(e, ed, sel) {
   const st = [`left:${+e.x}%`, `top:${+e.y}%`, `width:${+e.w}%`, `height:${+e.h}%`, `opacity:${e.op ?? 1}`,
@@ -821,14 +841,14 @@ const diapoActual = () => { const it = objActual(); return it && it.tipo === 'di
 const elSel = () => { const it = diapoActual(); return it && it.els.find(e => e.id === sSel); };
 function editorDiapositiva(it) {
   if (sItem !== it) { sSel = null; sEdit = false; sItem = it; }
-  return `<div class="s-bar">
+  return `<div class="ed-diapo"><div class="ed-col"><div class="s-bar">
       <button data-a="sAdd" data-t="titulo">${ic('title')} Título</button><button data-a="sAdd" data-t="texto">${ic('notes')} Texto</button>
       <button data-a="sAdd" data-t="imagen">${ic('image')} Imagen</button><button data-a="sAdd" data-t="rect">${ic('rectangle')} Forma</button>
       <button data-a="sAdd" data-t="elipse">${ic('circle')} Círculo</button><button data-a="sAdd" data-t="emoji">${ic('mood')} Emoji</button></div>
     <div class="s-dis"><span>Diseños:</span>${Object.entries(DISENOS).map(([k, d]) => `<button data-a="sLayout" data-v="${k}">${d.n}</button>`).join('')}</div>
     <div class="lz-wrap">${lienzoHTML(it, true)}</div>
-    <p class="hint">Arrastra para mover · tira de los cuadritos para cambiar el tamaño · doble clic (o toca de nuevo) para escribir · flechas para mover fino · Supr para borrar</p>
-    <div class="sprops" id="sprops"></div>`;
+    <p class="hint">Arrastra para mover · tira de los cuadritos para cambiar el tamaño · doble clic (o toca de nuevo) para escribir · flechas para mover fino · Supr para borrar</p></div>
+    <div class="sprops" id="sprops"></div></div>`;
 }
 function pintarLienzo() {
   const lz = $('#lz'), it = diapoActual(); if (!lz || !it) return;
@@ -1412,7 +1432,35 @@ function textoCorrecta(it) {
 
 /* ---------- Ruteo y acciones ---------- */
 let ACC = {};
-document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (el && ACC[el.dataset.a]) ACC[el.dataset.a](el, e); });
+const GLOBAL = {}; // acciones disponibles en cualquier pantalla (aviso de cookies)
+document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el) return; const f = ACC[el.dataset.a] || GLOBAL[el.dataset.a]; if (f) f(el, e); });
+let tourPendiente = null;
+function avisoCookies() {
+  try { if (localStorage.getItem('quiziglesia.cookies') === '1') return; } catch (_) { return; }
+  if (navigator.webdriver || document.documentElement.classList.contains('modo-vista') || $('#cookies')) return;
+  document.body.insertAdjacentHTML('beforeend', `<div class="cookies" id="cookies" role="dialog" aria-label="Aviso de cookies">${ic('cookie')}
+    <div><b>Aviso de cookies y almacenamiento</b><p>Esta app guarda tus quizzes y preferencias solo en este navegador; no usa cookies de seguimiento ni de publicidad. Para funcionar se conecta a servicios externos (Google Fonts, PeerJS y, si una diapositiva tiene un video, YouTube) que pueden usar sus propias cookies.</p></div>
+    <div class="botones"><button data-a="cookiesInfo">Más información</button><button class="pri" data-a="cookiesOk">Entendido</button></div></div>`);
+}
+Object.assign(GLOBAL, {
+  cookiesOk: () => { try { localStorage.setItem('quiziglesia.cookies', '1'); } catch (_) { } $('#cookies')?.remove(); $('#capaCookies')?.remove(); if (tourPendiente) { const n = tourPendiente; tourPendiente = null; setTimeout(() => tour(n), 300); } },
+  cookiesInfo: () => {
+    if ($('#capaCookies')) return;
+    document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capaCookies"><div class="card imp">
+      <div class="imp-cab"><h2>${ic('cookie')} Cookies y privacidad</h2><button data-a="cookiesCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+      <p><b>En este navegador (sin cookies de seguimiento):</b> la app guarda tus quizzes, la lista «Mis quizzes», tu nombre y personaje de jugador y preferencias como el sonido o el tutorial. Usa el almacenamiento local del navegador (IndexedDB y localStorage). Esta información no se envía a ningún servidor de la app y puedes borrarla desde la configuración de tu navegador.</p>
+      <p><b>Servicios externos que usa la app:</b></p>
+      <ul class="lista-priv">
+        <li><b>Google Fonts</b> (fonts.googleapis.com): tipografías e íconos.</li>
+        <li><b>PeerJS</b> (0.peerjs.com) y servidores STUN/TURN: conectan los teléfonos con la pantalla. Solo pasan los datos del juego (nombre, personaje, respuestas).</li>
+        <li><b>unpkg, jsDelivr y cdnjs</b>: entregan las librerías de la app (conexión, QR, lectura de PowerPoint/PDF).</li>
+        <li><b>YouTube</b> (modo de privacidad mejorada, youtube-nocookie.com): solo si una diapositiva tiene un video. YouTube puede mostrar anuncios y usar sus propias cookies; <b>la app no se hace responsable de los anuncios ni del contenido que muestre YouTube</b>.</li>
+      </ul>
+      <p class="muted">Estos servicios tienen sus propias políticas de privacidad.</p>
+      <div class="botones"><button class="pri" data-a="cookiesOk">Entendido</button></div></div></div>`);
+  },
+  cookiesCerrar: () => $('#capaCookies')?.remove(),
+});
 document.addEventListener('click', e => { const m = $('#menuMas'); if (m && !m.hidden && !e.target.closest('[data-a=menuMas]')) m.hidden = true; }, true); // cerrar el menú ⋮
 
 function iniciar() {
@@ -1486,7 +1534,7 @@ function vistaInicio() {
     tutorial: () => tour('inicio'),
     unirme: () => { const c = $('#jcode').value.trim(); if (c) location.search = '?join=' + encodeURIComponent(c); },
   };
-  autoTour('inicio');
+  avisoCookies(); autoTour('inicio');
 }
 
 function listaMisQuizzes() {
@@ -1662,6 +1710,7 @@ function renderForm() {
 }
 function renderFormCampos() {
   const form = $('#form'), it = objActual();
+  form.classList.toggle('ancho-diapo', !!(it && it.tipo === 'diapositiva'));
   if (!it) { form.innerHTML = '<p class="muted">Agrega una diapositiva o pregunta desde la lista.</p>'; return; }
   if (edSel === -1) {
     const c = quiz.config;
@@ -1683,6 +1732,7 @@ function renderFormCampos() {
       <label class="fld sm ancho"><span>Transición entre pantallas</span><select data-f="transicion">${TRANSICIONES.map(([v, n]) => `<option value="${v}" ${c.transicion === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
       <p class="hint">En la presentación: <b>P</b> pausa, <b>+</b> agrega 10 segundos, <b>M</b> silencia, <b>←</b> vuelve a la diapositiva anterior. Cada diapositiva puede tener su propia transición y animaciones de entrada.</p>
       ${fChk('Jugar por equipos (el puntaje se suma por equipo)', 'modoEquipos', c.modoEquipos)}
+      <label class="fld sm ancho"><span>Cómo se forman los equipos</span><select data-f="asignarEquipos">${[['elegir', 'Cada participante elige'], ['aleatorio', 'Al azar (equilibrado)'], ['llegada', 'Por orden de llegada']].map(([v, n]) => `<option value="${v}" ${c.asignarEquipos === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
       ${fTxt('Nombres de los equipos (separados por coma, de 2 a 6)', 'nombresEquipos', c.nombresEquipos)}
       <p class="hint">Con equipos, cada participante elige su equipo al entrar. Sirve también con un solo teléfono por equipo.</p>
       <h3 class="sub-cfg">🛡️ Cuidado de los niños</h3>
@@ -1758,7 +1808,7 @@ function renderFormCampos() {
         '<p class="hint">Las letras aparecen de a una, como en el ahorcado. Quien adivina con menos letras a la vista gana más puntos.</p>'; break;
     case 'zoom':
       h += imgField(it, 'Imagen') + (it.imagen ? `<p class="hint">Toca la imagen para elegir el detalle donde empieza el zoom.</p>
-        <div class="pinprev" data-a="zfoco"><img src="${esc(it.imagen)}"><div class="zmark" style="left:${+it.zx}%;top:${+it.zy}%"></div></div>
+        <div class="pinprev" id="zprev"><img src="${esc(it.imagen)}" draggable="false"><div class="zmark" id="zmark" style="left:${+it.zx}%;top:${+it.zy}%"></div></div>
         <label class="fld"><span>Acercamiento inicial: ${+it.zoom}×</span><input type="range" min="2" max="12" data-f="zoom" data-num value="${+it.zoom}"></label>` : '') + opcAlt(); break;
     case 'audio':
       h += `<div class="fld"><span>Audio (canción, sonido, lectura)</span><div class="imgrow"><input data-f="audio" value="${String(it.audio).startsWith('data:') ? '' : esc(it.audio)}" placeholder="${String(it.audio).startsWith('data:') ? 'Audio subido (guardado dentro del archivo)' : 'Pega la URL de un audio (mp3)…'}">
@@ -1793,7 +1843,7 @@ function renderFormCampos() {
         <div class="fila">${fNum('Respuesta correcta', 'correcta', it.correcta)}${fNum('Tolerancia (±)', 'tolerancia', it.tolerancia)}<label class="fld sm"><span>Unidad (opcional)</span><input data-f="unidad" value="${esc(it.unidad)}" placeholder="años, km…"></label></div>`; break;
     case 'pin':
       h += imgField(it, 'Imagen (mapa, dibujo, foto)') + (it.imagen ? `<p class="hint">Toca la imagen para marcar el lugar correcto.</p>
-        <div class="pinprev" data-a="pinset"><img id="pinimg" src="${esc(it.imagen)}"><div class="pinmark" id="pinmark"></div></div>
+        <div class="pinprev" id="pinprev"><img id="pinimg" src="${esc(it.imagen)}" draggable="false"><div class="pinmark" id="pinmark" title="Arrastra para mover"></div></div>
         <label class="fld"><span>Tolerancia (tamaño del círculo)</span><input type="range" min="2" max="30" data-f="radio" data-num value="${it.radio}"></label>` : ''); break;
     case 'nube': h += '<p class="hint">Los participantes escriben una palabra o frase corta. Se muestran todas en una nube: las más repetidas, más grandes.</p>'; break;
   }
@@ -1805,7 +1855,18 @@ function renderFormCampos() {
     const img = $('#pinimg');
     img.onload = () => { if (img.naturalWidth) { it.ar = img.naturalHeight / img.naturalWidth; guardarLocal(); } };
     actualizarPinMark();
+    arrastrarPunto($('#pinprev'), (x, y) => { it.x = x; it.y = y; actualizarPinMark(); });
   }
+  if (it.tipo === 'zoom' && it.imagen) arrastrarPunto($('#zprev'), (x, y) => { it.zx = x; it.zy = y; Object.assign($('#zmark').style, { left: x + '%', top: y + '%' }); });
+}
+function arrastrarPunto(cont, mover) { // tocar o arrastrar sobre la imagen para ubicar el punto (mouse o dedo)
+  if (!cont) return;
+  const pos = e => { const r = cont.getBoundingClientRect(); return [+Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)).toFixed(1), +Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100)).toFixed(1)]; };
+  cont.onpointerdown = e => {
+    e.preventDefault(); cont.setPointerCapture(e.pointerId); cont.classList.add('arrastrando'); mover(...pos(e));
+    cont.onpointermove = ev => mover(...pos(ev));
+    cont.onpointerup = cont.onpointercancel = () => { cont.onpointermove = cont.onpointerup = cont.onpointercancel = null; cont.classList.remove('arrastrando'); guardarLocal(); };
+  };
 }
 function actualizarPinMark() {
   const it = objActual(), m = $('#pinmark'); if (!m) return;
@@ -2016,7 +2077,9 @@ const TOURS = {
 };
 function autoTour(n) { // la primera vez que se abre cada pantalla
   let visto = true; try { visto = localStorage.getItem('quiziglesia.tour.' + n) === '1' || navigator.webdriver; } catch (_) { }
-  if (!visto) setTimeout(() => { if (!$('#capa')) tour(n); }, 700);
+  if (visto) return;
+  if ($('#cookies')) { tourPendiente = n; return; } // primero el aviso de cookies
+  setTimeout(() => { if (!$('#capa')) tour(n); }, 700);
 }
 function tour(n) {
   const pasos = TOURS[n].filter(p => { const el = $(p.sel); return el && el.getClientRects().length; });
@@ -2055,6 +2118,7 @@ function nuevoH() {
 }
 function vistaPresentar() {
   if (!quiz.items.length) { alert('El quiz está vacío.'); return; }
+  $('#cookies')?.remove(); // no mostrar el aviso en el proyector (vuelve a aparecer en el Inicio)
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost();
@@ -2073,7 +2137,7 @@ function vistaPresentar() {
   };
   ACC = {
     next: avanzar,
-    pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder,
+    pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder, mezclar: mezclarEquipos,
     sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
     cerrarModal: () => { H.modal = null; renderHost(); },
@@ -2135,6 +2199,20 @@ function equiposDe() {
   const n = String(quiz.config.nombresEquipos || '').split(',').map(x => x.trim().slice(0, 20)).filter(Boolean).slice(0, 6);
   return n.length >= 2 ? n : ['Equipo 1', 'Equipo 2'];
 }
+function asignarEquipo() { // según la configuración: el menos numeroso (elegir), al azar equilibrado o por orden de llegada
+  const modo = quiz.config.asignarEquipos;
+  if (modo === 'llegada') { H.nLlegada = (H.nLlegada || 0) + 1; return (H.nLlegada - 1) % H.eq.length; }
+  if (modo === 'aleatorio') {
+    const c = H.eq.map((_, i) => Object.values(H.players).filter(p => p.eq === i).length), min = Math.min(...c);
+    const op = c.map((n, i) => n === min ? i : -1).filter(i => i >= 0); return op[Math.floor(Math.random() * op.length)];
+  }
+  return equipoMenor();
+}
+function mezclarEquipos() { // reparte al azar a todos, equilibrado
+  const ps = shuffle(Object.values(H.players).filter(p => !p.pendiente));
+  ps.forEach((p, k) => { p.eq = k % H.eq.length; enviarEstado(p); });
+  renderHost(); aviso('🔀 Equipos mezclados', 1500);
+}
 const equipoMenor = () => H.eq.map((_, i) => [i, Object.values(H.players).filter(p => p.eq === i).length]).sort((a, b) => a[1] - b[1])[0][0];
 function rankingEquipos() {
   return H.eq.map((nombre, i) => {
@@ -2168,7 +2246,7 @@ function alRecibirHost(conn, d) {
       if (f && tieneGroseria(d.name, f)) { conn.send({ t: 'rechazo', msg: 'Ese nombre no está permitido. Elige otro.' }); return; }
       SND.efecto('unir');
       p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
-      if (H.eq.length) p.eq = equipoMenor();
+      if (H.eq.length) p.eq = asignarEquipo();
     }
     p.conn = conn; p.online = true; p.visto = Date.now(); conn.pid = d.pid;
     enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq, filtro: filtroQuiz() });
@@ -2176,7 +2254,7 @@ function alRecibirHost(conn, d) {
     if (H.fase === 'lobby') renderHost(); else actualizarContador();
   } else if (d.t === 'team') {
     const p = H.players[conn.pid], i = Number(d.eq);
-    if (!p || H.fase !== 'lobby' || !H.eq[i]) return;
+    if (!p || H.fase !== 'lobby' || !H.eq[i] || quiz.config.asignarEquipos !== 'elegir') return;
     p.eq = i; enviarEstado(p); renderHost();
   } else if (d.t === 'ans') {
     const pid = conn.pid, p = H.players[pid];
@@ -2214,7 +2292,7 @@ function marcarRapido(pid, ok) {
 }
 function enviarEstado(p) {
   if (p.pendiente) enviar(p, { t: 'msg', icono: '⏳', msg: 'Esperando que el presentador apruebe tu nombre…' });
-  else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
+  else if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq, fijo: quiz.config.asignarEquipos !== 'elegir' } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
   else if (H.fase === 'pregunta' && !H.resp[p.pid]) { enviar(p, { ...H.payload, tiempo: tiempoH(), restante: restanteH() }); if (H.pausa) enviar(p, { t: 'pausa', on: true }); }
   else enviar(p, { t: 'msg', icono: '👀', msg: 'Mira la pantalla', score: p.score });
 }
@@ -2446,6 +2524,7 @@ function hostLobby() {
       <div><p>Escanea el QR o entra a:</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>y escribe el código</p><div class="code">${H.code}</div>
       <p>${H.estado === 'ok' ? '<span class="badge cyan"><span class="dot"></span>Sala abierta</span>' : H.estado === 'conectando' ? '⏳ Abriendo sala…' : '🔴 Sin conexión'}</p>${resumenConexion(ps)}</div></div>
     ${aviso}
+    ${H.eq.length ? `<p class="eq-modo">${{ elegir: 'Cada uno elige su equipo en el teléfono', aleatorio: 'Equipos asignados al azar', llegada: 'Equipos por orden de llegada' }[quiz.config.asignarEquipos] || ''}${ps.length > 1 ? ` · <button data-a="mezclar">${ic('shuffle')} Mezclar equipos</button>` : ''}</p>` : ''}
     ${H.eq.length ? `<div class="equipos-lobby">${H.eq.map((n, i) => {
       const m = ps.filter(p => p.eq === i);
       return `<div class="eqbox" style="border-color:${COLORES[i % 6]}"><h3 style="background:${COLORES[i % 6]}">${esc(n)} · ${m.length}</h3><div class="players">${m.map(chip).join('') || '<small>Sin integrantes</small>'}</div></div>`;
@@ -2662,6 +2741,7 @@ function vistaRemoto(code, k) {
   document.title = 'Control remoto · Quiz Iglesia';
   R = { code, k, st: null };
   ACC = { rc: el => { try { R.conn.send({ t: 'rcmd', c: el.dataset.c }); } catch (_) { } navigator.vibrate?.(30); }, reintentar: () => location.reload() };
+  setTimeout(avisoCookies, 300);
   pintarRemoto('⏳ Conectando con la pantalla…');
   if (!window.Peer) return pintarRemoto('📵 No se pudo cargar la conexión.');
   R.peer = new Peer(opcionesPeer());
@@ -2746,6 +2826,7 @@ function vistaJugador(code, error) {
     <p class="aviso" id="jerrnom" ${error ? '' : 'hidden'}>${esc(error || '')}</p>
     <div class="fld"><span>Elige tu personaje</span><div class="avs">${AVATARES.map(a => `<button data-a="av" data-v="${a}" class="${a === P.avatar ? 'on' : ''}">${a}</button>`).join('')}</div></div>
     <button class="sec big" style="width:100%" data-a="entrar">Entrar al juego ${ic('arrow_forward')}</button></div></div></div>`;
+  avisoCookies();
 }
 function marcoJ(cuerpo, bg, preg) {
   const eq = P.equipos && P.equipos[P.eq] ? 'Equipo ' + P.equipos[P.eq] : (P.titulo || 'Sala ' + P.code);
@@ -2809,7 +2890,7 @@ function alRecibirJ(d) {
   switch (d.t) {
     case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
     case 'rechazo': P.kicked = true; try { P.peer.destroy(); } catch (e) { } vistaJugador(P.code, d.msg); break;
-    case 'equipos': P.equipos = d.equipos; P.eq = d.eq; renderEquipos(); break;
+    case 'equipos': P.equipos = d.equipos; P.eq = d.eq; P.eqFijo = !!d.fijo; renderEquipos(); break;
     case 'msg': pantallaJ(d.icono || '👀', esc(d.msg), d.bg); break;
     case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
     case 'recibido': pantallaJ('⏳', '¡Respuesta enviada!<br><small>Espera a los demás…</small>'); break;
@@ -2989,6 +3070,8 @@ function renderArmado() {
 }
 function renderEquipos() {
   clearInterval(P.tInt);
+  if (P.eqFijo) return marcoJ(`<div class="estado-big">✅</div><h2>¡Estás dentro!</h2><p class="muted">Tu equipo es:</p>
+    <div class="jeq"><button class="on" style="background:${COLORES[P.eq % 6]}">${esc(P.equipos[P.eq] || '')}</button></div><p class="muted">Espera a que comience.</p>`);
   marcoJ(`<div class="estado-big">✅</div><h2>¡Estás dentro!</h2><p class="muted">Elige tu equipo:</p>
     <div class="jeq">${P.equipos.map((n, i) => `<button data-a="jeq" data-i="${i}" class="${P.eq === i ? 'on' : ''}" style="background:${COLORES[i % 6]}">${P.eq === i ? '✔ ' : ''}${esc(n)}</button>`).join('')}</div>
     <p class="muted">Espera a que comience.</p>`);
