@@ -144,10 +144,21 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .li .acts{display:none;gap:2px}
 .li:hover .acts,.li.sel .acts{display:flex}
 .li .acts button{padding:2px 7px;font-size:.8rem;border-radius:8px}
-.add{margin-top:16px}
-.add p{margin:4px 0 8px;font-weight:600;font-size:.85rem;color:var(--on-s-var)}
-.add button{display:flex;justify-content:flex-start;width:100%;text-align:left;margin-bottom:6px;background:var(--s-lowest);border:1px dashed var(--outline-var);font-weight:500}
-.add button:hover{border-color:var(--c);background:var(--s-lowest)}
+.add{margin-bottom:12px}
+.add .add-btn{width:100%;justify-content:center;gap:8px;padding:.75em 1em;font-size:1rem}
+.add .add-btn .ms:last-child{margin-left:auto}
+.add-menu{margin-top:8px;background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);padding:10px;box-shadow:var(--sombra)}
+.add-menu>p{margin:0 0 6px;font-size:.8rem}
+.add-g h4{margin:10px 2px 6px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--on-s-var);font-weight:700}
+.add-g .tipos{display:flex;flex-direction:column;gap:4px}
+.add-g button{display:flex;align-items:center;justify-content:flex-start;gap:10px;width:100%;text-align:left;margin:0;padding:.5em .7em;background:transparent;border:1px solid transparent;font-weight:500}
+.add-g button:hover,.add-g button:focus-visible{border-color:var(--c);background:var(--s-low)}
+.add-g button .ico{font-size:1.15rem;width:24px;text-align:center;flex:none}
+.add-g button b{font-weight:600;font-size:.92rem}
+.add-g button small{display:none}
+#tipTipo{position:fixed;z-index:40;width:280px;background:var(--c);color:#fff;border-radius:12px;padding:10px 14px;font-size:.88rem;line-height:1.4;box-shadow:0 10px 30px #0004;pointer-events:none;opacity:0;transform:translateX(-4px);transition:opacity .12s,transform .12s}
+#tipTipo.ver{opacity:1;transform:none}
+#tipTipo b{display:block;margin-bottom:4px;font-size:.95rem}
 #form{flex:1;overflow:auto;padding:24px 32px;max-width:920px}
 #form>h2{font-size:2.2rem}
 .fld{display:block;margin:14px 0}
@@ -196,8 +207,9 @@ input[type=color]{padding:3px;height:44px;width:84px}
   .li{padding:12px 10px}
   .li.sel{padding:11px 9px}
   .li .acts,.li:hover .acts,.li.sel .acts{display:none}
-  .add .tipos{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .add button{margin:0;padding:.8em .6em;font-size:.9rem}
+  .add-g button{align-items:flex-start;padding:.7em .6em;border-color:var(--outline-var);background:var(--s-lowest)}
+  .add-g button small{display:block;font-size:.78rem;color:var(--on-s-var);font-weight:400;margin-top:2px;line-height:1.3}
+  #tipTipo{display:none}
   #form{padding:0 14px 28px;max-width:none}
   #form>h2{font-size:1.9rem}
   .mnav{display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:1;background:var(--bg);padding:10px 0;margin-bottom:4px;border-bottom:1px solid var(--outline-var)}
@@ -763,6 +775,45 @@ const TIPOS = {
   nube: { nombre: 'Nube de palabras', icono: '☁️', sinPuntaje: true },
   escala: { nombre: 'Escala 1 a 5 (sin puntaje)', icono: '🌡️', sinPuntaje: true },
 };
+const DESC_TIPOS = {
+  diapositiva: 'Una lámina como en PowerPoint: títulos, textos, imágenes, formas, fondos y videos de YouTube. Para explicar la historia antes de preguntar.',
+  alternativas: 'La clásica: una pregunta con 2 a 6 opciones (A, B, C…). Los niños tocan la que creen correcta.',
+  vf: 'Una afirmación y los niños deciden si es verdadera o falsa. Rápida y fácil para los más pequeños.',
+  multiple: 'Hay varias respuestas correctas y hay que marcarlas todas. Cada correcta suma y cada incorrecta resta.',
+  completar: 'Una frase con una palabra que falta. Los niños la escriben en el teléfono (con filtro de palabras).',
+  numero: 'Hay que adivinar un número (años, personas, días…). Gana más puntos quien se acerca más.',
+  ordenar: 'Una lista de hechos o elementos que hay que poner en el orden correcto.',
+  versiculo: 'El versículo aparece desordenado en trozos y hay que armarlo. Ideal para memorizar textos bíblicos.',
+  parejas: 'Unir cada elemento de la izquierda con su pareja de la derecha, arrastrando con el dedo. Admite textos e imágenes.',
+  clasificar: 'Separar elementos en dos grupos (por ejemplo, Antiguo y Nuevo Testamento). Da puntaje parcial.',
+  linea: 'Una línea de tiempo con hechos en orden: hay que ubicar dónde va el hecho que falta.',
+  huecos: 'Una frase con varios espacios en blanco y un banco de palabras para completarla.',
+  pin: 'Una imagen o mapa donde hay que tocar el lugar correcto. Gana más quien queda más cerca.',
+  revela: 'Una imagen tapada por cuadros que se van quitando de a poco. ¡Hay que adivinar antes que nadie!',
+  zoom: 'La imagen parte muy ampliada y se va alejando hasta verse completa. Adivina qué es.',
+  emoji: 'Una historia bíblica contada solo con emojis. Los niños eligen qué historia es.',
+  audio: 'Se escucha un audio en la pantalla (un canto, un sonido, una voz) y se responde con alternativas.',
+  quiensoy: 'Aparecen pistas de un personaje de a una. Quien adivina con menos pistas gana más puntos.',
+  palabra: 'Las letras de una palabra aparecen de a una. Quien la escribe con menos letras a la vista gana más.',
+  error: 'Un texto con una palabra equivocada. Hay que tocar la palabra que está mal.',
+  rafaga: 'Varias afirmaciones de verdadero o falso seguidas, lo más rápido posible.',
+  memoria: 'El juego de memoria en el teléfono: dar vuelta cartas y encontrar los pares.',
+  rapido: 'Un botón en el teléfono: el primero en tocarlo responde en voz alta y el presentador marca si acertó.',
+  encuesta: 'Una pregunta sin respuesta correcta. Se muestra cuántos eligieron cada opción.',
+  nube: 'Cada uno escribe una palabra y se forma una nube con las más repetidas. Sin puntaje.',
+  escala: 'Cada uno responde del 1 al 5 (por ejemplo, ¿cuánto entendiste hoy?). Sin puntaje.',
+  dibujo: 'Los niños dibujan con el dedo en el teléfono y los dibujos aparecen en la pantalla. Sin puntaje.',
+  muro: 'Un muro de mensajes o peticiones de oración. El presentador puede aprobarlos antes de mostrarlos.',
+};
+const GRUPOS_TIPOS = [
+  ['Diapositiva', ['diapositiva']],
+  ['Preguntas clásicas', ['alternativas', 'vf', 'multiple', 'completar', 'numero']],
+  ['Ordenar y relacionar', ['ordenar', 'versiculo', 'parejas', 'clasificar', 'linea', 'huecos']],
+  ['Con imágenes y sonido', ['pin', 'revela', 'zoom', 'emoji', 'audio']],
+  ['Juegos de adivinar', ['quiensoy', 'palabra', 'error', 'rafaga', 'memoria', 'rapido']],
+  ['Sin puntaje (participación)', ['encuesta', 'nube', 'escala', 'dibujo', 'muro']],
+];
+let menuAdd = false;
 const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela', 'zoom', 'audio']; // se responden tocando una opción
 const CON_CORRECTAS = ['alternativas', 'emoji', 'revela', 'zoom', 'audio'];
 const TEXTO_LIBRE = ['completar', 'nube', 'quiensoy', 'palabra', 'muro']; // respuestas escritas: pasan por el filtro de palabras
@@ -1715,7 +1766,8 @@ function vistaEditor() {
     home: vistaInicio, guardar: descargarQuiz, presentar: () => vistaPresentar(),
     abrir: () => abrirArchivo(() => { edSel = 0; vistaEditor(); }),
     sel: el => { edSel = +el.dataset.i; renderLista(); renderForm(); verVista('form'); },
-    add: el => { const i = edSel + 1; quiz.items.splice(i, 0, nuevoItem(el.dataset.t)); edSel = i; guardarLocal(); renderLista(); renderForm(); verVista('form'); },
+    menuAdd: () => { menuAdd = !menuAdd; $('#tipTipo')?.classList.remove('ver'); renderLista(); if (menuAdd) $('#lista').scrollTop = 0; },
+    add: el => { menuAdd = false; $('#tipTipo')?.classList.remove('ver'); const i = edSel + 1; quiz.items.splice(i, 0, nuevoItem(el.dataset.t)); edSel = i; guardarLocal(); renderLista(); renderForm(); verVista('form'); },
     lista: () => verVista('lista'),
     prev: () => { if (edSel > -1) { edSel--; renderLista(); renderForm(); $('#form').scrollTop = 0; } },
     next: () => { if (edSel < quiz.items.length - 1) { edSel++; renderLista(); renderForm(); $('#form').scrollTop = 0; } },
@@ -1785,10 +1837,27 @@ function vistaEditor() {
 }
 function mover(i, d) { const j = i + d; if (j < 0 || j >= quiz.items.length) return; [quiz.items[i], quiz.items[j]] = [quiz.items[j], quiz.items[i]]; edSel = j; guardarLocal(); renderLista(); renderForm(); }
 function renderLista() {
-  $('#lista').innerHTML = `<div class="li ${edSel === -1 ? 'sel' : ''}" data-a="sel" data-i="-1">⚙️ <b>Configuración</b></div>` +
+  $('#lista').innerHTML = `<div class="add${menuAdd ? ' abierto' : ''}"><button class="add-btn pri" data-a="menuAdd" aria-expanded="${menuAdd}">${ic('add_circle', 'fill')} Añadir pregunta ${ic(menuAdd ? 'expand_less' : 'expand_more')}</button>
+    ${menuAdd ? `<div class="add-menu"><p class="muted">Se agrega después de la seleccionada.<span class="solo-pc"> Deja el mouse sobre un tipo para ver de qué se trata.</span></p>${GRUPOS_TIPOS.map(([g, ks]) => `<div class="add-g"><h4>${g}</h4><div class="tipos">${ks.map(k => `<button data-a="add" data-t="${k}" data-desc="${esc(DESC_TIPOS[k])}"><span class="ico">${TIPOS[k].icono}</span><span><b>${TIPOS[k].nombre.replace(/ \(sin puntaje\)/, '')}</b><small>${esc(DESC_TIPOS[k])}</small></span></button>`).join('')}</div></div>`).join('')}</div>` : ''}</div>` +
+    `<div class="li ${edSel === -1 ? 'sel' : ''}" data-a="sel" data-i="-1">⚙️ <b>Configuración</b></div>` +
     quiz.items.map((it, i) => `<div class="li ${edSel === i ? 'sel' : ''}" data-a="sel" data-i="${i}"><span class="n">${i + 1}</span>${it.tipo === 'diapositiva' ? `<span class="mini" style="${esc(cssRelleno(it.fondo))}"></span>` : `<span>${TIPOS[it.tipo].icono}</span>`}<span class="tx">${esc(etiqueta(it))}</span>
       <span class="acts"><button data-a="up" data-i="${i}" title="Subir">↑</button><button data-a="down" data-i="${i}" title="Bajar">↓</button><button data-a="dup" data-i="${i}" title="Duplicar">⧉</button><button data-a="del" data-i="${i}" title="Eliminar">✕</button></span></div>`).join('') +
-    `<div class="add"><p>➕ Agregar después del seleccionado:</p><div class="tipos">${Object.entries(TIPOS).map(([k, t]) => `<button data-a="add" data-t="${k}">${t.icono} ${t.nombre}</button>`).join('')}</div></div>`;
+    '';
+  const lista = $('#lista');
+  if (!lista.dataset.tip) { // descripción flotante al pasar el mouse por un tipo
+    lista.dataset.tip = 1;
+    const tip = () => $('#tipTipo') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'tipTipo', role: 'tooltip' }));
+    const mostrar = b => {
+      const t = tip(), r = b.getBoundingClientRect(), rl = lista.getBoundingClientRect();
+      t.innerHTML = `<b>${b.querySelector('.ico').textContent} ${b.querySelector('b').textContent}</b>${esc(b.dataset.desc)}`;
+      t.style.left = (rl.right + 10) + 'px'; t.style.top = Math.min(r.top, innerHeight - t.offsetHeight - 10) + 'px'; t.classList.add('ver');
+    };
+    const ocultar = () => $('#tipTipo')?.classList.remove('ver');
+    lista.addEventListener('mouseover', e => { const b = e.target.closest('[data-desc]'); if (b && matchMedia('(min-width:761px)').matches) mostrar(b); else ocultar(); });
+    lista.addEventListener('mouseleave', ocultar);
+    lista.addEventListener('scroll', ocultar);
+    lista.addEventListener('focusin', e => { const b = e.target.closest('[data-desc]'); if (b && matchMedia('(min-width:761px)').matches) mostrar(b); });
+  }
 }
 const fTxt = (l, f, v, ph = '') => `<label class="fld"><span>${l}</span><input data-f="${f}" value="${esc(v)}" placeholder="${esc(ph)}"></label>`;
 const fArea = (l, f, v, ph = '') => `<label class="fld"><span>${l}</span><textarea data-f="${f}" rows="3" placeholder="${esc(ph)}">${esc(v)}</textarea></label>`;
@@ -2796,7 +2865,7 @@ const TOURS = {
   ],
   editor: [
     { sel: '#lista', t: 'Tu presentación', d: 'Diapositivas y preguntas en orden. Toca una para editarla; con ↑ ↓ cambias el orden.' },
-    { sel: '.add', t: 'Agregar', d: 'Elige el tipo de diapositiva o pregunta. Se agrega después de la seleccionada.' },
+    { sel: '.add', t: 'Añadir pregunta', d: 'Abre la lista de tipos de diapositiva y pregunta. Pasa el mouse sobre uno para ver de qué se trata. Se agrega después de la seleccionada.' },
     { sel: '#form', t: 'Editar', d: 'Aquí cambias el texto, las opciones, el tiempo y el puntaje. En las diapositivas puedes mover y escribir sobre el lienzo, como en PowerPoint.' },
     { sel: '#bUndo', t: 'Deshacer', d: 'Si te equivocas, deshaz (Ctrl+Z) o rehaz (Ctrl+Y). Todo se guarda solo.' },
     { sel: '.bar [data-a=vista]', t: 'Vista previa', d: 'Mira cómo se verá en la pantalla grande y en el teléfono de los niños.' },

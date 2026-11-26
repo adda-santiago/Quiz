@@ -58,6 +58,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Importar preguntas (`parsearImportacion`): texto (alternativas con *, V/F, =respuesta, lista numerada para ordenar, varias * → marca todas), tabla pegada de Excel/Sheets (Pregunta · Correcta · Otras) o JSON. `PROMPT_IA()` genera el prompt para pedírselas a una IA.
 - Fondo de la presentación (`config.fondoPres`): color, degradado o imagen de la galería detrás de preguntas, sala de espera y ranking (el contenido va sobre un panel claro).
 - Tutorial guiado (`TOURS`, `tour()`): Inicio y Editor, se abre solo la primera vez (no en navegadores automatizados) y con el botón ❓.
+- Añadir pregunta: botón desplegable arriba de «Configuración» en la lista del editor (`menuAdd`), tipos agrupados en `GRUPOS_TIPOS`; descripción de cada tipo en `DESC_TIPOS` (globo flotante `#tipTipo` al pasar el mouse en escritorio, texto bajo el nombre en el teléfono).
 - Editor en teléfono: barra con ←, deshacer, rehacer, vista previa, presentar y menú ⋮ (guardar, abrir, importar, tutorial); el título va en una segunda fila.
 - Host: lobby con QR, sacar jugadores, ranking cada N preguntas, podio final, exportar resultados CSV, modo solo pantalla si no hay conexión.
 - Jugador: nombre + avatar emoji, reconexión conservando puntaje (pid en localStorage).
