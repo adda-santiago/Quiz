@@ -12,7 +12,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 
 ## Estado actual (v1)
 - Todo está en un solo archivo: `index.html` (HTML + CSS + JS vanilla, sin build).
-- Dependencias por CDN: PeerJS 1.5.4 (WebRTC, conexión teléfono ↔ pantalla, sin servidor propio) y qrcode-generator 1.4.4.
+- Dependencias por CDN: PeerJS 1.5.4 (WebRTC, conexión teléfono ↔ pantalla, sin servidor propio) y qrcode-generator 1.4.4; bajo demanda JSZip 3.10.1 y pdf.js 3.11.174 (cdnjs) para importar PowerPoint/PDF.
 - Diseño visual: sistema "Sanctuary Tech" del proyecto de Google Stitch "Interactive Church Quiz Redesign" (pantallas Inicio y Pregunta, escritorio y celular). Tokens como variables CSS en `:root` (primario índigo #180157, cian #006780, magenta #A21CAF, dorado #F59E0B, fondo #FDF8FF). Fuentes de Google Fonts: Instrument Serif (títulos y preguntas), Instrument Sans (texto), Source Code Pro (códigos y números) e íconos Material Symbols Outlined (helper `ic(nombre)`). Sin Tailwind: CSS propio.
 - Alternativas con letras A–F (`LETRAS`) y los colores de `COLORES`; V/F con V verde y F roja. En el teléfono se responde con un solo toque.
 - Vistas: Inicio, Editor, Presentar (host), Jugador (`?join=CODIGO`).
@@ -53,6 +53,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Transiciones entre pantallas (config `transicion`, o por diapositiva `it.transicion`): fundido, deslizar, zoom, subir. Animaciones de entrada por elemento (`el.anim`, `el.retraso`). El teléfono vibra al recibir el resultado.
 - "Mis quizzes": cada quiz tiene `id`; se guarda en IDB como `q:<id>` + índice `indice` (`INDICE`, `guardarEnIndice`, `cambiarQuiz`). Lista en el Inicio (abrir, duplicar, eliminar). "Quiz en blanco" y "Cargar ejemplo" crean quizzes nuevos sin borrar el actual.
 - Vista previa en el editor: dos iframes de la misma app (`?vista=host` y `?vista=jugador`) que reciben el quiz por `postMessage` (`vistaPrevia()`), con navegación y fase pregunta/respuesta.
+- Importar PowerPoint (`abrirImportarPpt`): pregunta el modo. «Como elementos editables» lee el .pptx con JSZip (`importarPptx`: textos con tamaño/color/negrita/alineación, viñetas, imágenes, formas, tablas como texto, fondos; posiciones de marcadores desde el diseño/patrón; colores del tema). «Como imágenes» usa el PDF exportado desde PowerPoint (pdf.js) o imágenes sueltas (`importarComoImagenes`). Las librerías se cargan solo al importar (`LIBS`, `cargarScript`). Gráficos, SmartArt, conectores, animaciones y EMF/WMF se omiten.
 - Importar preguntas (`parsearImportacion`): texto (alternativas con *, V/F, =respuesta, lista numerada para ordenar, varias * → marca todas), tabla pegada de Excel/Sheets (Pregunta · Correcta · Otras) o JSON. `PROMPT_IA()` genera el prompt para pedírselas a una IA.
 - Fondo de la presentación (`config.fondoPres`): color, degradado o imagen de la galería detrás de preguntas, sala de espera y ranking (el contenido va sobre un panel claro).
 - Tutorial guiado (`TOURS`, `tour()`): Inicio y Editor, se abre solo la primera vez (no en navegadores automatizados) y con el botón ❓.

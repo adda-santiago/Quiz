@@ -519,6 +519,14 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .lz-el.t-texto{padding:.6cqw 1.2cqw;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.15;font-size:calc(var(--fs) * 1cqw / 12.8)}
 .lz-el .tx{width:100%;outline:none}
 .lz-el img{width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
+.ppt-op{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ppt-card{display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left;padding:16px;border-radius:var(--r-lg);background:var(--s-lowest);border:2px solid var(--outline-var);font-weight:400}
+.ppt-card:hover{border-color:var(--c);background:var(--s-low)}
+.ppt-card>b{display:flex;align-items:center;gap:6px;color:var(--c);font-size:1.05rem}
+.ppt-card span{color:var(--on-s-var);font-size:.92rem}
+.ppt-card small{color:var(--secondary);font-size:.85rem}
+.ppt-link{justify-content:flex-start;background:var(--tertiary-container);border-color:#F0ABFC;color:var(--on-tertiary-container)}
+@media (max-width:640px){.ppt-op{grid-template-columns:1fr}}
 .par-lado{flex:1;display:flex;align-items:center;gap:4px;min-width:0}
 .par-lado input{min-width:0}
 .par-addimg{padding:.45em .5em;flex:none}
@@ -1634,7 +1642,7 @@ function vistaEditor() {
       <button class="solo-pc" data-a="guardar" title="Guardar archivo">${ic('download')}<span class="lbl">Guardar archivo</span></button>
       <button class="pri" data-a="presentar" title="Presentar">${ic('play_circle', 'fill')}<span class="lbl">Presentar</span></button>
       <button class="solo-cel" data-a="menuMas" title="Más" aria-label="Más opciones">${ic('more_vert')}</button>
-      <div class="menu-mas" id="menuMas" hidden><button data-a="guardar">${ic('download')} Guardar archivo</button><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="importar">${ic('playlist_add')} Importar preguntas</button><button data-a="tutorial">${ic('help')} Tutorial</button></div></header>
+      <div class="menu-mas" id="menuMas" hidden><button data-a="guardar">${ic('download')} Guardar archivo</button><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="importar">${ic('playlist_add')} Importar preguntas</button><button data-a="importarPpt">${ic('slideshow')} Importar PowerPoint</button><button data-a="tutorial">${ic('help')} Tutorial</button></div></header>
     <div class="ed-body"><aside id="lista"></aside><main id="form"></main></div></div>`;
   $('#qTitulo').oninput = e => { quiz.config.titulo = e.target.value; guardarLocal(); };
   const form = $('#form');
@@ -1709,6 +1717,7 @@ function vistaEditor() {
     menuMas: () => { const m = $('#menuMas'); m.hidden = !m.hidden; },
     vista: () => abrirVistaPrevia(),
     importar: () => abrirImportar(),
+    importarPpt: () => abrirImportarPpt(),
     tutorial: () => tour('editor'),
     imgfile: () => elegirImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
     parImg: el => elegirImagen(d => { objActual().pares[+el.dataset.i][el.dataset.lado + 'i'] = d; guardarLocal(); renderForm(); }, 700),
@@ -2032,6 +2041,262 @@ function vistaPrevia(modo) { // esta página está dentro de un iframe de la vis
   window.parent.postMessage({ t: 'vista-lista' }, '*');
 }
 
+/* =================== IMPORTAR POWERPOINT ===================
+   - Como elementos editables: se lee el .pptx (es un zip con XML) con JSZip y se pasan títulos, textos,
+     imágenes, formas, tablas y fondos a elementos del lienzo.
+   - Como imágenes: el navegador no puede dibujar un .pptx, así que se usa el PDF exportado desde PowerPoint
+     (pdf.js convierte cada página en imagen) o las imágenes JPG/PNG de cada diapositiva. */
+const LIBS = {
+  jszip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+  pdf: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+  pdfWorker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+};
+const cargarScript = url => new Promise((ok, mal) => {
+  if ([...document.scripts].some(x => x.src === url && x.dataset.listo)) return ok();
+  const sc = document.createElement('script'); sc.src = url; sc.onload = () => { sc.dataset.listo = '1'; ok(); }; sc.onerror = () => mal(new Error('No se pudo descargar una librería necesaria. Revisa tu conexión a internet.'));
+  document.head.appendChild(sc);
+});
+function abrirImportarPpt() {
+  $('#capa')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp">
+    <div class="imp-cab"><h2>${ic('slideshow')} Importar PowerPoint</h2><button data-a="pptCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <p>¿Cómo quieres importarlo?</p>
+    <div class="ppt-op">
+      <button class="ppt-card" data-a="pptModo" data-v="elementos"><b>${ic('edit_note')} Como elementos editables</b>
+        <span>La app intenta pasar los títulos, textos, imágenes, formas y fondos para que puedas moverlos y editarlos. El diseño puede variar un poco respecto del original.</span>
+        <small>Elige el archivo <b>.pptx</b></small></button>
+      <button class="ppt-card" data-a="pptModo" data-v="imagenes"><b>${ic('image')} Como imágenes</b>
+        <span>Cada diapositiva queda idéntica al original, pero no se puede editar el texto.</span>
+        <small>En PowerPoint usa <b>Archivo → Exportar → PDF</b> y elige ese PDF (o las imágenes JPG/PNG de cada diapositiva).</small></button>
+    </div>
+    <p class="imp-res" id="pptProg"></p>
+    <p class="hint">Las diapositivas se agregan después de la seleccionada. Las animaciones, transiciones, gráficos y SmartArt de PowerPoint no se importan.</p>
+    <div class="botones"><button data-a="pptCerrar">Cancelar</button></div></div></div>`);
+  Object.assign(ACC, {
+    pptCerrar: () => $('#capa')?.remove(),
+    pptModo: el => {
+      const modo = el.dataset.v, inp = document.createElement('input'); inp.type = 'file';
+      inp.accept = modo === 'elementos' ? '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation' : '.pdf,application/pdf,image/*';
+      inp.multiple = modo === 'imagenes';
+      inp.onchange = () => { if (inp.files.length) ejecutarImportPpt(modo, [...inp.files]); };
+      inp.click();
+    },
+  });
+}
+async function ejecutarImportPpt(modo, files) {
+  const prog = t => { const el = $('#pptProg'); if (el) el.innerHTML = t; };
+  $('#capa')?.querySelectorAll('.ppt-card').forEach(b => b.disabled = true);
+  try {
+    let r;
+    if (modo === 'elementos') {
+      const f = files[0];
+      if (!/\.pptx$/i.test(f.name)) throw new Error(/\.ppt$/i.test(f.name) ? 'Ese es el formato antiguo (.ppt). Ábrelo en PowerPoint y guárdalo como .pptx, o expórtalo como PDF e impórtalo como imágenes.' : 'Elige un archivo .pptx.');
+      r = await importarPptx(f, prog);
+    } else r = { diapos: await importarComoImagenes(files, prog), omitidos: 0 };
+    if (!r.diapos.length) throw new Error('No se encontraron diapositivas.');
+    const i = Math.max(-1, edSel) + 1;
+    quiz.items.splice(i, 0, ...r.diapos); edSel = i; guardarLocal();
+    $('#capa')?.remove(); renderLista(); renderForm();
+    aviso(`✅ Se importaron ${r.diapos.length} diapositiva${r.diapos.length > 1 ? 's' : ''}${r.omitidos ? ` (se omitieron ${r.omitidos} elemento${r.omitidos > 1 ? 's' : ''} no compatibles)` : ''}`, 5000);
+  } catch (e) {
+    console.warn(e); prog(`<span class="aviso">⚠️ ${esc(e.message || 'No se pudo importar el archivo.')}</span>`);
+    $('#capa')?.querySelectorAll('.ppt-card').forEach(b => b.disabled = false);
+  }
+}
+function imagenAData(blob, max = 1600, tipo) { // reduce la imagen y la devuelve como data URL + proporción
+  return new Promise((ok, mal) => {
+    const url = URL.createObjectURL(blob), img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * s)); c.height = Math.max(1, Math.round(img.height * s));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      const png = (tipo || blob.type) === 'image/png';
+      ok({ url: c.toDataURL(png ? 'image/png' : 'image/jpeg', 0.85), ar: img.width / img.height });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); mal(new Error('Imagen no compatible')); };
+    img.src = url;
+  });
+}
+function diapoDeImagen(src, ar) {
+  const exacta = Math.abs(ar - 16 / 9) < 0.03;
+  return exacta ? { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'imagen', imagen: src, oscurecer: 0 }, els: [] }
+    : { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'color', color: '#000000' }, els: [elImagen({ src, x: 0, y: 0, w: 100, h: 100, ajuste: 'contain', rad: 0, sombra: false })] };
+}
+async function importarComoImagenes(files, prog) {
+  const out = [];
+  files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  for (const f of files) {
+    if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) {
+      prog('Cargando el lector de PDF…');
+      await cargarScript(LIBS.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWorker;
+      const pdf = await pdfjsLib.getDocument({ data: await f.arrayBuffer() }).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        prog(`Convirtiendo página ${i} de ${pdf.numPages}…`);
+        const pg = await pdf.getPage(i), v0 = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: 1600 / v0.width });
+        const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+        await pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+        out.push(diapoDeImagen(c.toDataURL('image/jpeg', 0.85), vp.width / vp.height));
+      }
+    } else if (/^image\//.test(f.type)) {
+      prog(`Procesando ${esc(f.name)}…`);
+      const d = await imagenAData(f, 1600); out.push(diapoDeImagen(d.url, d.ar));
+    } else throw new Error(`«${f.name}» no es un PDF ni una imagen. Para importar como imágenes, exporta el PowerPoint como PDF (Archivo → Exportar → PDF).`);
+  }
+  return out;
+}
+async function importarPptx(file, prog) {
+  prog('Cargando el lector de PowerPoint…');
+  await cargarScript(LIBS.jszip);
+  const zip = await JSZip.loadAsync(file);
+  const xml = {};
+  const leer = async ruta => { if (ruta in xml) return xml[ruta]; const f = zip.file(ruta); xml[ruta] = f ? new DOMParser().parseFromString(await f.async('string'), 'application/xml') : null; return xml[ruta]; };
+  const resolver = (dir, t) => { if (t.startsWith('/')) return t.slice(1); const o = []; (dir + '/' + t).split('/').forEach(x => { if (x === '..') o.pop(); else if (x && x !== '.') o.push(x); }); return o.join('/'); };
+  const rels = async ruta => {
+    const dir = ruta.slice(0, ruta.lastIndexOf('/')), d = await leer(`${dir}/_rels/${ruta.slice(ruta.lastIndexOf('/') + 1)}.rels`), m = {};
+    if (d) [...d.getElementsByTagName('Relationship')].forEach(r => m[r.getAttribute('Id')] = { ruta: r.getAttribute('TargetMode') === 'External' ? null : resolver(dir, r.getAttribute('Target')), tipo: r.getAttribute('Type') || '' });
+    return m;
+  };
+  const H1 = (el, tag) => el ? [...el.children].find(c => c.tagName === tag) : null; // hijo directo
+  const D1 = (el, tag) => el ? el.getElementsByTagName(tag)[0] || null : null; // descendiente
+  const pres = await leer('ppt/presentation.xml'); if (!pres) throw new Error('El archivo no parece un PowerPoint válido.');
+  const sz = D1(pres, 'p:sldSz'), CX = +sz?.getAttribute('cx') || 12192000, CY = +sz?.getAttribute('cy') || 6858000;
+  const prel = await rels('ppt/presentation.xml');
+  // colores del tema
+  const tema = {};
+  const rTema = Object.values(prel).find(r => /\/theme$/.test(r.tipo));
+  const dTema = rTema && await leer(rTema.ruta);
+  if (dTema) { const cs = D1(dTema, 'a:clrScheme'); if (cs) [...cs.children].forEach(c => { const v = D1(c, 'a:srgbClr')?.getAttribute('val') || D1(c, 'a:sysClr')?.getAttribute('lastClr'); if (v) tema[c.tagName.replace('a:', '')] = '#' + v; }); }
+  const alias = { tx1: 'dk1', bg1: 'lt1', tx2: 'dk2', bg2: 'lt2' };
+  const colorDe = cont => { // a:solidFill (u otro contenedor) → '#rrggbb[aa]'
+    if (!cont) return null;
+    const n = [...cont.children].find(c => /^a:(srgbClr|schemeClr|sysClr|prstClr)$/.test(c.tagName)); if (!n) return null;
+    let c = n.tagName === 'a:srgbClr' ? '#' + n.getAttribute('val') : n.tagName === 'a:sysClr' ? '#' + (n.getAttribute('lastClr') || '000000') : n.tagName === 'a:prstClr' ? ({ black: '#000000', white: '#FFFFFF', red: '#FF0000' }[n.getAttribute('val')] || '#000000') : tema[alias[n.getAttribute('val')] || n.getAttribute('val')] || null;
+    if (!c) return null;
+    const lm = D1(n, 'a:lumMod')?.getAttribute('val'), lo = D1(n, 'a:lumOff')?.getAttribute('val');
+    if (lm || lo) { const k = (+lm || 100000) / 100000, off = (+lo || 0) / 100000; c = '#' + [1, 3, 5].map(i => Math.round(Math.min(255, parseInt(c.substr(i, 2), 16) * k + 255 * off)).toString(16).padStart(2, '0')).join(''); }
+    const al = D1(n, 'a:alpha')?.getAttribute('val'); if (al && +al < 100000) c += Math.round(+al / 100000 * 255).toString(16).padStart(2, '0');
+    return c.toUpperCase();
+  };
+  const rellenoDe = spPr => { // a:solidFill / a:gradFill → relleno de la app
+    const sol = H1(spPr, 'a:solidFill'), gr = H1(spPr, 'a:gradFill');
+    if (sol) { const c = colorDe(sol); return c ? rellenoDef('color', c) : null; }
+    if (gr) { const gs = [...gr.getElementsByTagName('a:gs')].map(g => colorDe(g)).filter(Boolean); if (gs.length) { const ang = +D1(gr, 'a:lin')?.getAttribute('ang') || 0; return { ...rellenoDef('degradado'), colores: gs.length > 1 ? [gs[0], gs[gs.length - 1]] : [gs[0], gs[0]], angulo: Math.round(ang / 60000 + 90) % 360 }; } }
+    return null;
+  };
+  const cacheImg = {};
+  const imagen = async ruta => {
+    if (!ruta) return null; if (ruta in cacheImg) return cacheImg[ruta];
+    const f = zip.file(ruta); if (!f || !/\.(png|jpe?g|gif|bmp|webp|svg)$/i.test(ruta)) return cacheImg[ruta] = null;
+    const tipo = /\.png$/i.test(ruta) ? 'image/png' : /\.svg$/i.test(ruta) ? 'image/svg+xml' : 'image/jpeg';
+    const blob = new Blob([await f.async('uint8array')], { type: tipo });
+    try { cacheImg[ruta] = (await imagenAData(blob, 1600, tipo)).url; } catch (_) { cacheImg[ruta] = null; }
+    return cacheImg[ruta];
+  };
+  const fondoDe = async (doc, ruta) => { // p:bg de una diapositiva, diseño o patrón
+    const bg = D1(doc, 'p:bg'); if (!bg) return null;
+    const pr = H1(bg, 'p:bgPr'), ref = H1(bg, 'p:bgRef');
+    if (pr) {
+      const blip = D1(H1(pr, 'a:blipFill'), 'a:blip');
+      if (blip) { const r = (await rels(ruta))[blip.getAttribute('r:embed')], src = await imagen(r && r.ruta); if (src) return { ...fondoDef(), tipo: 'imagen', imagen: src, oscurecer: 0 }; }
+      const rel = rellenoDe(pr); if (rel) return { ...fondoDef(), ...rel, imagen: '', oscurecer: 0 };
+    }
+    if (ref) { const c = colorDe(ref); if (c) return { ...fondoDef(), tipo: 'color', color: c }; }
+    return null;
+  };
+  // estilos de texto del patrón (tamaños y colores por defecto)
+  const estiloPatron = (master, tipo) => {
+    const st = D1(master, tipo === 'title' ? 'p:titleStyle' : tipo === 'body' ? 'p:bodyStyle' : 'p:otherStyle'), l1 = D1(st, 'a:lvl1pPr'), rp = D1(l1, 'a:defRPr');
+    return { sz: +rp?.getAttribute('sz') || 0, color: colorDe(D1(rp, 'a:solidFill')), b: rp?.getAttribute('b') === '1' };
+  };
+  const tipoPh = ph => { const t = ph?.getAttribute('type') || 'obj'; return ['title', 'ctrTitle'].includes(t) ? 'title' : ['body', 'obj', 'subTitle'].includes(t) ? 'body' : 'other'; };
+  const buscarPh = (doc, ph) => { // placeholder equivalente en el diseño o patrón
+    if (!doc || !ph) return null;
+    const idx = ph.getAttribute('idx'), t = ph.getAttribute('type') || 'obj';
+    const sps = [...doc.getElementsByTagName('p:sp')].filter(sp => D1(sp, 'p:ph'));
+    return sps.find(sp => idx != null && D1(sp, 'p:ph').getAttribute('idx') === idx)
+      || sps.find(sp => (D1(sp, 'p:ph').getAttribute('type') || 'obj') === t)
+      || sps.find(sp => tipoPh(D1(sp, 'p:ph')) === tipoPh(ph) && tipoPh(ph) !== 'other') || null;
+  };
+  const xfrmDe = el => { const x = el && (H1(H1(el, 'p:spPr'), 'a:xfrm') || H1(el, 'p:xfrm') || H1(H1(el, 'p:grpSpPr'), 'a:xfrm')); if (!x) return null;
+    const off = H1(x, 'a:off'), ext = H1(x, 'a:ext'); if (!off || !ext) return null;
+    return { x: +off.getAttribute('x'), y: +off.getAttribute('y'), w: +ext.getAttribute('cx'), h: +ext.getAttribute('cy'), rot: (+x.getAttribute('rot') || 0) / 60000, x0: x }; };
+  const pct = (v, total) => +(v / total * 100).toFixed(2);
+  const pxPorPt = 1280 / (CX / 12700);
+  const ids = [...pres.getElementsByTagName('p:sldId')].map(s => s.getAttribute('r:id'));
+  const diapos = []; let omitidos = 0;
+  for (let n = 0; n < ids.length; n++) {
+    prog(`Leyendo diapositiva ${n + 1} de ${ids.length}…`);
+    const ruta = prel[ids[n]]?.ruta; const doc = ruta && await leer(ruta); if (!doc) continue;
+    const srel = await rels(ruta);
+    const rLay = Object.values(srel).find(r => /\/slideLayout$/.test(r.tipo)), lay = rLay && await leer(rLay.ruta);
+    const rMas = rLay && Object.values(await rels(rLay.ruta)).find(r => /\/slideMaster$/.test(r.tipo)), mas = rMas && await leer(rMas.ruta);
+    const fondo = await fondoDe(doc, ruta) || (lay && await fondoDe(lay, rLay.ruta)) || (mas && await fondoDe(mas, rMas.ruta)) || { ...fondoDef(), tipo: 'color', color: tema.lt1 || '#FFFFFF' };
+    const els = [];
+    const procesar = async (nodo, T) => {
+      const tag = nodo.tagName;
+      if (tag === 'p:grpSp') {
+        const gx = xfrmDe(nodo), cOff = gx && H1(gx.x0, 'a:chOff'), cExt = gx && H1(gx.x0, 'a:chExt');
+        let T2 = T;
+        if (gx && cOff && cExt) { const sx = gx.w / (+cExt.getAttribute('cx') || gx.w), sy = gx.h / (+cExt.getAttribute('cy') || gx.h), ox = +cOff.getAttribute('x'), oy = +cOff.getAttribute('y');
+          T2 = b => T({ ...b, x: gx.x + (b.x - ox) * sx, y: gx.y + (b.y - oy) * sy, w: b.w * sx, h: b.h * sy }); }
+        for (const ch of [...nodo.children]) await procesar(ch, T2);
+        return;
+      }
+      if (!['p:sp', 'p:pic', 'p:graphicFrame', 'p:cxnSp'].includes(tag)) return;
+      if (tag === 'p:cxnSp') { omitidos++; return; } // líneas y conectores
+      const ph = D1(nodo, 'p:nvPr') && D1(D1(nodo, 'p:nvPr'), 'p:ph');
+      const phLay = buscarPh(lay, ph), phMas = buscarPh(mas, ph);
+      let bx = xfrmDe(nodo) || xfrmDe(phLay) || xfrmDe(phMas); if (!bx) return;
+      bx = T(bx);
+      const geo = { x: pct(bx.x, CX), y: pct(bx.y, CY), w: pct(bx.w, CX), h: pct(bx.h, CY), rot: Math.round(bx.rot) || 0 };
+      if (tag === 'p:pic') {
+        const blip = D1(nodo, 'a:blip'), src = await imagen(blip && srel[blip.getAttribute('r:embed')]?.ruta);
+        if (src) els.push(elImagen({ ...geo, src, ajuste: 'cover', rad: 0, sombra: false })); else omitidos++;
+        return;
+      }
+      if (tag === 'p:graphicFrame') {
+        const tbl = D1(nodo, 'a:tbl');
+        if (!tbl) { omitidos++; return; } // gráficos, SmartArt, etc.
+        const filas = [...tbl.getElementsByTagName('a:tr')].map(tr => [...tr.getElementsByTagName('a:tc')].map(tc => [...tc.getElementsByTagName('a:t')].map(t => t.textContent).join(' ').trim()).join('   ·   '));
+        els.push(elTexto({ ...geo, texto: filas.join('\n'), fs: Math.max(12, Math.round(16 * pxPorPt)), font: 'sans', color: tema.dk1 || '#1C1B20', al: 'left', va: 'top', fill: rellenoDef('color', '#FFFFFFE6'), rad: 8 }));
+        return;
+      }
+      // p:sp: texto y/o forma
+      const spPr = H1(nodo, 'p:spPr'), txb = H1(nodo, 'p:txBody'), tipo = tipoPh(ph);
+      const geom = D1(spPr, 'a:prstGeom')?.getAttribute('prst') || 'rect';
+      let fill = rellenoDe(spPr);
+      if (!fill && !H1(spPr, 'a:noFill')) { const fr = D1(H1(nodo, 'p:style'), 'a:fillRef'); if (fr && +fr.getAttribute('idx') > 0) { const c = colorDe(fr); if (c) fill = rellenoDef('color', c); } }
+      if (H1(spPr, 'a:blipFill')) { const blip = D1(H1(spPr, 'a:blipFill'), 'a:blip'), src = await imagen(blip && srel[blip.getAttribute('r:embed')]?.ruta); if (src) { els.push(elImagen({ ...geo, src, ajuste: 'cover', rad: geom === 'ellipse' ? 0 : 0, sombra: false })); return; } }
+      const parrafos = txb ? [...txb.getElementsByTagName('a:p')] : [];
+      const lineas = parrafos.map(pa => {
+        let t = ''; [...pa.children].forEach(c => { if (c.tagName === 'a:r' || c.tagName === 'a:fld') t += D1(c, 'a:t')?.textContent || ''; else if (c.tagName === 'a:br') t += '\n'; });
+        const ppr = H1(pa, 'a:pPr'), bu = D1(ppr, 'a:buChar')?.getAttribute('char');
+        if (t.trim() && (bu || (tipo === 'body' && ph && ph.getAttribute('type') !== 'subTitle' && !D1(ppr, 'a:buNone')))) t = (bu || '•') + ' ' + t;
+        return t;
+      });
+      const texto = lineas.join('\n').replace(/\n+$/, '');
+      if (!texto.trim()) { // forma sin texto
+        if (fill) els.push(elForma({ ...geo, forma: geom === 'ellipse' ? 'elipse' : 'rect', fill, rad: /round/i.test(geom) ? 24 : 0 }));
+        return;
+      }
+      const rPr = D1(txb, 'a:rPr') || D1(txb, 'a:endParaRPr'), defR = D1(D1(txb, 'a:lstStyle'), 'a:defRPr');
+      const est = mas ? estiloPatron(mas, tipo) : {};
+      const szPh = +D1(D1(phLay, 'a:lstStyle'), 'a:defRPr')?.getAttribute('sz') || +D1(D1(phMas, 'a:lstStyle'), 'a:defRPr')?.getAttribute('sz') || 0;
+      const szPt = (+rPr?.getAttribute('sz') || +defR?.getAttribute('sz') || szPh || est.sz || (tipo === 'title' ? 4400 : 1800)) / 100;
+      const escala = (+D1(D1(txb, 'a:bodyPr'), 'a:normAutofit')?.getAttribute('fontScale') || 100000) / 100000;
+      const color = colorDe(D1(rPr, 'a:solidFill')) || colorDe(D1(D1(phLay, 'a:defRPr'), 'a:solidFill')) || est.color || tema.dk1 || '#1C1B20';
+      const algn = D1(txb, 'a:pPr')?.getAttribute('algn') || D1(D1(phLay, 'a:lstStyle'), 'a:lvl1pPr')?.getAttribute('algn') || D1(D1(mas, tipo === 'title' ? 'p:titleStyle' : 'p:bodyStyle'), 'a:lvl1pPr')?.getAttribute('algn');
+      const anchor = D1(txb, 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phLay, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || D1(D1(phMas, 'p:txBody'), 'a:bodyPr')?.getAttribute('anchor') || (tipo === 'title' ? 'ctr' : 't');
+      els.push(elTexto({ ...geo, texto, fs: Math.max(8, Math.round(szPt * escala * pxPorPt)), font: 'sans', color, b: rPr?.getAttribute('b') === '1' || (rPr?.getAttribute('b') == null && est.b), i: rPr?.getAttribute('i') === '1',
+        al: algn === 'ctr' ? 'center' : algn === 'r' ? 'right' : 'left', va: anchor === 'ctr' ? 'middle' : anchor === 'b' ? 'bottom' : 'top', fill: fill || rellenoDef(), rad: /round/i.test(geom) ? 24 : geom === 'ellipse' ? 200 : 0 }));
+    };
+    const tree = D1(D1(doc, 'p:cSld'), 'p:spTree');
+    if (tree) for (const ch of [...tree.children]) await procesar(ch, b => b);
+    diapos.push({ tipo: 'diapositiva', fondo, els });
+  }
+  return { diapos, omitidos };
+}
+
 /* =================== IMPORTAR PREGUNTAS =================== */
 const PROMPT_IA = (tema, edad, n) => `Eres un maestro de escuela dominical. Crea ${n} preguntas sobre «${tema}» para niños de ${edad} años, basadas en la Biblia (versión Reina-Valera). Varía la dificultad y usa un lenguaje simple.
 
@@ -2101,6 +2366,7 @@ function parsearImportacion(txt) {
 function abrirImportar() {
   document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp">
     <div class="imp-cab"><h2>${ic('playlist_add')} Importar preguntas</h2><button data-a="impCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <button class="ppt-link" data-a="impPpt">${ic('slideshow')} ¿Tienes un PowerPoint? Impórtalo como diapositivas ${ic('arrow_forward')}</button>
     <p class="muted">Pega preguntas escritas, una tabla copiada de Excel o Google Sheets (Pregunta · Correcta · Otras opciones…), o un JSON.</p>
     <textarea id="impTxt" rows="10" placeholder="¿Quién construyó el arca?&#10;*Noé&#10;Moisés&#10;David&#10;&#10;Jonás fue tragado por un gran pez.&#10;V"></textarea>
     <p class="imp-res" id="impRes">Escribe o pega las preguntas para ver cuántas se detectan.</p>
@@ -2117,6 +2383,7 @@ function abrirImportar() {
   ta.focus();
   Object.assign(ACC, {
     impCerrar: () => $('#capa').remove(),
+    impPpt: () => abrirImportarPpt(),
     impPrompt: () => { const txt = PROMPT_IA($('#iaTema').value || 'la Biblia', $('#iaEdad').value || '8 a 12', +$('#iaN').value || 10); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => aviso('📋 Prompt copiado')).catch(() => { ta.value = txt; aviso('Copia el texto del cuadro'); }); },
     impAgregar: () => {
       const r = parsearImportacion(ta.value); if (!r.items.length) return;
@@ -2143,7 +2410,7 @@ const TOURS = {
     { sel: '#form', t: 'Editar', d: 'Aquí cambias el texto, las opciones, el tiempo y el puntaje. En las diapositivas puedes mover y escribir sobre el lienzo, como en PowerPoint.' },
     { sel: '#bUndo', t: 'Deshacer', d: 'Si te equivocas, deshaz (Ctrl+Z) o rehaz (Ctrl+Y). Todo se guarda solo.' },
     { sel: '.bar [data-a=vista]', t: 'Vista previa', d: 'Mira cómo se verá en la pantalla grande y en el teléfono de los niños.' },
-    { sel: '.bar [data-a=importar]', t: 'Importar', d: 'Pega muchas preguntas de una vez, desde un texto, una planilla o lo que te dé una IA.' },
+    { sel: '.bar [data-a=importar]', t: 'Importar', d: 'Pega muchas preguntas de una vez (desde un texto, una planilla o lo que te dé una IA) o importa un PowerPoint como diapositivas.' },
     { sel: '.bar [data-a=guardar]', t: 'Guardar archivo', d: 'Descarga el quiz como archivo .json para tener una copia o abrirlo en otro computador.' },
     { sel: '.bar [data-a=presentar]', t: '¡A jugar!', d: 'Cuando esté listo, presenta. Durante el juego: P pausa, + agrega tiempo, M silencia y puedes usar tu celular como control remoto.' },
   ],
