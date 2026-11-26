@@ -18,6 +18,8 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Vistas: Inicio, Editor, Presentar (host), Jugador (`?join=CODIGO`).
 - ID del host en PeerJS: `quiziglesia-<código>`.
 - Autoguardado en localStorage + Descargar/Abrir archivo `.quiz.json`.
+- Diapositivas tipo PowerPoint: lienzo 16:9 (`it.fondo` + `it.els`). Elementos texto/imagen/forma con x, y, w, h en % del lienzo; tamaño de letra `fs` en px de un lienzo de 1280 px (CSS con `cqw`). Fondo: color, degradado ("combinar colores", 2–3 colores, lineal/radial, `COMBINACIONES`) o imagen con oscurecer. Diseños predefinidos en `DISENOS`. Las diapositivas del formato antiguo (titulo/texto/imagen/fondo) se convierten con `migrarDiapo()`.
+- Galería de fondos: carpeta `fondos/` (imágenes 1920×1080 + `mini/` de miniaturas) listada en `fondos/lista.json`. Prompts de Google Flow para los 20 fondos en `fondos/PROMPTS.md`.
 - Tipos implementados: diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, encuesta, nube, escala.
   - `emoji` y `revela` reutilizan opciones de colores (`CON_OPCIONES` / `CON_CORRECTAS`).
   - `error`: la palabra equivocada se marca entre *asteriscos* en el texto.

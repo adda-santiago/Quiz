@@ -229,10 +229,7 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .chip{background:var(--s-lowest);border:1px solid var(--outline-var);color:var(--on-s);border-radius:999px;padding:8px 16px;font-weight:600;font-size:1.05rem;cursor:pointer;box-shadow:var(--sombra)}
 .chip.off{opacity:.45}
 .chip:hover{text-decoration:line-through;border-color:var(--error)}
-.slide{width:100%;min-height:56vh;border-radius:28px;background:var(--sf);background:linear-gradient(150deg,var(--sf),color-mix(in srgb,var(--sf) 55%,#000));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:48px;box-shadow:var(--sombra)}
-.slide h1{color:#fff;font-size:clamp(2.4rem,6vw,4.6rem)}
-.slide p{font-size:clamp(1.2rem,2.8vw,2rem);max-width:1000px;white-space:pre-wrap;margin:0}
-.slide img,.qimg{max-height:42vh;max-width:90%;border-radius:var(--r-lg);box-shadow:var(--sombra)}
+.qimg{max-height:42vh;max-width:90%;border-radius:var(--r-lg);box-shadow:var(--sombra)}
 .hq-card{width:100%;text-align:left;padding:28px 32px;display:flex;flex-direction:column;gap:18px}
 .hq-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .timer{display:inline-flex;align-items:center;gap:8px;background:var(--c);color:#fff;border-radius:999px;padding:6px 16px;font-family:var(--mono);font-weight:700;font-size:1.4rem;font-variant-numeric:tabular-nums}
@@ -325,6 +322,54 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .eqbox h3{margin:0;padding:8px 16px;color:#fff;font-size:1.1rem}
 .eqbox .players{padding:12px}
 .eqbox small{color:var(--outline)}
+/* ---------- Diapositivas (lienzo 16:9) ---------- */
+.lienzo{position:relative;width:100%;aspect-ratio:16/9;container-type:size;overflow:hidden;border-radius:var(--r-lg);box-shadow:var(--sombra);background:#180157;user-select:none;-webkit-user-select:none}
+.stage .lienzo{width:min(100%,calc((100vh - 200px) * 16 / 9));width:min(100%,calc((100dvh - 200px) * 16 / 9));border-radius:var(--r-xl);text-align:initial}
+.lz-el{position:absolute;display:flex;flex-direction:column}
+.lz-el.t-texto{padding:.6cqw 1.2cqw;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.15;font-size:calc(var(--fs) * 1cqw / 12.8)}
+.lz-el .tx{width:100%;outline:none}
+.lz-el img{width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
+.ph-img{width:100%;height:100%;display:grid;place-items:center;text-align:center;border:2px dashed #ffffffaa;border-radius:inherit;color:#fff;background:#ffffff1a;font:600 calc(15 * 1cqw / 12.8)/1.3 var(--sans)}
+.ed-lz .lz-el{cursor:move;touch-action:none}
+.ed-lz .lz-el:hover{outline:1px dashed #ffffffb3}
+.ed-lz .lz-el.sel{outline:2px solid var(--cyan);outline-offset:1px}
+.ed-lz .lz-el.editando{cursor:text;outline-style:dashed;user-select:text;-webkit-user-select:text}
+.lz-el .h{--hs:12px;position:absolute;width:var(--hs);height:var(--hs);background:#fff;border:2px solid var(--cyan);border-radius:3px;touch-action:none;z-index:2;margin:calc(var(--hs) / -2)}
+.h.nw{left:0;top:0;cursor:nwse-resize}.h.n{left:50%;top:0;cursor:ns-resize}.h.ne{left:100%;top:0;cursor:nesw-resize}.h.e{left:100%;top:50%;cursor:ew-resize}
+.h.se{left:100%;top:100%;cursor:nwse-resize}.h.s{left:50%;top:100%;cursor:ns-resize}.h.sw{left:0;top:100%;cursor:nesw-resize}.h.w{left:0;top:50%;cursor:ew-resize}
+@media (pointer:coarse){.lz-el .h{--hs:16px;border-radius:50%}.lz-el .h.n,.lz-el .h.s{display:none}}
+.guia{position:absolute;background:var(--gold);pointer-events:none;z-index:3}
+.guia.gv{top:0;bottom:0;width:2px;left:calc(50% - 1px)}.guia.gh{left:0;right:0;height:2px;top:calc(50% - 1px)}
+.lz-wrap{padding:8px 0}
+.s-bar{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.s-bar button{padding:.5em .8em;font-size:.88rem;background:var(--s-lowest)}
+.s-bar .ms{color:var(--c)}
+.s-dis{display:flex;gap:6px;overflow-x:auto;align-items:center;padding-bottom:4px;font-size:.82rem;font-weight:600;color:var(--on-s-var)}
+.s-dis button{flex:none;font-size:.8rem;padding:.35em .7em;background:var(--s-lowest);font-weight:500}
+.sprops{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.sp-sec{background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);padding:14px 16px}
+.sp-sec h3{font:600 1rem var(--sans);margin:0 0 12px;color:var(--c);display:flex;align-items:center;gap:8px}
+.sp-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.sp-row label{display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--on-s-var)}
+.sp-row input[type=number]{width:84px}
+.sp-row select{width:auto;max-width:100%}
+.sp-row input[type=range]{width:130px}
+.sp-row input[type=color]{width:52px;height:40px}
+.sp-row button{padding:.5em .8em;font-size:.88rem}
+.sp-row .peligro{background:var(--error-container);border-color:var(--error-container);color:#93000A}
+.seg{display:inline-flex;border:1px solid var(--outline-var);border-radius:var(--r-md);overflow:hidden;background:var(--s-lowest)}
+.seg button{border:0;border-radius:0;background:transparent;padding:.5em .8em;font-size:.86rem}
+.seg button+button{border-left:1px solid var(--outline-var)}
+.seg button.on,.tg.on{background:var(--on-primary-container);color:var(--c)}
+.swatches{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sw{width:30px;height:30px;padding:0;border-radius:9px;border:2px solid #fff;box-shadow:0 0 0 1px var(--outline-var)}
+.sw.ancho{width:52px}
+.sw:hover{box-shadow:0 0 0 2px var(--c)}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:6px 0 12px}
+.gal{aspect-ratio:16/9;padding:0;border-radius:10px;background-size:cover;background-position:center;border:2px solid #fff;box-shadow:0 0 0 1px var(--outline-var)}
+.gal.on{box-shadow:0 0 0 3px var(--c)}
+.li .mini{width:30px;height:17px;border-radius:4px;flex:none;box-shadow:0 0 0 1px var(--outline-var)}
+@media (max-width:760px){.sp-row input[type=range]{width:110px}.s-bar button{font-size:.8rem;padding:.45em .6em}}
 /* ---------- Jugador (teléfono) ---------- */
 .jug{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg);color:var(--on-s)}
 .jug .top{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
@@ -465,7 +510,7 @@ function configDefecto() {
 function nuevoItem(tipo) {
   const b = { tipo };
   switch (tipo) {
-    case 'diapositiva': return { ...b, titulo: '', texto: '', imagen: '', fondo: '' };
+    case 'diapositiva': return { ...b, fondo: fondoDef(), els: DISENOS['titulo-texto'].els() };
     case 'alternativas': return { ...b, pregunta: '', opciones: ['', '', '', ''], correctas: [0], imagen: '', tiempo: null, mult: 1 };
     case 'vf': return { ...b, pregunta: '', correcta: true, imagen: '', tiempo: null, mult: 1 };
     case 'completar': return { ...b, pregunta: 'Completa la frase', frase: '', aceptadas: '', imagen: '', tiempo: null, mult: 1 };
@@ -487,8 +532,286 @@ function nuevoItem(tipo) {
 }
 function normalizarQuiz(q) {
   q.config = Object.assign(configDefecto(), q.config || {});
-  q.items = (q.items || []).map(it => Object.assign(nuevoItem(TIPOS[it.tipo] ? it.tipo : 'diapositiva'), it));
+  q.items = (q.items || []).map(it => { const t = TIPOS[it.tipo] ? it.tipo : 'diapositiva'; return t === 'diapositiva' ? migrarDiapo({ ...it, tipo: t }) : Object.assign(nuevoItem(t), it); });
   return q;
+}
+
+/* =================== DIAPOSITIVAS (lienzo 16:9 tipo PowerPoint) ===================
+   Cada diapositiva tiene un fondo (color, degradado o imagen) y una lista de elementos `els`
+   (texto, imagen o forma) con posición y tamaño en % del lienzo. El tamaño de letra `fs`
+   está en píxeles de un lienzo de 1280 px de ancho, así se ve igual en el editor y proyectado. */
+const nid = () => Math.random().toString(36).slice(2, 9);
+const FUENTES = { serif: 'var(--serif)', sans: 'var(--sans)', mono: 'var(--mono)' };
+const PALETA = ['#FFFFFF', '#1C1B20', '#180157', '#2D1E6B', '#006780', '#06B6D4', '#A21CAF', '#7C3AED', '#F59E0B', '#059669', '#BA1A1A', '#FEF3C7'];
+const COMBINACIONES = [ // "combinar colores": degradados listos con la paleta del diseño
+  { n: 'Noche santa', c: ['#180157', '#A21CAF'] }, { n: 'Amanecer', c: ['#F59E0B', '#A21CAF'] }, { n: 'Mar de Galilea', c: ['#006780', '#06B6D4'] },
+  { n: 'Medianoche', c: ['#0F0E12', '#2D1E6B'] }, { n: 'Pradera', c: ['#059669', '#F59E0B'] }, { n: 'Violeta', c: ['#7C3AED', '#06B6D4'] },
+  { n: 'Fuego', c: ['#BA1A1A', '#F59E0B'] }, { n: 'Cielo', c: ['#76DCFF', '#E6DEFF'] }, { n: 'Lavanda', c: ['#FDF8FF', '#E6DEFF'] },
+  { n: 'Arena', c: ['#FEF3C7', '#F59E0B'] }, { n: 'Aurora', c: ['#180157', '#7C3AED', '#06B6D4'] }, { n: 'Atardecer', c: ['#2D1E6B', '#A21CAF', '#F59E0B'] },
+];
+const colorOk = (x, d = '#180157') => /^#[0-9a-f]{3,8}$/i.test(String(x)) ? x : d;
+const urlCss = u => String(u).replace(/['"()\\\s<>]/g, ch => encodeURIComponent(ch));
+const rellenoDef = (tipo = 'ninguno', c = '#180157') => ({ tipo, color: c, colores: ['#180157', '#A21CAF'], angulo: 135, radial: false });
+const fondoDef = () => ({ tipo: 'degradado', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.35 });
+function cssRelleno(f) {
+  if (!f || f.tipo === 'ninguno') return 'background:transparent';
+  if (f.tipo === 'degradado') {
+    const cs = (f.colores || []).map(x => colorOk(x)).join(',') || '#180157,#A21CAF';
+    return `background:${f.radial ? `radial-gradient(circle at center,${cs})` : `linear-gradient(${+f.angulo || 0}deg,${cs})`}`;
+  }
+  if (f.tipo === 'imagen' && f.imagen) {
+    const o = Math.max(0, Math.min(0.9, +f.oscurecer || 0));
+    return `background:linear-gradient(rgba(0,0,0,${o}),rgba(0,0,0,${o})),url('${urlCss(f.imagen)}') center/cover no-repeat,${colorOk(f.color)}`;
+  }
+  return `background:${colorOk(f.color)}`;
+}
+const elTexto = o => ({ id: nid(), t: 'texto', x: 8, y: 10, w: 84, h: 18, rot: 0, texto: 'Texto', fs: 48, font: 'serif', color: '#FFFFFF', b: false, i: false, al: 'center', va: 'middle', fill: rellenoDef(), rad: 0, op: 1, sombra: false, ...o });
+const elImagen = o => ({ id: nid(), t: 'imagen', x: 30, y: 22, w: 40, h: 56, rot: 0, src: '', ajuste: 'cover', rad: 24, op: 1, sombra: true, ...o });
+const elForma = o => ({ id: nid(), t: 'forma', forma: 'rect', x: 38, y: 30, w: 24, h: 40, rot: 0, fill: rellenoDef('color', '#F59E0B'), rad: 0, op: 1, sombra: false, ...o });
+const DISENOS = {
+  portada: { n: 'Portada', els: () => [elTexto({ texto: 'Título de la diapositiva', y: 28, h: 26, fs: 96 }), elTexto({ texto: 'Subtítulo', x: 15, y: 56, w: 70, h: 12, fs: 36, font: 'sans' })] },
+  'titulo-texto': { n: 'Título y texto', els: () => [elTexto({ texto: 'Título', x: 6, y: 6, w: 88, h: 16, fs: 64, al: 'left' }), elTexto({ texto: 'Escribe aquí el contenido…', x: 6, y: 26, w: 88, h: 64, fs: 36, font: 'sans', al: 'left', va: 'top' })] },
+  'solo-titulo': { n: 'Solo título', els: () => [elTexto({ texto: 'Título', x: 6, y: 6, w: 88, h: 16, fs: 64, al: 'left' })] },
+  'imagen-texto': { n: 'Imagen y texto', els: () => [elImagen({ x: 5, y: 10, w: 42, h: 80 }), elTexto({ texto: 'Título', x: 52, y: 10, w: 43, h: 22, fs: 56, al: 'left' }), elTexto({ texto: 'Texto…', x: 52, y: 36, w: 43, h: 52, fs: 30, font: 'sans', al: 'left', va: 'top' })] },
+  'dos-columnas': { n: 'Dos columnas', els: () => [elTexto({ texto: 'Título', x: 6, y: 6, w: 88, h: 16, fs: 60, al: 'left' }), elTexto({ texto: 'Columna 1…', x: 6, y: 28, w: 42, h: 62, fs: 30, font: 'sans', al: 'left', va: 'top', fill: rellenoDef('color', '#FFFFFF1F'), rad: 24 }), elTexto({ texto: 'Columna 2…', x: 52, y: 28, w: 42, h: 62, fs: 30, font: 'sans', al: 'left', va: 'top', fill: rellenoDef('color', '#FFFFFF1F'), rad: 24 })] },
+  versiculo: { n: 'Versículo', els: () => [elTexto({ texto: '«Lámpara es a mis pies tu palabra, y lumbrera a mi camino.»', x: 10, y: 20, w: 80, h: 44, fs: 64, i: true }), elTexto({ texto: 'Salmo 119:105', x: 10, y: 68, w: 80, h: 10, fs: 30, font: 'sans', color: '#F59E0B', b: true })] },
+  blanco: { n: 'En blanco', els: () => [] },
+};
+function migrarDiapo(it) { // diapositivas del formato anterior (título, texto, imagen, color de fondo)
+  if (Array.isArray(it.els)) { it.fondo = Object.assign(fondoDef(), typeof it.fondo === 'object' && it.fondo ? it.fondo : {}); return it; }
+  const els = [], img = !!it.imagen;
+  if (it.titulo) els.push(elTexto({ texto: it.titulo, y: img ? 5 : it.texto ? 20 : 36, h: img ? 18 : 24, fs: 80 }));
+  if (img) els.push(elImagen({ src: it.imagen, x: 25, y: 25, w: 50, h: 48, ajuste: 'contain', sombra: false, rad: 0 }));
+  if (it.texto) els.push(elTexto({ texto: it.texto, x: 8, y: img ? 76 : 48, w: 84, h: img ? 20 : 34, fs: 36, font: 'sans', va: 'top' }));
+  const fondo = typeof it.fondo === 'string' && it.fondo ? Object.assign(fondoDef(), { tipo: 'color', color: it.fondo }) : fondoDef();
+  return { tipo: 'diapositiva', fondo, els };
+}
+const HANDLES = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map(h => `<i class="h ${h}" data-h="${h}"></i>`).join('');
+function elHTML(e, ed, sel) {
+  const st = [`left:${+e.x}%`, `top:${+e.y}%`, `width:${+e.w}%`, `height:${+e.h}%`, `opacity:${e.op ?? 1}`,
+    e.rot ? `transform:rotate(${+e.rot}deg)` : '', e.forma === 'elipse' ? 'border-radius:50%' : `border-radius:calc(${+e.rad || 0} * 1cqw / 12.8)`];
+  let inner = '';
+  if (e.t === 'texto') {
+    st.push(cssRelleno(e.fill), `--fs:${+e.fs || 40}`, `font-family:${FUENTES[e.font] || FUENTES.serif}`, `color:${colorOk(e.color, '#FFFFFF')}`,
+      `font-weight:${e.b ? 700 : 400}`, `font-style:${e.i ? 'italic' : 'normal'}`, `text-align:${['left', 'center', 'right'].includes(e.al) ? e.al : 'center'}`,
+      `justify-content:${{ top: 'flex-start', bottom: 'flex-end' }[e.va] || 'center'}`);
+    if (e.sombra) st.push('text-shadow:0 .25cqw .9cqw rgba(0,0,0,.5)');
+    inner = `<div class="tx">${esc(e.texto)}</div>`;
+  } else {
+    if (e.sombra) st.push('box-shadow:0 .6cqw 2.2cqw rgba(0,0,0,.35)');
+    if (e.t === 'forma') st.push(cssRelleno(e.fill));
+    else inner = e.src ? `<img src="${esc(e.src)}" alt="" draggable="false" style="object-fit:${e.ajuste === 'contain' ? 'contain' : 'cover'}">`
+      : ed ? '<div class="ph-img">🖼️<br>Doble clic o toca de nuevo<br>para elegir imagen</div>' : '';
+  }
+  return `<div class="lz-el t-${e.t}${sel ? ' sel' : ''}" data-id="${esc(e.id)}" style="${esc(st.filter(Boolean).join(';'))}">${inner}${sel && ed ? HANDLES : ''}</div>`;
+}
+const lienzoHTML = (it, ed) => `<div class="lienzo${ed ? ' ed-lz' : ''}"${ed ? ' id="lz"' : ''} style="${esc(cssRelleno(it.fondo))}">${it.els.map(e => elHTML(e, ed, ed && e.id === sSel)).join('')}${ed ? '<i class="guia gv" hidden></i><i class="guia gh" hidden></i>' : ''}</div>`;
+const textoDiapo = it => { const ts = (it.els || []).filter(e => e.t === 'texto' && String(e.texto).trim()), t = ts.find(e => /\p{L}/u.test(e.texto)) || ts[0]; return t ? String(t.texto).split('\n')[0] : ''; };
+
+/* ----- Galería de fondos (carpeta fondos/ del repositorio) ----- */
+let FONDOS = null;
+function cargarFondos() {
+  if (FONDOS) return Promise.resolve(FONDOS);
+  return fetch('fondos/lista.json', { cache: 'no-cache' }).then(r => r.json()).then(l => (FONDOS = Array.isArray(l) ? l : [])).catch(() => (FONDOS = []));
+}
+
+/* ----- Editor del lienzo ----- */
+let sSel = null, sEdit = false, sItem = null;
+const diapoActual = () => { const it = objActual(); return it && it.tipo === 'diapositiva' ? it : null; };
+const elSel = () => { const it = diapoActual(); return it && it.els.find(e => e.id === sSel); };
+function editorDiapositiva(it) {
+  if (sItem !== it) { sSel = null; sEdit = false; sItem = it; }
+  return `<div class="s-bar">
+      <button data-a="sAdd" data-t="titulo">${ic('title')} Título</button><button data-a="sAdd" data-t="texto">${ic('notes')} Texto</button>
+      <button data-a="sAdd" data-t="imagen">${ic('image')} Imagen</button><button data-a="sAdd" data-t="rect">${ic('rectangle')} Forma</button>
+      <button data-a="sAdd" data-t="elipse">${ic('circle')} Círculo</button><button data-a="sAdd" data-t="emoji">${ic('mood')} Emoji</button></div>
+    <div class="s-dis"><span>Diseños:</span>${Object.entries(DISENOS).map(([k, d]) => `<button data-a="sLayout" data-v="${k}">${d.n}</button>`).join('')}</div>
+    <div class="lz-wrap">${lienzoHTML(it, true)}</div>
+    <p class="hint">Arrastra para mover · tira de los cuadritos para cambiar el tamaño · doble clic (o toca de nuevo) para escribir · flechas para mover fino · Supr para borrar</p>
+    <div class="sprops" id="sprops"></div>`;
+}
+function pintarLienzo() {
+  const lz = $('#lz'), it = diapoActual(); if (!lz || !it) return;
+  lz.style.cssText = cssRelleno(it.fondo);
+  lz.innerHTML = it.els.map(e => elHTML(e, true, e.id === sSel)).join('') + '<i class="guia gv" hidden></i><i class="guia gh" hidden></i>';
+}
+function montarLienzo() {
+  const lz = $('#lz'); if (!lz) return;
+  renderProps();
+  lz.onpointerdown = e => {
+    if (e.button > 0) return;
+    if (sEdit && e.target.closest('[contenteditable]')) return; // seleccionar texto mientras se escribe
+    const d = e.target.closest('.lz-el'), h = e.target.dataset.h, it = diapoActual();
+    if (!d) { terminarEdicion(); if (sSel) { sSel = null; pintarLienzo(); renderProps(); } return; }
+    const id = d.dataset.id, el = it.els.find(x => x.id === id); if (!el) return;
+    if (sEdit) terminarEdicion();
+    const yaSel = sSel === id;
+    if (!yaSel) { sSel = id; pintarLienzo(); renderProps(); }
+    e.preventDefault();
+    const r = lz.getBoundingClientRect(), x0 = e.clientX, y0 = e.clientY, o = { x: +el.x, y: +el.y, w: +el.w, h: +el.h };
+    let movido = false;
+    try { lz.setPointerCapture(e.pointerId); } catch (_) { }
+    lz.onpointermove = ev => {
+      if (!movido && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 4) return;
+      movido = true;
+      const dx = (ev.clientX - x0) / r.width * 100, dy = (ev.clientY - y0) / r.height * 100;
+      let gv = false, gh = false;
+      if (h) {
+        let { x, y, w } = o, hh = o.h;
+        if (h.includes('e')) w = o.w + dx;
+        if (h.includes('w')) { w = o.w - dx; x = o.x + dx; }
+        if (h.includes('s')) hh = o.h + dy;
+        if (h.includes('n')) { hh = o.h - dy; y = o.y + dy; }
+        if (h.length === 2 && (el.t === 'imagen' || ev.shiftKey)) { hh = w * o.h / o.w; if (h.includes('n')) y = o.y + o.h - hh; } // mantener proporción
+        if (w < 3) { if (h.includes('w')) x -= 3 - w; w = 3; }
+        if (hh < 3) { if (h.includes('n')) y -= 3 - hh; hh = 3; }
+        Object.assign(el, { x: +x.toFixed(2), y: +y.toFixed(2), w: +w.toFixed(2), h: +hh.toFixed(2) });
+      } else {
+        let x = o.x + dx, y = o.y + dy;
+        if (Math.abs(x + o.w / 2 - 50) < 1.2) { x = 50 - o.w / 2; gv = true; } // imán al centro y a los bordes
+        if (Math.abs(y + o.h / 2 - 50) < 1.8) { y = 50 - o.h / 2; gh = true; }
+        if (Math.abs(x) < 1) x = 0; if (Math.abs(x + o.w - 100) < 1) x = 100 - o.w;
+        if (Math.abs(y) < 1.5) y = 0; if (Math.abs(y + o.h - 100) < 1.5) y = 100 - o.h;
+        el.x = +x.toFixed(2); el.y = +y.toFixed(2);
+      }
+      const div = lz.querySelector(`.lz-el[data-id="${id}"]`);
+      if (div) Object.assign(div.style, { left: el.x + '%', top: el.y + '%', width: el.w + '%', height: el.h + '%' });
+      lz.querySelector('.gv').hidden = !gv; lz.querySelector('.gh').hidden = !gh;
+    };
+    lz.onpointerup = lz.onpointercancel = () => {
+      lz.onpointermove = lz.onpointerup = lz.onpointercancel = null;
+      lz.querySelector('.gv').hidden = lz.querySelector('.gh').hidden = true;
+      if (movido) guardarLocal();
+      else if (yaSel && !h) { if (el.t === 'texto') iniciarEdicion(id); else if (el.t === 'imagen') ACC.sImg(); }
+    };
+  };
+  lz.ondblclick = e => {
+    const d = e.target.closest('.lz-el'); if (!d) return;
+    const el = diapoActual().els.find(x => x.id === d.dataset.id);
+    if (el && el.t === 'texto') iniciarEdicion(el.id); else if (el && el.t === 'imagen') ACC.sImg();
+  };
+}
+function iniciarEdicion(id) {
+  const lz = $('#lz'), d = lz && lz.querySelector(`.lz-el[data-id="${id}"]`), el = elSel(); if (!d || !el) return;
+  const tx = d.querySelector('.tx'); sEdit = true; d.classList.add('editando');
+  try { tx.contentEditable = 'plaintext-only'; } catch (_) { }
+  if (tx.contentEditable !== 'plaintext-only') tx.contentEditable = 'true';
+  tx.focus();
+  const rg = document.createRange(); rg.selectNodeContents(tx); const s = getSelection(); s.removeAllRanges(); s.addRange(rg);
+  tx.oninput = () => { el.texto = tx.innerText.replace(/\n$/, ''); guardarLocal(); };
+  tx.onblur = terminarEdicion;
+}
+function terminarEdicion() {
+  if (!sEdit) return;
+  sEdit = false;
+  const tx = $('#lz [contenteditable]'), el = elSel();
+  if (tx) { if (el) el.texto = tx.innerText.replace(/\n$/, ''); tx.removeAttribute('contenteditable'); tx.parentNode.classList.remove('editando'); }
+  guardarLocal(); renderLista();
+}
+function setRuta(obj, ruta, v) { const p = ruta.split('.'); let o = obj; for (let k = 0; k < p.length - 1; k++) o = o[p[k]]; o[p[p.length - 1]] = v; }
+function editorRelleno(scope, f, pre, conNinguno, sinBotones) {
+  const tipos = (conNinguno ? [['ninguno', 'Sin relleno']] : []).concat([['color', 'Color'], ['degradado', 'Combinar colores']]);
+  let h = sinBotones ? '' : `<div class="sp-row"><div class="seg">${tipos.map(([t, n]) => `<button data-a="sRellTipo" data-scope="${scope}" data-v="${t}" class="${f.tipo === t ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
+  if (f.tipo === 'color') h += `<div class="sp-row"><label>Color <input type="color" data-scope="${scope}" data-sp="${pre}color" value="${esc(colorOk(f.color).slice(0, 7))}"></label>
+      <div class="swatches">${PALETA.map(c => `<button class="sw" style="background:${c}" title="${c}" data-a="sColor" data-scope="${scope}" data-k="${pre}color" data-v="${c}"></button>`).join('')}</div></div>`;
+  if (f.tipo === 'degradado') h += `<p class="lbl-sm">Combinaciones listas</p><div class="swatches">${COMBINACIONES.map((p, i) => `<button class="sw ancho" title="${p.n}" style="background:linear-gradient(135deg,${p.c.join(',')})" data-a="sPreset" data-scope="${scope}" data-i="${i}"></button>`).join('')}</div>
+    <p class="lbl-sm">O combina tus colores</p><div class="sp-row">${f.colores.map((c, k) => `<input type="color" data-scope="${scope}" data-sp="${pre}colores.${k}" value="${esc(colorOk(c).slice(0, 7))}" title="Color ${k + 1}">`).join('')}
+      ${f.colores.length < 3 ? `<button data-a="sDeg" data-scope="${scope}" data-v="mas">+ Color</button>` : `<button data-a="sDeg" data-scope="${scope}" data-v="menos">− Color</button>`}
+      <button data-a="sDeg" data-scope="${scope}" data-v="invertir" title="Invertir">${ic('swap_horiz')}</button></div>
+    <div class="sp-row"><div class="seg"><button data-a="sDeg" data-scope="${scope}" data-v="lineal" class="${f.radial ? '' : 'on'}">Lineal</button><button data-a="sDeg" data-scope="${scope}" data-v="radial" class="${f.radial ? 'on' : ''}">Radial</button></div>
+      ${f.radial ? '' : `<label>Ángulo <input type="range" min="0" max="360" step="15" data-scope="${scope}" data-sp="${pre}angulo" value="${+f.angulo || 0}"></label>`}</div>`;
+  return h;
+}
+function renderProps() {
+  const box = $('#sprops'), it = diapoActual(); if (!box || !it) return;
+  const el = elSel();
+  if (!el) {
+    const f = it.fondo;
+    let h = `<div class="sp-sec"><h3>${ic('wallpaper')} Fondo de la diapositiva</h3>
+      <div class="sp-row"><div class="seg">${[['color', 'Color'], ['degradado', 'Combinar colores'], ['imagen', 'Imagen']].map(([t, n]) => `<button data-a="sRellTipo" data-scope="fondo" data-v="${t}" class="${f.tipo === t ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
+    if (f.tipo === 'imagen') {
+      if (!FONDOS) { cargarFondos().then(renderProps); h += '<p class="hint">Cargando galería…</p>'; }
+      else h += FONDOS.length ? `<p class="lbl-sm">Galería de fondos 16:9</p><div class="gal-grid">${FONDOS.map(x => {
+        const src = 'fondos/' + x.archivo; return `<button class="gal ${f.imagen === src ? 'on' : ''}" title="${esc(x.nombre || x.archivo)}" data-a="sGal" data-src="${esc(src)}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`;
+      }).join('')}</div>` : '<p class="hint">La galería de fondos todavía está vacía. Puedes subir tu propia imagen 16:9.</p>';
+      h += `<div class="sp-row"><button data-a="sSubirFondo">${ic('upload')} Subir imagen</button>${f.imagen ? `<button data-a="sQuitarFondo">Quitar imagen</button>` : ''}
+        <label>Oscurecer <input type="range" min="0" max="0.8" step="0.05" data-scope="fondo" data-sp="oscurecer" value="${+f.oscurecer || 0}"></label></div>`;
+    } else h += editorRelleno('fondo', f, '', false, true);
+    box.innerHTML = h + '</div><p class="hint">Toca un elemento de la diapositiva para cambiar su formato.</p>';
+    return;
+  }
+  const N = { texto: 'Texto', imagen: 'Imagen', forma: 'Forma' }[el.t];
+  let h = `<div class="sp-sec"><h3>${ic(el.t === 'texto' ? 'text_fields' : el.t === 'imagen' ? 'image' : 'category')} ${N}</h3>`;
+  if (el.t === 'texto') h += `<div class="sp-row">
+      <select data-scope="el" data-sp="font">${[['serif', 'Instrument Serif (títulos)'], ['sans', 'Instrument Sans (texto)'], ['mono', 'Source Code Pro (números)']].map(([v, n]) => `<option value="${v}" ${el.font === v ? 'selected' : ''}>${n}</option>`).join('')}</select>
+      <label>Tamaño <input type="number" min="8" max="400" data-scope="el" data-sp="fs" value="${+el.fs}"></label>
+      <button class="tg ${el.b ? 'on' : ''}" data-a="sTog" data-k="b" title="Negrita"><b>N</b></button><button class="tg ${el.i ? 'on' : ''}" data-a="sTog" data-k="i" title="Cursiva"><i>K</i></button></div>
+    <div class="sp-row"><div class="seg">${[['left', 'format_align_left'], ['center', 'format_align_center'], ['right', 'format_align_right']].map(([v, n]) => `<button data-a="sSet" data-k="al" data-v="${v}" class="${el.al === v ? 'on' : ''}" title="Alinear">${ic(n)}</button>`).join('')}</div>
+      <div class="seg">${[['top', 'vertical_align_top'], ['middle', 'vertical_align_center'], ['bottom', 'vertical_align_bottom']].map(([v, n]) => `<button data-a="sSet" data-k="va" data-v="${v}" class="${(el.va || 'middle') === v ? 'on' : ''}" title="Alinear vertical">${ic(n)}</button>`).join('')}</div></div>
+    <div class="sp-row"><label>Color del texto <input type="color" data-scope="el" data-sp="color" value="${esc(colorOk(el.color, '#FFFFFF').slice(0, 7))}"></label>
+      <div class="swatches">${PALETA.map(c => `<button class="sw" style="background:${c}" data-a="sColor" data-scope="el" data-k="color" data-v="${c}"></button>`).join('')}</div></div>
+    <p class="lbl-sm">Relleno del cuadro</p>${editorRelleno('el', el.fill, 'fill.', true)}`;
+  if (el.t === 'imagen') h += `<div class="sp-row"><button data-a="sImg">${ic('image')} ${el.src ? 'Cambiar imagen' : 'Elegir imagen'}</button>
+      <div class="seg"><button data-a="sSet" data-k="ajuste" data-v="cover" class="${el.ajuste !== 'contain' ? 'on' : ''}">Rellenar</button><button data-a="sSet" data-k="ajuste" data-v="contain" class="${el.ajuste === 'contain' ? 'on' : ''}">Ajustar</button></div></div>`;
+  if (el.t === 'forma') h += `<div class="sp-row"><div class="seg"><button data-a="sSet" data-k="forma" data-v="rect" class="${el.forma !== 'elipse' ? 'on' : ''}">Rectángulo</button><button data-a="sSet" data-k="forma" data-v="elipse" class="${el.forma === 'elipse' ? 'on' : ''}">Círculo / óvalo</button></div></div>${editorRelleno('el', el.fill, 'fill.', false)}`;
+  h += `<div class="sp-row">${el.forma === 'elipse' ? '' : `<label>Redondeo <input type="range" min="0" max="200" data-scope="el" data-sp="rad" value="${+el.rad || 0}"></label>`}
+      <label>Opacidad <input type="range" min="0.1" max="1" step="0.05" data-scope="el" data-sp="op" value="${el.op ?? 1}"></label>
+      <label>Rotación <input type="range" min="-180" max="180" step="5" data-scope="el" data-sp="rot" value="${+el.rot || 0}"></label>
+      <button class="tg ${el.sombra ? 'on' : ''}" data-a="sTog" data-k="sombra">Sombra</button></div>
+    <div class="sp-row"><button data-a="sOrden" data-v="frente">${ic('flip_to_front')} Traer al frente</button><button data-a="sOrden" data-v="atras">${ic('flip_to_back')} Enviar atrás</button>
+      <button data-a="sDup">${ic('content_copy')} Duplicar</button><button class="peligro" data-a="sDel">${ic('delete')} Eliminar</button></div></div>`;
+  box.innerHTML = h;
+}
+function accionesDiapositiva() {
+  const listo = (props = true) => { guardarLocal(); pintarLienzo(); if (props) renderProps(); renderLista(); };
+  const destino = el => el.dataset.scope === 'fondo' ? diapoActual().fondo : elSel();
+  const rell = el => el.dataset.scope === 'fondo' ? diapoActual().fondo : elSel().fill;
+  return {
+    sAdd: el => {
+      const it = diapoActual(), t = el.dataset.t; terminarEdicion();
+      const n = t === 'titulo' ? elTexto({ texto: 'Título', y: 8, h: 18, fs: 72 }) : t === 'texto' ? elTexto({ texto: 'Escribe aquí…', x: 20, y: 40, w: 60, h: 20, fs: 36, font: 'sans' })
+        : t === 'imagen' ? elImagen() : t === 'emoji' ? elTexto({ texto: '⭐', x: 42, y: 34, w: 16, h: 30, fs: 140, font: 'sans' }) : elForma({ forma: t === 'elipse' ? 'elipse' : 'rect', ...(t === 'elipse' ? { x: 41, y: 27, w: 18, h: 32 } : {}) });
+      it.els.push(n); sSel = n.id; listo();
+      if (t === 'imagen') ACC.sImg(); else if (n.t === 'texto') iniciarEdicion(n.id);
+    },
+    sLayout: el => {
+      const it = diapoActual();
+      if (it.els.length && !confirm('¿Aplicar este diseño? Se reemplazarán los elementos de la diapositiva (los textos se conservan cuando se puede).')) return;
+      const viejos = it.els.filter(e => e.t === 'texto').map(e => e.texto), img = it.els.find(e => e.t === 'imagen' && e.src);
+      it.els = DISENOS[el.dataset.v].els();
+      it.els.filter(e => e.t === 'texto').forEach((e, k) => { if (viejos[k] != null) e.texto = viejos[k]; });
+      const ni = it.els.find(e => e.t === 'imagen'); if (ni && img) ni.src = img.src;
+      sSel = null; listo();
+    },
+    sDel: () => { const it = diapoActual(); it.els = it.els.filter(e => e.id !== sSel); sSel = null; sEdit = false; listo(); },
+    sDup: () => { const it = diapoActual(), e = elSel(); if (!e) return; const c = JSON.parse(JSON.stringify(e)); c.id = nid(); c.x = +e.x + 3; c.y = +e.y + 3; it.els.push(c); sSel = c.id; listo(); },
+    sOrden: el => { const it = diapoActual(), e = elSel(); if (!e) return; it.els = it.els.filter(x => x !== e); el.dataset.v === 'frente' ? it.els.push(e) : it.els.unshift(e); listo(false); },
+    sTog: el => { const e = elSel(); e[el.dataset.k] = !e[el.dataset.k]; listo(); },
+    sSet: el => { const e = elSel(); e[el.dataset.k] = el.dataset.v; listo(); },
+    sColor: el => { setRuta(destino(el), el.dataset.k, el.dataset.v); listo(); },
+    sRellTipo: el => { rell(el).tipo = el.dataset.v; if (el.dataset.v === 'imagen') cargarFondos(); listo(); },
+    sPreset: el => { const f = rell(el), p = COMBINACIONES[+el.dataset.i]; Object.assign(f, { tipo: 'degradado', colores: p.c.slice() }); listo(); },
+    sDeg: el => {
+      const f = rell(el), v = el.dataset.v;
+      if (v === 'mas') f.colores.push('#F59E0B'); else if (v === 'menos') f.colores.pop(); else if (v === 'invertir') f.colores.reverse();
+      else f.radial = v === 'radial';
+      listo();
+    },
+    sGal: el => { const f = diapoActual().fondo; f.imagen = el.dataset.src; f.tipo = 'imagen'; listo(); },
+    sSubirFondo: () => leerImagen(d => { const f = diapoActual().fondo; f.imagen = d; f.tipo = 'imagen'; listo(); }, 1920),
+    sQuitarFondo: () => { diapoActual().fondo.imagen = ''; listo(); },
+    sImg: () => leerImagen(d => { const e = elSel(); if (e) { e.src = d; listo(); } }),
+  };
+}
+function teclasDiapositiva(e) {
+  const it = diapoActual(); if (!it || !sSel || sEdit || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+  const el = elSel(); if (!el) return;
+  const p = e.shiftKey ? 2 : 0.5, mv = { ArrowLeft: [-p, 0], ArrowRight: [p, 0], ArrowUp: [0, -p], ArrowDown: [0, p] }[e.key];
+  if (mv) { e.preventDefault(); el.x = +(+el.x + mv[0]).toFixed(2); el.y = +(+el.y + mv[1]).toFixed(2); pintarLienzo(); guardarLocal(); }
+  else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); ACC.sDel(); }
+  else if (e.key === 'Escape') { sSel = null; pintarLienzo(); renderProps(); }
+  else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') { e.preventDefault(); ACC.sDup(); }
+  else if (e.key === 'Enter' && el.t === 'texto') { e.preventDefault(); iniciarEdicion(el.id); }
 }
 
 /* ---------- Quiz de ejemplo ---------- */
@@ -521,17 +844,17 @@ function ejemploQuiz() {
   return normalizarQuiz({
     config: { ...configDefecto(), titulo: 'Quiz Bíblico de ejemplo', organizacion: 'Escuela Dominical' },
     items: [
-      I('diapositiva', { titulo: '¡Bienvenidos al Quiz Bíblico!', texto: 'Saca tu teléfono, escanea el código QR y prepárate 🙌' }),
+      { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'degradado', colores: ['#180157', '#A21CAF'], angulo: 135 }, els: [elForma({ forma: 'elipse', x: 70, y: 52, w: 42, h: 80, fill: rellenoDef('color', '#F59E0B'), op: 0.18 }), elForma({ forma: 'elipse', x: -8, y: -20, w: 26, h: 48, fill: rellenoDef('color', '#06B6D4'), op: 0.15 }), elTexto({ texto: '⛪', x: 44, y: 10, w: 12, h: 20, fs: 110, font: 'sans' }), elTexto({ texto: '¡Bienvenidos al Quiz Bíblico!', y: 32, h: 24, fs: 96, sombra: true }), elTexto({ texto: 'Saca tu teléfono, escanea el código QR y prepárate 🙌', x: 15, y: 60, w: 70, h: 12, fs: 34, font: 'sans', color: '#E6DEFF' })] },
       I('alternativas', { pregunta: '¿Cuántos días y noches llovió en el diluvio?', opciones: ['7', '12', '40', '100'], correctas: [2] }),
       I('vf', { pregunta: 'Jonás fue tragado por un gran pez.', correcta: true }),
-      I('diapositiva', { titulo: 'Jesús, el Buen Pastor', texto: '«Yo soy el buen pastor: el buen pastor su vida da por las ovejas.»\nJuan 10:11 (RV 1909)' }),
+      { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'degradado', colores: ['#006780', '#180157'], angulo: 160 }, els: [elImagen({ src: IMG_OVEJA, x: 5, y: 12, w: 44, h: 76 }), elTexto({ texto: 'Jesús, el Buen Pastor', x: 53, y: 12, w: 42, h: 22, fs: 60, al: 'left' }), elTexto({ texto: '«Yo soy el buen pastor: el buen pastor su vida da por las ovejas.»', x: 53, y: 38, w: 42, h: 34, fs: 34, font: 'sans', al: 'left', va: 'top', i: true }), elTexto({ texto: 'Juan 10:11 (RV 1909)', x: 53, y: 76, w: 42, h: 8, fs: 26, font: 'sans', al: 'left', b: true, color: '#F59E0B' })] },
       I('pin', { pregunta: 'La oveja perdida: ¡toca dónde está escondida!', imagen: IMG_OVEJA, ar: 0.625, x: 86.3, y: 74, radio: 7 }),
       I('completar', { pregunta: 'Completa el versículo (Juan 3:16)', frase: 'Porque de tal manera amó Dios al ___', aceptadas: 'mundo' }),
       I('ordenar', { pregunta: 'Ordena lo que Dios creó cada día', elementos: ['La luz', 'El cielo', 'La tierra seca y las plantas', 'El sol, la luna y las estrellas', 'Los peces y las aves', 'Los animales y el ser humano'], tiempo: 40 }),
       I('numero', { pregunta: '¿Cuántos discípulos eligió Jesús?', min: 0, max: 20, correcta: 12, tolerancia: 0 }),
       I('encuesta', { pregunta: '¿Cuál es tu historia bíblica favorita?', opciones: ['David y Goliat', 'Daniel y los leones', 'El arca de Noé', 'Jesús camina sobre el agua'] }),
       I('nube', { pregunta: 'En una palabra: ¿qué significa Dios para ti?', tiempo: 30 }),
-      I('diapositiva', { titulo: '¡Segunda ronda!', texto: 'Ahora vienen otros tipos de preguntas 🚀' }),
+      { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'degradado', colores: ['#F59E0B', '#A21CAF'], angulo: 120 }, els: [elTexto({ texto: '¡Segunda ronda!', y: 26, h: 26, fs: 110, sombra: true }), elTexto({ texto: 'Ahora vienen otros tipos de preguntas 🚀', x: 15, y: 56, w: 70, h: 12, fs: 36, font: 'sans', fill: rellenoDef('color', '#18015733'), rad: 60 })] },
       I('emoji', { emojis: '🐋👨‍🦰🌊', opciones: ['Jonás', 'Noé', 'Pedro', 'Pablo'], correctas: [0] }),
       I('parejas', { pares: [{ a: 'Noé', b: 'El arca' }, { a: 'David', b: 'Goliat' }, { a: 'Daniel', b: 'El foso de los leones' }, { a: 'Moisés', b: 'El mar Rojo' }], tiempo: 40 }),
       I('versiculo', { texto: 'Todo lo puedo en Cristo que me fortalece', referencia: 'Filipenses 4:13', tiempo: 40 }),
@@ -541,7 +864,7 @@ function ejemploQuiz() {
       I('error', { pregunta: 'Encuentra la palabra que está mal (Juan 3:16)', texto: 'Porque de tal manera amó Dios al *pueblo*, que ha dado a su Hijo unigénito', correctaTxt: 'mundo' }),
       I('linea', { pregunta: 'Ubica el hecho en la línea de tiempo', elementos: ['La creación', 'El diluvio', 'Moisés cruza el mar Rojo', 'El rey David', 'El nacimiento de Jesús'], ubicar: 2 }),
       I('escala', { pregunta: '¿Cuánto te gustó el quiz de hoy?', etiquetaMin: 'Poco', etiquetaMax: '¡Mucho!' }),
-      I('diapositiva', { titulo: '¡Gracias por jugar! 🎉', texto: 'Dios les bendiga' }),
+      { tipo: 'diapositiva', fondo: { ...fondoDef(), tipo: 'degradado', colores: ['#2D1E6B', '#0F0E12'], radial: true }, els: [elTexto({ texto: '¡Gracias por jugar! 🎉', y: 30, h: 24, fs: 96 }), elTexto({ texto: 'Dios les bendiga', x: 25, y: 58, w: 50, h: 12, fs: 40, font: 'sans', color: '#F59E0B', b: true })] },
     ]
   });
 }
@@ -568,7 +891,7 @@ function abrirArchivo(cb) {
   };
   i.click();
 }
-function leerImagen(cb) {
+function leerImagen(cb, max = 1200) {
   const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
   i.onchange = () => {
     const f = i.files[0]; if (!f) return;
@@ -577,10 +900,10 @@ function leerImagen(cb) {
       if (f.type === 'image/svg+xml' || f.type === 'image/gif') return cb(r.result);
       const img = new Image();
       img.onload = () => { // reducir para que el archivo no pese demasiado
-        const max = 1200, s = Math.min(1, max / Math.max(img.width, img.height));
+        const s = Math.min(1, max / Math.max(img.width, img.height));
         const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
         c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-        cb(c.toDataURL('image/jpeg', 0.8));
+        cb(c.toDataURL('image/jpeg', max > 1200 ? 0.82 : 0.8));
       };
       img.src = r.result;
     };
@@ -740,7 +1063,7 @@ function verVista(v) {
   if (v === 'form') $('#form').scrollTop = 0;
   else { const s = $('#lista .li.sel'); if (s) s.scrollIntoView({ block: 'center' }); }
 }
-function etiqueta(it) { return it.tipo === 'diapositiva' ? (it.titulo || '(diapositiva sin título)') : (it.pregunta || '(pregunta sin texto)'); }
+function etiqueta(it) { return it.tipo === 'diapositiva' ? (textoDiapo(it) || '(diapositiva)') : (it.pregunta || '(pregunta sin texto)'); }
 function objActual() { return edSel === -1 ? quiz.config : quiz.items[edSel]; }
 
 function vistaEditor() {
@@ -756,6 +1079,11 @@ function vistaEditor() {
   const form = $('#form');
   form.oninput = e => {
     const el = e.target, it = objActual(); if (!it) return;
+    if (el.dataset.sp) { // panel de formato de la diapositiva
+      const obj = el.dataset.scope === 'fondo' ? it.fondo : elSel(); if (!obj) return;
+      setRuta(obj, el.dataset.sp, el.type === 'range' || el.type === 'number' ? Number(el.value) : el.value);
+      pintarLienzo(); guardarLocal(); return;
+    }
     if (el.dataset.f) {
       let v = el.type === 'checkbox' ? el.checked : el.value;
       if ('num' in el.dataset) v = el.value === '' ? null : Number(el.value);
@@ -801,6 +1129,7 @@ function vistaEditor() {
     ubicar: el => { objActual().ubicar = +el.dataset.i; guardarLocal(); renderForm(); },
     corr: el => { const it = objActual(), i = +el.dataset.i; it.correctas = it.correctas.includes(i) ? it.correctas.filter(c => c !== i) : [...it.correctas, i]; if (!it.correctas.length) it.correctas = [i]; guardarLocal(); renderForm(); },
     vf: el => { objActual().correcta = el.dataset.v === 'true'; guardarLocal(); renderForm(); },
+    ...accionesDiapositiva(),
     imgfile: () => leerImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
     imgdel: () => { objActual().imagen = ''; guardarLocal(); renderForm(); },
     pinset: (el, e) => {
@@ -809,12 +1138,13 @@ function vistaEditor() {
       guardarLocal(); actualizarPinMark();
     },
   };
+  document.onkeydown = teclasDiapositiva;
   renderLista(); renderForm();
 }
 function mover(i, d) { const j = i + d; if (j < 0 || j >= quiz.items.length) return; [quiz.items[i], quiz.items[j]] = [quiz.items[j], quiz.items[i]]; edSel = j; guardarLocal(); renderLista(); renderForm(); }
 function renderLista() {
   $('#lista').innerHTML = `<div class="li ${edSel === -1 ? 'sel' : ''}" data-a="sel" data-i="-1">⚙️ <b>Configuración</b></div>` +
-    quiz.items.map((it, i) => `<div class="li ${edSel === i ? 'sel' : ''}" data-a="sel" data-i="${i}"><span class="n">${i + 1}</span><span>${TIPOS[it.tipo].icono}</span><span class="tx">${esc(etiqueta(it))}</span>
+    quiz.items.map((it, i) => `<div class="li ${edSel === i ? 'sel' : ''}" data-a="sel" data-i="${i}"><span class="n">${i + 1}</span>${it.tipo === 'diapositiva' ? `<span class="mini" style="${esc(cssRelleno(it.fondo))}"></span>` : `<span>${TIPOS[it.tipo].icono}</span>`}<span class="tx">${esc(etiqueta(it))}</span>
       <span class="acts"><button data-a="up" data-i="${i}" title="Subir">↑</button><button data-a="down" data-i="${i}" title="Bajar">↓</button><button data-a="dup" data-i="${i}" title="Duplicar">⧉</button><button data-a="del" data-i="${i}" title="Eliminar">✕</button></span></div>`).join('') +
     `<div class="add"><p>➕ Agregar después del seleccionado:</p><div class="tipos">${Object.entries(TIPOS).map(([k, t]) => `<button data-a="add" data-t="${k}">${t.icono} ${t.nombre}</button>`).join('')}</div></div>`;
 }
@@ -873,11 +1203,7 @@ function renderFormCampos() {
   }
   const T = TIPOS[it.tipo];
   let h = `<h2>${T.icono} ${T.nombre}</h2>`;
-  if (it.tipo === 'diapositiva') {
-    h += fTxt('Título', 'titulo', it.titulo) + fArea('Texto', 'texto', it.texto, 'Versículo, explicación, instrucciones…') + imgField(it) +
-      `<label class="fld sm"><span>Color de fondo</span><input type="color" data-f="fondo" value="${esc(it.fondo || quiz.config.color)}"></label>`;
-    form.innerHTML = h; return;
-  }
+  if (it.tipo === 'diapositiva') { form.innerHTML = h + editorDiapositiva(it); montarLienzo(); return; }
   h += fArea('Pregunta', 'pregunta', it.pregunta);
   const opcAlt = () => `<div class="fld"><span>Opciones — marca con ✔ la(s) correcta(s)</span>${listaEditable(it, 'opciones', true, true, 6)}</div>`;
   switch (it.tipo) {
@@ -1195,7 +1521,7 @@ function hostLobby() {
 }
 function hostSlide() {
   const it = quiz.items[H.idx];
-  return `<div class="slide" style="--sf:${esc(it.fondo || quiz.config.color)}">${it.titulo ? `<h1>${esc(it.titulo)}</h1>` : ''}${it.imagen ? `<img src="${esc(it.imagen)}">` : ''}${it.texto ? `<p>${esc(it.texto)}</p>` : ''}</div>`;
+  return lienzoHTML(it, false);
 }
 function conteo(fn) { const c = {}; Object.values(H.resp).forEach(r => { const k = fn(r.val); c[k] = (c[k] || 0) + 1; }); return c; }
 function hostPregunta(rev) {
