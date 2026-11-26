@@ -68,6 +68,12 @@ h1,h2,h3{margin:.2em 0}
 .pinmark{position:absolute;aspect-ratio:1;border-radius:50%;background:#e21b3c55;border:3px solid #e21b3c;transform:translate(-50%,-50%);pointer-events:none}
 .vfbtns{display:flex;gap:10px}
 .vfbtns button.on{background:#26890c;color:#fff}
+.clb{background:#eee;color:#888;min-width:44px;padding:.5em .5em}
+.clb.on{background:var(--cc);color:#fff}
+.parrow>span{font-weight:900;color:#888}
+.ubi{background:#eee;filter:grayscale(1);opacity:.45}
+.ubi.on{background:#ffd93b;filter:none;opacity:1}
+.aviso{color:#b0102b;font-weight:600}
 /* ---------- Editor en teléfono: lista o formulario, uno a la vez ---------- */
 @media (max-width:760px){
   .bar{gap:6px;padding:8px 10px}
@@ -154,6 +160,49 @@ h1,h2,h3{margin:.2em 0}
 .podio .col{display:flex;flex-direction:column;align-items:center;gap:8px;font-weight:800;font-size:1.3rem}
 .podio .blk{width:170px;border-radius:14px 14px 0 0;background:#fff;color:#1d1b2b;display:grid;place-items:center;font-size:2.6rem;font-weight:900}
 .podio .av{font-size:3.2rem}
+.eqc{display:inline-block;width:22px;height:22px;border-radius:6px;flex:none}
+.eqc.big{width:56px;height:56px;border-radius:14px}
+/* tipos nuevos (pantalla principal) */
+.resumen{font-size:1.4rem;font-weight:700;margin:0}
+.emojis{font-size:clamp(3rem,12vw,8rem);line-height:1.15;letter-spacing:.05em}
+.revela{position:relative;display:inline-block}
+.revela img{display:block;max-height:40vh;max-width:90vw;border-radius:16px}
+.tiles{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr);border-radius:16px;overflow:hidden}
+.tiles i{background:var(--c);border:2px solid #ffffff44;transition:opacity .7s,transform .7s}
+.tiles i.off{opacity:0;transform:scale(.5)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:1100px}
+.chips span{background:#fff;color:#1d1b2b;border-radius:12px;padding:10px 16px;font-size:clamp(1.1rem,2.4vw,1.8rem);font-weight:700}
+.parejas{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px;width:min(1000px,92vw)}
+.parejas>div{display:flex;flex-direction:column;gap:10px}
+.parejas.sol{grid-template-columns:1fr auto 1fr;align-items:center;gap:10px 16px}
+.pz{background:#fff;color:#1d1b2b;border-radius:12px;padding:12px 18px;font-size:clamp(1.1rem,2.4vw,1.7rem);font-weight:700;text-align:left}
+.pz.der{background:#ffd93b}
+.flecha{font-size:2rem;font-weight:900}
+.pistas{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;width:min(900px,92vw);counter-reset:p}
+.pistas li{background:#fff;color:#1d1b2b;border-radius:12px;padding:12px 18px;font-size:clamp(1.1rem,2.6vw,1.9rem);font-weight:700;text-align:left;transition:opacity .6s}
+.pistas li::before{counter-increment:p;content:"Pista " counter(p) ": ";color:var(--c)}
+.pistas li.off{opacity:0}
+.cats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.cat{border-radius:12px;padding:12px 22px;font-size:clamp(1.2rem,2.6vw,1.8rem);font-weight:800}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;width:min(1100px,94vw)}
+.col-cat{background:#ffffff22;border-radius:14px;overflow:hidden;text-align:left}
+.col-cat h3{margin:0;padding:10px 16px;font-size:1.5rem}
+.col-cat div{padding:8px 16px;font-size:1.3rem;font-weight:700;display:flex;justify-content:space-between;gap:10px;border-top:1px solid #ffffff22}
+.mal{color:#ff8a9b;text-decoration-thickness:4px}
+.bien{color:#b6f5a0;font-weight:900}
+.hecho{background:#ffd93b;color:#1d1b2b;border-radius:14px;padding:12px 22px;font-size:clamp(1.3rem,3vw,2.2rem);font-weight:800}
+.tl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;max-width:1200px}
+.tl div{background:#fff;color:#1d1b2b;border-radius:12px;padding:10px 16px;font-size:clamp(1rem,2.2vw,1.6rem);font-weight:700}
+.tl div.h{background:#ffd93b;outline:4px solid #fff}
+.tl i{font-style:normal;font-size:1.6rem;opacity:.7}
+.escala{display:flex;gap:18px;align-items:flex-end}
+.escala>div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:1.4rem;font-weight:800}
+.escala .eb{width:70px;border-radius:10px 10px 0 0;min-height:6px}
+.escala-et{display:flex;justify-content:space-between;gap:40px;font-size:1.4rem;font-weight:700}
+.equipos-lobby{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:1200px}
+.eqbox{background:#ffffff18;border-radius:16px;overflow:hidden;min-width:220px;border:3px solid}
+.eqbox h3{margin:0;padding:8px 14px}
+.eqbox .players{padding:10px}
 /* ---------- Jugador ---------- */
 .jug{min-height:100vh;display:flex;flex-direction:column;background:var(--bg,#3b2a7a);color:#fff;transition:background .3s}
 .jug .top{display:flex;justify-content:space-between;padding:12px 16px;font-weight:700;background:#0002}
@@ -176,6 +225,34 @@ h1,h2,h3{margin:.2em 0}
 .jnum{font-size:3.2rem;font-weight:900}
 .jug input[type=range]{width:100%;max-width:480px}
 .estado-big{font-size:5rem}
+/* tipos nuevos (teléfono) */
+.jemojis{font-size:3.4rem;line-height:1.2}
+.jpar{display:flex;flex-direction:column;gap:10px;width:100%;max-width:480px}
+.jpar label{display:flex;flex-direction:column;gap:6px;background:#fff;color:#1d1b2b;border-radius:12px;padding:10px;text-align:left;font-weight:700}
+.jarm{min-height:64px;width:100%;max-width:520px;background:#fff;border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;color:#1d1b2b}
+.jarm .ph{color:#888;padding:10px}
+.jbanco,.jerr{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:520px}
+.jbanco button,.jarm button,.jerr button{font-size:1.1rem;padding:.5em .8em}
+.jarm button{background:var(--c,#6c3ce0);color:#fff}
+.jerr button.on{background:#ffd93b;outline:3px solid #fff}
+.jpistas{list-style:none;padding:0;margin:0;width:100%;max-width:480px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.jpistas li{background:#0003;border-radius:10px;padding:8px 12px;font-weight:600}
+.jpistas li.off{display:none}
+.jclas{display:flex;flex-direction:column;gap:8px;width:100%;max-width:480px}
+.jclas>div{background:#fff;color:#1d1b2b;border-radius:12px;padding:8px 10px;text-align:left;font-weight:700}
+.jclas>div>div{display:flex;gap:6px;margin-top:6px}
+.jclas button{flex:1;font-size:.95rem;padding:.6em .4em;background:#eee}
+.jclas button.on{background:var(--cc);color:#fff}
+.jlinea{display:flex;flex-direction:column;gap:6px;width:100%;max-width:480px}
+.jlinea .fijo{background:#fff;color:#1d1b2b;border-radius:10px;padding:10px 12px;font-weight:700}
+.jlinea .slot{background:#ffffff22;color:#fff;border:2px dashed #fff8;padding:.45em}
+.jlinea .slot.on{background:#ffd93b;color:#1d1b2b;border-style:solid}
+.jescala{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;width:100%;max-width:480px}
+.jescala button{color:#fff;font-size:2rem;font-weight:900;min-height:90px;padding:0;min-width:0}
+.jescala-et{display:flex;justify-content:space-between;width:100%;max-width:480px;font-weight:700}
+.jeq{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+.jeq button{color:#fff;font-size:1.3rem;padding:.9em}
+.jeq button.on{outline:4px solid #fff;box-shadow:0 0 0 8px #0004}
 </style>
 </head>
 <body>
@@ -206,13 +283,27 @@ const TIPOS = {
   pin: { nombre: 'Ubicar el pin', icono: '📍' },
   ordenar: { nombre: 'Ordenar', icono: '🔢' },
   numero: { nombre: 'Adivina el número', icono: '🎚️' },
+  parejas: { nombre: 'Unir parejas', icono: '🔗' },
+  versiculo: { nombre: 'Ordenar el versículo', icono: '📜' },
+  quiensoy: { nombre: '¿Quién soy?', icono: '🕵️' },
+  revela: { nombre: 'Imagen que se revela', icono: '🧩' },
+  clasificar: { nombre: 'Clasificar', icono: '🗂️' },
+  error: { nombre: 'Encontrar el error', icono: '🔍' },
+  emoji: { nombre: 'Emoji-historia', icono: '😀' },
+  linea: { nombre: 'Línea de tiempo', icono: '⏳' },
   encuesta: { nombre: 'Encuesta (sin puntaje)', icono: '📊', sinPuntaje: true },
   nube: { nombre: 'Nube de palabras', icono: '☁️', sinPuntaje: true },
+  escala: { nombre: 'Escala 1 a 5 (sin puntaje)', icono: '🌡️', sinPuntaje: true },
 };
+const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela']; // se responden tocando una opción de color
+const CON_CORRECTAS = ['alternativas', 'emoji', 'revela'];
+const ESCALA = ['#1368ce', '#0aa3a3', '#26890c', '#d89e00', '#e21b3c'];
+const NTILES = 24; // cuadros que tapan la imagen que se revela (6 × 4)
 
 function configDefecto() {
   return { titulo: 'Mi quiz', organizacion: '', color: '#6c3ce0', tiempo: 20, puntos: 1000,
-    bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true };
+    bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
+    modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas' };
 }
 function nuevoItem(tipo) {
   const b = { tipo };
@@ -226,6 +317,15 @@ function nuevoItem(tipo) {
     case 'numero': return { ...b, pregunta: '', min: 0, max: 100, paso: 1, correcta: 50, tolerancia: 0, unidad: '', imagen: '', tiempo: null, mult: 1 };
     case 'encuesta': return { ...b, pregunta: '', opciones: ['', ''], imagen: '', tiempo: null };
     case 'nube': return { ...b, pregunta: '', imagen: '', tiempo: null };
+    case 'parejas': return { ...b, pregunta: 'Une cada personaje con su historia', pares: [{ a: '', b: '' }, { a: '', b: '' }, { a: '', b: '' }], imagen: '', tiempo: null, mult: 1 };
+    case 'versiculo': return { ...b, pregunta: 'Arma el versículo', texto: '', referencia: '', imagen: '', tiempo: null, mult: 1 };
+    case 'quiensoy': return { ...b, pregunta: '¿Quién soy?', pistas: ['', '', ''], aceptadas: '', imagen: '', tiempo: 45, mult: 1 };
+    case 'revela': return { ...b, pregunta: '¿Qué muestra la imagen?', imagen: '', opciones: ['', '', '', ''], correctas: [0], tiempo: 30, mult: 1 };
+    case 'clasificar': return { ...b, pregunta: '¿Antiguo o Nuevo Testamento?', categorias: ['Antiguo Testamento', 'Nuevo Testamento'], elementos: [{ t: '', c: 0 }, { t: '', c: 1 }, { t: '', c: 0 }, { t: '', c: 1 }], imagen: '', tiempo: 40, mult: 1 };
+    case 'error': return { ...b, pregunta: 'Toca la palabra que está mal', texto: '', correctaTxt: '', imagen: '', tiempo: null, mult: 1 };
+    case 'emoji': return { ...b, pregunta: '¿Qué historia es?', emojis: '', opciones: ['', '', '', ''], correctas: [0], imagen: '', tiempo: null, mult: 1 };
+    case 'linea': return { ...b, pregunta: '¿Dónde va en la línea de tiempo?', elementos: ['', '', '', ''], ubicar: 1, imagen: '', tiempo: null, mult: 1 };
+    case 'escala': return { ...b, pregunta: '', etiquetaMin: 'Nada', etiquetaMax: 'Muchísimo', imagen: '', tiempo: null };
   }
 }
 function normalizarQuiz(q) {
@@ -248,6 +348,16 @@ const SVG_OVEJA = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="5
 <ellipse cx="660" cy="405" rx="75" ry="40" fill="#3f8f3a"/><ellipse cx="610" cy="395" rx="40" ry="30" fill="#4aa043"/>
 </svg>`;
 const IMG_OVEJA = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(SVG_OVEJA);
+const SVG_ARCA = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+<rect width="800" height="500" fill="#bfe6ff"/>
+<g fill="none" stroke-width="18"><circle cx="400" cy="420" r="330" stroke="#e21b3c"/><circle cx="400" cy="420" r="312" stroke="#f39c12"/><circle cx="400" cy="420" r="294" stroke="#ffd93b"/><circle cx="400" cy="420" r="276" stroke="#26890c"/><circle cx="400" cy="420" r="258" stroke="#1368ce"/><circle cx="400" cy="420" r="240" stroke="#864cbf"/></g>
+<rect x="0" y="380" width="800" height="120" fill="#2a7fd4"/>
+<path d="M170 300 L630 300 L580 400 L220 400Z" fill="#8b5a2b"/><rect x="290" y="230" width="220" height="70" fill="#a8703a"/><path d="M270 230 L400 175 L530 230Z" fill="#6e4520"/>
+<g font-size="46"><text x="230" y="290">🦒</text><text x="310" y="290">🐘</text><text x="530" y="292">🦁</text><text x="585" y="292">🐑</text></g>
+<text x="620" y="110" font-size="56">🕊️</text>
+<path d="M0 410 Q50 390 100 410 T200 410 T300 410 T400 410 T500 410 T600 410 T700 410 T800 410" stroke="#fff" stroke-width="6" fill="none"/>
+</svg>`;
+const IMG_ARCA = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(SVG_ARCA);
 
 function ejemploQuiz() {
   const I = (t, o) => Object.assign(nuevoItem(t), o);
@@ -264,6 +374,16 @@ function ejemploQuiz() {
       I('numero', { pregunta: '¿Cuántos discípulos eligió Jesús?', min: 0, max: 20, correcta: 12, tolerancia: 0 }),
       I('encuesta', { pregunta: '¿Cuál es tu historia bíblica favorita?', opciones: ['David y Goliat', 'Daniel y los leones', 'El arca de Noé', 'Jesús camina sobre el agua'] }),
       I('nube', { pregunta: 'En una palabra: ¿qué significa Dios para ti?', tiempo: 30 }),
+      I('diapositiva', { titulo: '¡Segunda ronda!', texto: 'Ahora vienen otros tipos de preguntas 🚀' }),
+      I('emoji', { emojis: '🐋👨‍🦰🌊', opciones: ['Jonás', 'Noé', 'Pedro', 'Pablo'], correctas: [0] }),
+      I('parejas', { pares: [{ a: 'Noé', b: 'El arca' }, { a: 'David', b: 'Goliat' }, { a: 'Daniel', b: 'El foso de los leones' }, { a: 'Moisés', b: 'El mar Rojo' }], tiempo: 40 }),
+      I('versiculo', { texto: 'Todo lo puedo en Cristo que me fortalece', referencia: 'Filipenses 4:13', tiempo: 40 }),
+      I('quiensoy', { pistas: ['Crecí en el palacio del faraón', 'Vi una zarza que ardía sin consumirse', 'Dios me usó para abrir el mar Rojo'], aceptadas: 'Moisés' }),
+      I('revela', { imagen: IMG_ARCA, opciones: ['El arca de Noé', 'La torre de Babel', 'Jonás y el gran pez', 'El cruce del mar Rojo'], correctas: [0] }),
+      I('clasificar', { elementos: [{ t: 'Moisés', c: 0 }, { t: 'Pedro', c: 1 }, { t: 'David', c: 0 }, { t: 'Pablo', c: 1 }, { t: 'Ester', c: 0 }, { t: 'Zaqueo', c: 1 }] }),
+      I('error', { pregunta: 'Encuentra la palabra que está mal (Juan 3:16)', texto: 'Porque de tal manera amó Dios al *pueblo*, que ha dado a su Hijo unigénito', correctaTxt: 'mundo' }),
+      I('linea', { pregunta: 'Ubica el hecho en la línea de tiempo', elementos: ['La creación', 'El diluvio', 'Moisés cruza el mar Rojo', 'El rey David', 'El nacimiento de Jesús'], ubicar: 2 }),
+      I('escala', { pregunta: '¿Cuánto te gustó el quiz de hoy?', etiquetaMin: 'Poco', etiquetaMax: '¡Mucho!' }),
       I('diapositiva', { titulo: '¡Gracias por jugar! 🎉', texto: 'Dios les bendiga' }),
     ]
   });
@@ -317,22 +437,77 @@ const tiempoDe = it => Number(it.tiempo) || Number(quiz.config.tiempo) || 20;
 const aceptadas = it => String(it.aceptadas || '').split(',').map(norm).filter(Boolean);
 const opcionesValidas = arr => arr.map((o, i) => ({ o, i })).filter(x => String(x.o).trim());
 const esPregunta = it => it.tipo !== 'diapositiva';
-function evaluar(it, v) {
+const paresValidos = it => (it.pares || []).filter(p => String(p.a).trim() && String(p.b).trim());
+const clasifValidos = it => (it.elementos || []).map((e, i) => ({ t: e.t, c: +e.c || 0, i })).filter(e => String(e.t).trim());
+const catsDe = it => (it.categorias || []).map((c, i) => String(c).trim() || 'Grupo ' + (i + 1));
+const pistasValidas = it => (it.pistas || []).filter(x => String(x).trim());
+const abrev = c => ((String(c).match(/\p{Lu}/gu) || []).join('') || String(c).trim().slice(0, 2)).slice(0, 3);
+function palabrasVersiculo(it) { // si el texto tiene "/", se corta en esos trozos; si no, palabra por palabra
+  const t = String(it.texto || '').trim();
+  return (t.includes('/') ? t.split('/') : t.split(/\s+/)).map(x => x.trim()).filter(Boolean);
+}
+const textoVersiculo = it => palabrasVersiculo(it).join(' ');
+function tokensError(it) { // la palabra equivocada va entre *asteriscos*
+  const tk = String(it.texto || '').trim().split(/\s+/).filter(Boolean);
+  const idx = tk.findIndex(w => /\*[^*]+\*/.test(w)), m = idx >= 0 ? tk[idx].match(/^(.*)\*([^*]+)\*(.*)$/) : null;
+  return { tokens: tk.map(w => w.replace(/\*/g, '')), idx, antes: m ? m[1] : '', palabra: m ? m[2] : '', despues: m ? m[3] : '' };
+}
+function lineaDe(it) { // hechos fijos (en orden) + el hecho que hay que ubicar y su posición correcta
+  const v = opcionesValidas(it.elementos || []);
+  let u = v.findIndex(x => x.i === +it.ubicar); if (u < 0) u = 0;
+  return { hecho: v[u] ? v[u].o : '', fijos: v.filter((_, k) => k !== u).map(x => x.o), pos: u };
+}
+const pistasVisibles = (n, ms, T) => n ? Math.min(n, 1 + Math.floor(Math.max(0, ms) / (T / n))) : 0;
+// Fracción correcta de una respuesta (0 a 1). La mayoría es todo o nada; parejas y clasificar dan puntaje parcial.
+function fraccion(it, v) {
   try {
     switch (it.tipo) {
-      case 'alternativas': return it.correctas.includes(Number(v));
-      case 'vf': return v === it.correcta;
-      case 'completar': return aceptadas(it).includes(norm(v));
-      case 'pin': { const dx = v.x - it.x, dy = (v.y - it.y) * (it.ar || 1); return Math.hypot(dx, dy) <= it.radio; }
-      case 'ordenar': { const ok = opcionesValidas(it.elementos).map(x => x.i); return Array.isArray(v) && v.length === ok.length && v.every((x, k) => x === ok[k]); }
-      case 'numero': return Math.abs(Number(v) - Number(it.correcta)) <= Number(it.tolerancia || 0);
+      case 'alternativas': case 'emoji': case 'revela': return it.correctas.includes(Number(v)) ? 1 : 0;
+      case 'vf': return v === it.correcta ? 1 : 0;
+      case 'completar': case 'quiensoy': return aceptadas(it).includes(norm(v)) ? 1 : 0;
+      case 'pin': { const dx = v.x - it.x, dy = (v.y - it.y) * (it.ar || 1); return Math.hypot(dx, dy) <= it.radio ? 1 : 0; }
+      case 'ordenar': { const ok = opcionesValidas(it.elementos).map(x => x.i); return Array.isArray(v) && v.length === ok.length && v.every((x, k) => x === ok[k]) ? 1 : 0; }
+      case 'numero': return Math.abs(Number(v) - Number(it.correcta)) <= Number(it.tolerancia || 0) ? 1 : 0;
+      case 'parejas': { const n = paresValidos(it).length; return Array.isArray(v) && n ? v.slice(0, n).filter((x, k) => Number(x) === k).length / n : 0; }
+      case 'versiculo': return Array.isArray(v) && norm(v.join(' ')) === norm(textoVersiculo(it)) ? 1 : 0;
+      case 'clasificar': {
+        const el = clasifValidos(it); if (!Array.isArray(v) || !el.length) return 0;
+        const m = new Map(v.map(p => [Number(p[0]), Number(p[1])]));
+        return el.filter(e => m.get(e.i) === e.c).length / el.length;
+      }
+      case 'error': return Number(v) === tokensError(it).idx ? 1 : 0;
+      case 'linea': return Number(v) === lineaDe(it).pos ? 1 : 0;
     }
   } catch (e) { }
-  return false;
+  return 0;
+}
+const evaluar = (it, v) => fraccion(it, v) >= 1;
+function problemasQuiz() {
+  const pr = [];
+  quiz.items.forEach((it, i) => {
+    const m = t => pr.push(`${i + 1}. ${TIPOS[it.tipo].nombre}: ${t}`);
+    switch (it.tipo) {
+      case 'error': if (tokensError(it).idx < 0) m('falta marcar la palabra equivocada con *asteriscos*'); break;
+      case 'parejas': if (paresValidos(it).length < 2) m('necesita al menos 2 parejas completas'); break;
+      case 'versiculo': if (palabrasVersiculo(it).length < 2) m('falta el versículo'); break;
+      case 'quiensoy': if (!pistasValidas(it).length || !aceptadas(it).length) m('faltan pistas o respuestas aceptadas'); break;
+      case 'revela': if (!it.imagen) m('falta la imagen'); break;
+      case 'clasificar': if (!clasifValidos(it).length) m('no tiene elementos'); break;
+      case 'linea': if (opcionesValidas(it.elementos).length < 3) m('necesita al menos 3 hechos'); break;
+      case 'emoji': if (!String(it.emojis || '').trim()) m('faltan los emojis'); break;
+    }
+  });
+  return pr;
 }
 function textoCorrecta(it) {
   switch (it.tipo) {
-    case 'alternativas': return it.correctas.map(i => it.opciones[i]).join(' / ');
+    case 'alternativas': case 'emoji': case 'revela': return it.correctas.map(i => it.opciones[i]).join(' / ');
+    case 'quiensoy': return String(it.aceptadas).split(',')[0].trim();
+    case 'parejas': return paresValidos(it).map(p => p.a + ' → ' + p.b).join(' · ');
+    case 'versiculo': return textoVersiculo(it) + (it.referencia ? ' (' + it.referencia + ')' : '');
+    case 'clasificar': return catsDe(it).map((c, ci) => c + ': ' + clasifValidos(it).filter(e => e.c === ci).map(e => e.t).join(', ')).join(' · ');
+    case 'error': { const t = tokensError(it); return `«${t.palabra}»` + (it.correctaTxt ? ` debía decir «${it.correctaTxt}»` : ''); }
+    case 'linea': { const l = lineaDe(it); return l.pos === 0 ? 'Antes de: ' + l.fijos[0] : 'Después de: ' + l.fijos[l.pos - 1]; }
     case 'vf': return it.correcta ? 'Verdadero' : 'Falso';
     case 'completar': return String(it.aceptadas).split(',')[0].trim();
     case 'pin': return '📍 Mira la pantalla';
@@ -419,6 +594,9 @@ function vistaEditor() {
       if (el.dataset.f === 'radio') actualizarPinMark();
       if (el.dataset.f === 'color') app.firstChild.style.setProperty('--c', v);
     } else if (el.dataset.arr) it[el.dataset.arr][+el.dataset.i] = el.value;
+    else if (el.dataset.par != null) it.pares[+el.dataset.par][el.dataset.lado] = el.value;
+    else if (el.dataset.cl != null) it.elementos[+el.dataset.cl].t = el.value;
+    if (it.tipo === 'error') { const a = $('#avisoErr'); if (a) a.hidden = tokensError(it).idx >= 0; }
     guardarLocal(); renderLista();
   };
   form.onchange = e => { if (e.target.dataset.f === 'imagen') renderForm(); };
@@ -436,10 +614,22 @@ function vistaEditor() {
     optadd: el => { objActual()[el.dataset.arr].push(''); guardarLocal(); renderForm(); },
     optdel: el => {
       const it = objActual(), i = +el.dataset.i; it[el.dataset.arr].splice(i, 1);
-      if (it.correctas) { it.correctas = it.correctas.filter(c => c !== i).map(c => c > i ? c - 1 : c); if (!it.correctas.length) it.correctas = [0]; }
+      if (it.correctas && el.dataset.arr === 'opciones') { it.correctas = it.correctas.filter(c => c !== i).map(c => c > i ? c - 1 : c); if (!it.correctas.length) it.correctas = [0]; }
+      if (el.dataset.arr === 'categorias') it.elementos.forEach(e => { if (+e.c === i) e.c = 0; else if (+e.c > i) e.c = +e.c - 1; });
+      if (el.dataset.arr === 'elementos' && it.ubicar != null) { if (it.ubicar === i) it.ubicar = 0; else if (it.ubicar > i) it.ubicar--; }
       guardarLocal(); renderForm();
     },
-    optmove: el => { const it = objActual(), a = it[el.dataset.arr], i = +el.dataset.i, j = i + (+el.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; guardarLocal(); renderForm(); },
+    optmove: el => {
+      const it = objActual(), a = it[el.dataset.arr], i = +el.dataset.i, j = i + (+el.dataset.d); if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]];
+      if (el.dataset.arr === 'elementos' && it.ubicar != null) { if (it.ubicar === i) it.ubicar = j; else if (it.ubicar === j) it.ubicar = i; }
+      guardarLocal(); renderForm();
+    },
+    paradd: () => { objActual().pares.push({ a: '', b: '' }); guardarLocal(); renderForm(); },
+    pardel: el => { objActual().pares.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
+    cladd: () => { objActual().elementos.push({ t: '', c: 0 }); guardarLocal(); renderForm(); },
+    cldel: el => { objActual().elementos.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
+    clcat: el => { objActual().elementos[+el.dataset.i].c = +el.dataset.c; guardarLocal(); renderForm(); },
+    ubicar: el => { objActual().ubicar = +el.dataset.i; guardarLocal(); renderForm(); },
     corr: el => { const it = objActual(), i = +el.dataset.i; it.correctas = it.correctas.includes(i) ? it.correctas.filter(c => c !== i) : [...it.correctas, i]; if (!it.correctas.length) it.correctas = [i]; guardarLocal(); renderForm(); },
     vf: el => { objActual().correcta = el.dataset.v === 'true'; guardarLocal(); renderForm(); },
     imgfile: () => leerImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
@@ -469,12 +659,13 @@ function imgField(it, titulo = 'Imagen (opcional)') {
     <button data-a="imgfile">📁 Subir</button>${it.imagen ? '<button data-a="imgdel">Quitar</button>' : ''}</div>
     ${it.imagen && it.tipo !== 'pin' ? `<img class="thumb" src="${esc(it.imagen)}">` : ''}</div>`;
 }
-function listaEditable(it, arr, conColor, conCorrecta, max) {
+function listaEditable(it, arr, conColor, conCorrecta, max, ph, conUbicar) {
   const a = it[arr];
   return a.map((o, i) => `<div class="optrow">
       ${conColor ? `<span class="sh" style="background:${COLORES[i % 6]}">${FORMAS[i % 6]}</span>` : `<span class="sh" style="background:#888">${i + 1}</span>`}
-      <input data-arr="${arr}" data-i="${i}" value="${esc(o)}" placeholder="${conColor ? 'Opción' : 'Elemento'} ${i + 1}">
+      <input data-arr="${arr}" data-i="${i}" value="${esc(o)}" placeholder="${ph || (conColor ? 'Opción' : 'Elemento')} ${i + 1}">
       ${conCorrecta ? `<button class="chk ${it.correctas.includes(i) ? 'on' : ''}" data-a="corr" data-i="${i}" title="Marcar como correcta">✔</button>` : ''}
+      ${conUbicar ? `<button class="ubi ${+it.ubicar === i ? 'on' : ''}" data-a="ubicar" data-i="${i}" title="Este es el que deben ubicar">⭐</button>` : ''}
       ${!conColor ? `<button data-a="optmove" data-arr="${arr}" data-i="${i}" data-d="-1">↑</button><button data-a="optmove" data-arr="${arr}" data-i="${i}" data-d="1">↓</button>` : ''}
       ${a.length > 2 ? `<button data-a="optdel" data-arr="${arr}" data-i="${i}">✕</button>` : ''}</div>`).join('') +
     (a.length < max ? `<button data-a="optadd" data-arr="${arr}">+ Agregar</button>` : '');
@@ -505,6 +696,9 @@ function renderFormCampos() {
       </select></label></div>
       ${fChk('Mostrar la respuesta correcta en el teléfono', 'mostrarCorrectaTelefono', c.mostrarCorrectaTelefono)}
       ${fChk('Permitir unirse después de comenzar', 'permitirTarde', c.permitirTarde)}
+      ${fChk('Jugar por equipos (el puntaje se suma por equipo)', 'modoEquipos', c.modoEquipos)}
+      ${fTxt('Nombres de los equipos (separados por coma, de 2 a 6)', 'nombresEquipos', c.nombresEquipos)}
+      <p class="hint">Con equipos, cada participante elige su equipo al entrar. Sirve también con un solo teléfono por equipo.</p>
       <p class="hint">Todo se guarda automáticamente en este navegador. Para conservarlo o pasarlo a otro computador usa <b>💾 Guardar archivo</b>.</p>`;
     return;
   }
@@ -516,8 +710,48 @@ function renderFormCampos() {
     form.innerHTML = h; return;
   }
   h += fArea('Pregunta', 'pregunta', it.pregunta);
+  const opcAlt = () => `<div class="fld"><span>Opciones — marca con ✔ la(s) correcta(s)</span>${listaEditable(it, 'opciones', true, true, 6)}</div>`;
   switch (it.tipo) {
-    case 'alternativas': h += `<div class="fld"><span>Opciones — marca con ✔ la(s) correcta(s)</span>${listaEditable(it, 'opciones', true, true, 6)}</div>`; break;
+    case 'alternativas': h += opcAlt(); break;
+    case 'emoji': h += fTxt('Emojis de la historia', 'emojis', it.emojis, '🐋👨‍🦰🌊') + '<p class="hint">Se muestran en grande en la pantalla. En el teléfono puedes usar el teclado de emojis.</p>' + opcAlt(); break;
+    case 'revela': h += imgField(it, 'Imagen a revelar') + '<p class="hint">La imagen empieza tapada y se va destapando de a poco. Quien responde antes gana más puntos.</p>' + opcAlt(); break;
+    case 'parejas':
+      h += `<div class="fld"><span>Parejas correctas (la columna derecha se mezcla al jugar)</span>${it.pares.map((p, k) => `<div class="optrow parrow">
+        <input data-par="${k}" data-lado="a" value="${esc(p.a)}" placeholder="${['Noé', 'David', 'Daniel', 'Moisés', 'Jonás', 'Pedro'][k] || 'Izquierda'}"><span>↔</span>
+        <input data-par="${k}" data-lado="b" value="${esc(p.b)}" placeholder="${['El arca', 'Goliat', 'Los leones', 'El mar Rojo', 'El gran pez', 'La pesca'][k] || 'Derecha'}">
+        ${it.pares.length > 2 ? `<button data-a="pardel" data-i="${k}">✕</button>` : ''}</div>`).join('')}
+        ${it.pares.length < 6 ? '<button data-a="paradd">+ Agregar pareja</button>' : ''}</div><p class="hint">Si aciertan solo algunas parejas, ganan puntos en proporción.</p>`; break;
+    case 'versiculo':
+      h += fArea('Versículo (en el orden correcto)', 'texto', it.texto, 'Todo lo puedo en Cristo que me fortalece') +
+        '<p class="hint">Las palabras se mezclan y hay que armarlo. Si es largo, sepáralo en trozos con / (ej: Lámpara es a mis pies / tu palabra, / y lumbrera a mi camino).</p>' +
+        fTxt('Referencia (opcional, se muestra al final)', 'referencia', it.referencia, 'Filipenses 4:13'); break;
+    case 'quiensoy':
+      h += `<div class="fld"><span>Pistas (de la más difícil a la más fácil)</span>${listaEditable(it, 'pistas', false, false, 6, 'Pista')}</div>` +
+        fTxt('Respuestas aceptadas (separadas por coma)', 'aceptadas', it.aceptadas, 'Moisés') +
+        '<p class="hint">Las pistas aparecen de a una durante el tiempo. Quien acierta con menos pistas gana más puntos. No importan mayúsculas ni tildes.</p>'; break;
+    case 'clasificar': {
+      const cats = catsDe(it);
+      h += `<div class="fld"><span>Categorías (2 o 3)</span>${it.categorias.map((c, i) => `<div class="optrow"><span class="sh" style="background:${COLORES[i % 6]}">${esc(abrev(cats[i]))}</span>
+          <input data-arr="categorias" data-i="${i}" value="${esc(c)}" placeholder="Categoría ${i + 1}">${it.categorias.length > 2 ? `<button data-a="optdel" data-arr="categorias" data-i="${i}">✕</button>` : ''}</div>`).join('')}
+          ${it.categorias.length < 3 ? '<button data-a="optadd" data-arr="categorias">+ Agregar categoría</button>' : ''}</div>
+        <div class="fld"><span>Elementos — toca la categoría correcta de cada uno</span>${it.elementos.map((e, k) => `<div class="optrow">
+          <input data-cl="${k}" value="${esc(e.t)}" placeholder="Elemento ${k + 1}">
+          ${cats.map((c, ci) => `<button class="clb ${+e.c === ci ? 'on' : ''}" style="--cc:${COLORES[ci % 6]}" data-a="clcat" data-i="${k}" data-c="${ci}" title="${esc(c)}">${esc(abrev(c))}</button>`).join('')}
+          ${it.elementos.length > 2 ? `<button data-a="cldel" data-i="${k}">✕</button>` : ''}</div>`).join('')}
+          ${it.elementos.length < 12 ? '<button data-a="cladd">+ Agregar elemento</button>' : ''}</div><p class="hint">Si clasifican solo algunos bien, ganan puntos en proporción.</p>`; break;
+    }
+    case 'error':
+      h += fArea('Texto con una palabra cambiada', 'texto', it.texto, 'Porque de tal manera amó Dios al *pueblo*') +
+        `<p class="hint">Escribe la palabra equivocada entre asteriscos, así: *pueblo*. Los jugadores deben tocarla en su teléfono.</p>
+        <p class="hint aviso" id="avisoErr" ${tokensError(it).idx >= 0 ? 'hidden' : ''}>⚠️ Falta marcar la palabra equivocada con *asteriscos*.</p>` +
+        fTxt('Palabra correcta (se muestra al final)', 'correctaTxt', it.correctaTxt, 'mundo'); break;
+    case 'linea':
+      h += `<div class="fld"><span>Hechos en orden cronológico — marca con ⭐ el que deben ubicar</span>${listaEditable(it, 'elementos', false, false, 8, 'Hecho', true)}</div>
+        <p class="hint">Los demás hechos se muestran en orden y los jugadores eligen dónde va el marcado.</p>`; break;
+    case 'escala':
+      h += `<div class="fila"><label class="fld sm ancho"><span>Qué significa 1</span><input data-f="etiquetaMin" value="${esc(it.etiquetaMin)}" placeholder="Nada"></label>
+        <label class="fld sm ancho"><span>Qué significa 5</span><input data-f="etiquetaMax" value="${esc(it.etiquetaMax)}" placeholder="Muchísimo"></label></div>
+        <p class="hint">Para preguntas de reflexión: no da puntos. Al final se muestra cuántos eligieron cada número y el promedio.</p>`; break;
     case 'encuesta': h += `<div class="fld"><span>Opciones (no hay respuesta correcta)</span>${listaEditable(it, 'opciones', true, false, 6)}</div>`; break;
     case 'vf': h += `<div class="fld"><span>Respuesta correcta</span><div class="vfbtns"><button data-a="vf" data-v="true" class="${it.correcta ? 'on' : ''}">✔ Verdadero</button><button data-a="vf" data-v="false" class="${!it.correcta ? 'on' : ''}">✘ Falso</button></div></div>`; break;
     case 'completar':
@@ -533,7 +767,7 @@ function renderFormCampos() {
         <label class="fld"><span>Tolerancia (tamaño del círculo)</span><input type="range" min="2" max="30" data-f="radio" data-num value="${it.radio}"></label>` : ''); break;
     case 'nube': h += '<p class="hint">Los participantes escriben una palabra o frase corta. Se muestran todas en una nube: las más repetidas, más grandes.</p>'; break;
   }
-  if (it.tipo !== 'pin') h += imgField(it);
+  if (it.tipo !== 'pin' && it.tipo !== 'revela') h += imgField(it);
   h += `<div class="fila">${fNum('Tiempo (seg)', 'tiempo', it.tiempo, 'Por defecto: ' + quiz.config.tiempo)}
     ${T.sinPuntaje ? '' : `<label class="fld sm"><span>Puntaje</span><select data-f="mult" data-num>${[[1, 'Normal'], [2, 'Doble'], [0, 'Sin puntos (práctica)']].map(([v, t]) => `<option value="${v}" ${+it.mult === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>`}</div>`;
   form.innerHTML = h;
@@ -553,8 +787,10 @@ let H = null;
 function detenerHost() { if (H) { clearInterval(H.timer); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
 function vistaPresentar() {
   if (!quiz.items.length) { alert('El quiz está vacío.'); return; }
+  const pr = problemasQuiz();
+  if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost();
-  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {} };
+  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe() };
   iniciarPeerHost();
   document.onkeydown = e => { if (H && ['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key) && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) { e.preventDefault(); avanzar(); } };
   ACC = {
@@ -582,6 +818,23 @@ function iniciarPeerHost() {
     conn.on('close', () => { const p = H && H.players[conn.pid]; if (p && p.conn === conn) { p.online = false; if (H.fase === 'lobby') renderHost(); } });
   });
 }
+function equiposDe() {
+  if (!quiz.config.modoEquipos) return [];
+  const n = String(quiz.config.nombresEquipos || '').split(',').map(x => x.trim().slice(0, 20)).filter(Boolean).slice(0, 6);
+  return n.length >= 2 ? n : ['Equipo 1', 'Equipo 2'];
+}
+const equipoMenor = () => H.eq.map((_, i) => [i, Object.values(H.players).filter(p => p.eq === i).length]).sort((a, b) => a[1] - b[1])[0][0];
+function rankingEquipos() {
+  return H.eq.map((nombre, i) => {
+    const ms = Object.values(H.players).filter(p => p.eq === i);
+    return { i, nombre, n: ms.length, score: ms.reduce((s, p) => s + p.score, 0), plus: ms.reduce((s, p) => s + (H.ult[p.pid]?.pts || 0), 0) };
+  }).filter(e => e.n > 0).sort((a, b) => b.score - a.score); // los equipos sin integrantes no compiten
+}
+function posicion(p, k, n) { // con equipos, la posición que se informa es la del equipo
+  if (!H.eq.length) return { rank: k + 1, n };
+  const rk = rankingEquipos();
+  return { rank: rk.findIndex(e => e.i === p.eq) + 1, n: rk.length, equipo: H.eq[p.eq] };
+}
 function enviar(p, msg) { try { if (p.conn && p.conn.open) p.conn.send(msg); } catch (e) { } }
 function difundir(msg) { Object.values(H.players).forEach(p => enviar(p, msg)); }
 const conectados = () => Object.values(H.players).filter(p => p.online);
@@ -592,11 +845,16 @@ function alRecibirHost(conn, d) {
     if (!p) {
       if (H.fase !== 'lobby' && !quiz.config.permitirTarde) { conn.send({ t: 'msg', icono: '🚪', msg: 'El juego ya comenzó. ¡Espera la próxima ronda!' }); return; }
       p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0 };
+      if (H.eq.length) p.eq = equipoMenor();
     }
     p.conn = conn; p.online = true; conn.pid = d.pid;
-    enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color });
+    enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq });
     enviarEstado(p);
     if (H.fase === 'lobby') renderHost(); else actualizarContador();
+  } else if (d.t === 'team') {
+    const p = H.players[conn.pid], i = Number(d.eq);
+    if (!p || H.fase !== 'lobby' || !H.eq[i]) return;
+    p.eq = i; enviarEstado(p); renderHost();
   } else if (d.t === 'ans') {
     const pid = conn.pid, p = H.players[pid];
     if (!p || H.fase !== 'pregunta' || d.idx !== H.idx || H.resp[pid]) return;
@@ -607,14 +865,22 @@ function alRecibirHost(conn, d) {
   }
 }
 function enviarEstado(p) {
-  if (H.fase === 'lobby') enviar(p, { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
+  if (H.fase === 'lobby') enviar(p, H.eq.length ? { t: 'equipos', equipos: H.eq, eq: p.eq } : { t: 'msg', icono: '✅', msg: '¡Estás dentro! Espera a que comience.' });
   else if (H.fase === 'pregunta' && !H.resp[p.pid]) enviar(p, { ...H.payload, restante: Math.max(1, tiempoDe(quiz.items[H.idx]) - Math.floor((Date.now() - H.t0) / 1000)) });
   else enviar(p, { t: 'msg', icono: '👀', msg: 'Mira la pantalla', score: p.score });
 }
 function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = `${Object.keys(H.resp).length}/${conectados().length} respuestas`; }
 function payload(it, idx) {
   const b = { t: 'q', idx, tipo: it.tipo, pregunta: it.pregunta, tiempo: tiempoDe(it) };
-  if (it.tipo === 'alternativas' || it.tipo === 'encuesta') b.opciones = opcionesValidas(it.opciones);
+  if (CON_OPCIONES.includes(it.tipo)) b.opciones = opcionesValidas(it.opciones);
+  if (it.tipo === 'emoji') b.emojis = it.emojis;
+  if (it.tipo === 'parejas') { const p = paresValidos(it); b.izq = p.map(x => x.a); b.der = H.shuf.map(k => ({ k, t: p[k].b })); }
+  if (it.tipo === 'versiculo') b.palabras = H.shuf;
+  if (it.tipo === 'quiensoy') b.pistas = pistasValidas(it);
+  if (it.tipo === 'clasificar') { b.categorias = catsDe(it); b.items = H.shuf.map(e => ({ i: e.i, t: e.t })); }
+  if (it.tipo === 'error') b.tokens = tokensError(it).tokens;
+  if (it.tipo === 'linea') { const l = lineaDe(it); b.hecho = l.hecho; b.fijos = l.fijos; }
+  if (it.tipo === 'escala') { b.min = it.etiquetaMin; b.max = it.etiquetaMax; }
   if (it.tipo === 'completar') b.frase = it.frase;
   if (it.tipo === 'pin') b.imagen = it.imagen;
   if (it.tipo === 'ordenar') b.elementos = H.shuf;
@@ -642,7 +908,8 @@ function irA(i) {
   H.idx = i; const it = quiz.items[i];
   if (!esPregunta(it)) { H.fase = 'slide'; difundir({ t: 'msg', icono: '👀', msg: 'Mira la pantalla' }); renderHost(); return; }
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
-  H.shuf = it.tipo === 'ordenar' ? (() => { const v = opcionesValidas(it.elementos); let s; do { s = shuffle(v); } while (v.length > 1 && s.every((x, k) => x.i === v[k].i)); return s; })() : null;
+  H.shuf = barajar(it);
+  H.tiles = it.tipo === 'revela' ? shuffle([...Array(NTILES).keys()]) : null; // orden en que se destapa cada cuadro
   H.payload = payload(it, i);
   difundir(H.payload);
   renderHost();
@@ -650,8 +917,25 @@ function irA(i) {
   H.timer = setInterval(() => {
     const left = Math.max(0, Math.ceil(T - (Date.now() - H.t0) / 1000));
     const el = $('#tLeft'); if (el) el.textContent = left;
+    tickHost();
     if (left <= 0) revelar();
   }, 250);
+}
+function barajar(it) { // mezcla evitando, si se puede, que quede igual al orden correcto
+  const mezcla = v => { let s, n = 0; do { s = shuffle(v); } while (v.length > 1 && s.every((x, k) => x === v[k]) && ++n < 30); return s; };
+  switch (it.tipo) {
+    case 'ordenar': return mezcla(opcionesValidas(it.elementos));
+    case 'parejas': return mezcla(paresValidos(it).map((_, k) => k));
+    case 'versiculo': return mezcla(palabrasVersiculo(it));
+    case 'clasificar': return shuffle(clasifValidos(it));
+  }
+  return null;
+}
+function tickHost() { // animaciones que dependen del tiempo: imagen que se revela y pistas de ¿Quién soy?
+  if (!H || H.fase !== 'pregunta') return;
+  const it = quiz.items[H.idx], ms = Date.now() - H.t0, T = tiempoDe(it) * 1000;
+  if (it.tipo === 'revela') { const n = Math.floor(ms / T * NTILES); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
+  if (it.tipo === 'quiensoy') { const k = pistasVisibles(pistasValidas(it).length, ms, T); document.querySelectorAll('.pistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
 }
 function ranking() { return Object.values(H.players).sort((a, b) => b.score - a.score); }
 function revelar() {
@@ -661,25 +945,33 @@ function revelar() {
   const T = tiempoDe(it) * 1000, base = (+quiz.config.puntos || 0) * (it.mult ?? 1);
   H.fase = 'revelar'; H.ult = {};
   for (const p of Object.values(H.players)) {
-    const r = H.resp[p.pid]; let ok = null, pts = 0;
+    const r = H.resp[p.pid]; let ok = null, pts = 0, fr = 0;
     if (!sinP) {
-      ok = r ? evaluar(it, r.val) : false;
-      if (ok) { p.aciertos++; pts = quiz.config.bonusVelocidad ? Math.round(base * (1 - 0.5 * Math.min(r.ms, T) / T)) : base; }
+      fr = r ? fraccion(it, r.val) : 0; ok = fr >= 1;
+      if (ok) p.aciertos++;
+      if (fr > 0) {
+        let f = 1;
+        if (it.tipo === 'quiensoy') { const n = pistasValidas(it).length || 1; f = (n - pistasVisibles(n, r.ms, T) + 1) / n; } // menos pistas, más puntos
+        else if (quiz.config.bonusVelocidad || it.tipo === 'revela') f = 1 - 0.5 * Math.min(r.ms, T) / T;
+        pts = Math.round(base * fr * f);
+      }
     }
-    p.score += pts; H.ult[p.pid] = { ok, pts, resp: !!r };
+    p.score += pts; H.ult[p.pid] = { ok, pts, fr, resp: !!r };
   }
   const rk = ranking();
-  rk.forEach((p, k) => enviar(p, { t: 'res', ...H.ult[p.pid], score: p.score, rank: k + 1, n: rk.length, correcta: quiz.config.mostrarCorrectaTelefono && !sinP ? textoCorrecta(it) : null }));
+  rk.forEach((p, k) => enviar(p, { t: 'res', ...H.ult[p.pid], score: p.score, ...posicion(p, k, rk.length), correcta: quiz.config.mostrarCorrectaTelefono && !sinP ? textoCorrecta(it) : null }));
   renderHost();
 }
 function fin() {
   H.fase = 'fin'; clearInterval(H.timer);
   const rk = ranking();
-  rk.forEach((p, k) => enviar(p, { t: 'fin', rank: k + 1, n: rk.length, score: p.score }));
+  rk.forEach((p, k) => enviar(p, { t: 'fin', ...posicion(p, k, rk.length), score: p.score }));
   renderHost();
 }
 function descargarResultados() {
-  const filas = [['Posición', 'Nombre', 'Puntaje', 'Aciertos']].concat(ranking().map((p, k) => [k + 1, p.name, p.score, p.aciertos]));
+  let filas = [['Posición', 'Nombre', 'Puntaje', 'Aciertos'].concat(H.eq.length ? ['Equipo'] : [])]
+    .concat(ranking().map((p, k) => [k + 1, p.name, p.score, p.aciertos].concat(H.eq.length ? [H.eq[p.eq] || ''] : [])));
+  if (H.eq.length) filas = filas.concat([[], ['Posición', 'Equipo', 'Puntaje', 'Integrantes']], rankingEquipos().map((e, k) => [k + 1, e.nombre, e.score, e.n]));
   bajar('resultados-' + (slug(quiz.config.titulo) || 'quiz') + '.csv', '﻿' + filas.map(f => f.map(x => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n'), 'text/csv');
 }
 
@@ -702,6 +994,7 @@ function renderHost() {
     ${H.idx >= 0 && H.fase !== 'fin' ? `<span class="pill">${H.idx + 1}/${quiz.items.length}</span>` : ''}
     <span class="sp"></span><button data-a="fs" title="Pantalla completa">⛶</button><button data-a="salir">Salir</button>
     ${H.fase !== 'fin' ? `<button class="pri" data-a="next">${btn}</button>` : ''}</div></div>`;
+  tickHost();
 }
 function urlUnirse() { return location.origin + location.pathname + '?join=' + H.code; }
 function hostLobby() {
@@ -711,12 +1004,16 @@ function hostLobby() {
     : H.estado === 'sinpeer' ? '<div class="warn">⚠️ No se pudo cargar el módulo de conexión (¿sin internet?). Puedes presentar igual, en modo “solo pantalla”.</div>'
       : H.estado === 'error' ? '<div class="warn">⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.</div>' : '';
   const ps = Object.values(H.players);
+  const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="Clic para sacar">${esc(p.avatar)} ${esc(p.name)}</span>`;
   return `<h1>${esc(quiz.config.titulo)}</h1>${quiz.config.organizacion ? `<p>${esc(quiz.config.organizacion)}</p>` : ''}
     <div class="join"><div class="qr">${qr}</div>
       <div><p>Escanea el QR o entra a:</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>y escribe el código</p><div class="code">${H.code}</div>
       <p class="muted">${H.estado === 'ok' ? '🟢 Sala abierta' : H.estado === 'conectando' ? '⏳ Abriendo sala…' : '🔴 Sin conexión'}</p></div></div>
     ${aviso}
-    <div class="players">${ps.length ? ps.map(p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="Clic para sacar">${esc(p.avatar)} ${esc(p.name)}</span>`).join('') : '<p>Esperando participantes…</p>'}</div>`;
+    ${H.eq.length ? `<div class="equipos-lobby">${H.eq.map((n, i) => {
+      const m = ps.filter(p => p.eq === i);
+      return `<div class="eqbox" style="border-color:${COLORES[i % 6]}"><h3 style="background:${COLORES[i % 6]}">${esc(n)} · ${m.length}</h3><div class="players">${m.map(chip).join('') || '<small>Sin integrantes</small>'}</div></div>`;
+    }).join('')}</div>` : `<div class="players">${ps.length ? ps.map(chip).join('') : '<p>Esperando participantes…</p>'}</div>`}`;
 }
 function hostSlide() {
   const it = quiz.items[H.idx];
@@ -729,14 +1026,17 @@ function hostPregunta(rev) {
   let h = `<div class="hq-top"><span>Pregunta ${numPregunta(H.idx)} de ${quiz.items.filter(esPregunta).length} · ${TIPOS[it.tipo].icono} ${TIPOS[it.tipo].nombre}</span>
     ${rev ? '' : `<span class="timer" id="tLeft">${left}</span>`}<span id="nResp">${nTot}/${conectados().length} respuestas</span></div>
     <div class="hq-q">${esc(it.pregunta)}</div>`;
-  if (it.imagen && it.tipo !== 'pin' && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
+  if (it.imagen && it.tipo !== 'pin' && it.tipo !== 'revela' && !rev) h += `<img class="qimg" src="${esc(it.imagen)}">`;
+  const resumen = txt => `<p class="resumen">${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} ${txt}</p>`;
+  if (it.tipo === 'emoji') h += `<div class="emojis">${esc(it.emojis)}</div>`;
+  if (it.tipo === 'revela') h += `<div class="revela"><img src="${esc(it.imagen)}">${rev ? '' : `<div class="tiles">${H.tiles.map((_, k) => `<i data-k="${k}"></i>`).join('')}</div>`}</div>`;
   switch (it.tipo) {
-    case 'alternativas': case 'encuesta': {
-      const c = conteo(v => v), max = Math.max(1, ...Object.values(c));
+    case 'alternativas': case 'encuesta': case 'emoji': case 'revela': {
+      const c = conteo(v => v), max = Math.max(1, ...Object.values(c)), conOk = CON_CORRECTAS.includes(it.tipo);
       h += `<div class="opts">${opcionesValidas(it.opciones).map(({ o, i }) => {
-        const dim = rev && it.tipo === 'alternativas' && !it.correctas.includes(i);
+        const dim = rev && conOk && !it.correctas.includes(i);
         return `<div class="opt ${dim ? 'dim' : ''}" style="background:${COLORES[i % 6]}"><span class="f">${FORMAS[i % 6]}</span>${esc(o)}
-          ${rev ? `<span class="cnt">${it.tipo === 'alternativas' && it.correctas.includes(i) ? '✔ ' : ''}${c[i] || 0}</span><span class="barra" style="width:${(c[i] || 0) / max * 100}%"></span>` : ''}</div>`;
+          ${rev ? `<span class="cnt">${conOk && it.correctas.includes(i) ? '✔ ' : ''}${c[i] || 0}</span><span class="barra" style="width:${(c[i] || 0) / max * 100}%"></span>` : ''}</div>`;
       }).join('')}</div>`; break;
     }
     case 'vf': {
@@ -763,6 +1063,54 @@ function hostPregunta(rev) {
       else h += `<div class="lista-ord">${opcionesValidas(it.elementos).map((x, k) => `<div><b>${k + 1}</b>${esc(x.o)}</div>`).join('')}</div>
         <p>${Object.values(H.resp).filter(r => evaluar(it, r.val)).length} de ${nTot} lo ordenaron bien</p>`;
       break;
+    case 'parejas': {
+      const p = paresValidos(it);
+      if (!rev) h += `<div class="parejas"><div>${p.map(x => `<div class="pz">${esc(x.a)}</div>`).join('')}</div><div>${H.shuf.map(k => `<div class="pz der">${esc(p[k].b)}</div>`).join('')}</div></div>`;
+      else h += `<div class="parejas sol">${p.map(x => `<div class="pz">${esc(x.a)}</div><div class="flecha">→</div><div class="pz der">${esc(x.b)}</div>`).join('')}</div>` + resumen('unieron todas bien');
+      break;
+    }
+    case 'versiculo':
+      if (!rev) h += `<div class="chips">${H.shuf.map(w => `<span>${esc(w)}</span>`).join('')}</div>`;
+      else h += `<div class="frase">«${esc(textoVersiculo(it))}»</div>${it.referencia ? `<p class="resumen">${esc(it.referencia)}</p>` : ''}` + resumen('lo armaron bien');
+      break;
+    case 'quiensoy':
+      h += `<ol class="pistas">${pistasValidas(it).map(t => `<li class="${rev ? '' : 'off'}">${esc(t)}</li>`).join('')}</ol>`;
+      if (rev) h += `<div class="frase">Soy <span class="bien">${esc(String(it.aceptadas).split(',')[0].trim())}</span></div>` + topRespuestas(v => aceptadas(it).includes(norm(v)));
+      break;
+    case 'clasificar': {
+      const cats = catsDe(it), el = clasifValidos(it);
+      if (!rev) h += `<div class="cats">${cats.map((c, ci) => `<div class="cat" style="background:${COLORES[ci % 6]}">${esc(c)}</div>`).join('')}</div>
+        <div class="chips">${H.shuf.map(e => `<span>${esc(e.t)}</span>`).join('')}</div>`;
+      else {
+        const okE = e => Object.values(H.resp).filter(r => Array.isArray(r.val) && r.val.some(x => +x[0] === e.i && +x[1] === e.c)).length;
+        h += `<div class="cols">${cats.map((c, ci) => `<div class="col-cat"><h3 style="background:${COLORES[ci % 6]}">${esc(c)}</h3>
+          ${el.filter(e => e.c === ci).map(e => `<div><span>${esc(e.t)}</span><small>✔ ${okE(e)}</small></div>`).join('')}</div>`).join('')}</div>` + resumen('clasificaron todo bien');
+      }
+      break;
+    }
+    case 'error': {
+      const t = tokensError(it);
+      h += `<div class="frase">${t.tokens.map((w, k) => rev && k === t.idx ? `${esc(t.antes)}<s class="mal">${esc(t.palabra)}</s>${it.correctaTxt ? ` <span class="bien">${esc(it.correctaTxt)}</span>` : ''}${esc(t.despues)}` : esc(w)).join(' ')}</div>`;
+      if (rev) h += resumen('encontraron el error');
+      break;
+    }
+    case 'linea': {
+      const l = lineaDe(it);
+      if (!rev) h += `<div class="hecho">❓ ${esc(l.hecho)}</div><div class="tl">${l.fijos.map(f => `<div>${esc(f)}</div>`).join('<i>→</i>')}</div>`;
+      else {
+        const full = l.fijos.map(t => ({ t })); full.splice(l.pos, 0, { t: l.hecho, h: 1 });
+        h += `<div class="tl">${full.map(x => `<div class="${x.h ? 'h' : ''}">${esc(x.t)}</div>`).join('<i>→</i>')}</div>` + resumen('lo ubicaron bien');
+      }
+      break;
+    }
+    case 'escala': {
+      const et = `<div class="escala-et"><span>1 = ${esc(it.etiquetaMin)}</span><span>5 = ${esc(it.etiquetaMax)}</span></div>`;
+      if (!rev) { h += et + '<p class="resumen">📱 Responde en tu teléfono</p>'; break; }
+      const c = conteo(v => Number(v)), mx = Math.max(1, ...Object.values(c)), vals = Object.values(H.resp).map(r => Number(r.val)).filter(v => v >= 1 && v <= 5);
+      h += `<div class="escala">${[1, 2, 3, 4, 5].map(v => `<div><span>${c[v] || 0}</span><div class="eb" style="height:${(c[v] || 0) / mx * 200}px;background:${ESCALA[v - 1]}"></div><b>${v}</b></div>`).join('')}</div>${et}
+        ${vals.length ? `<p class="resumen">Promedio: ${(vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1).replace('.', ',')}</p>` : ''}`;
+      break;
+    }
     case 'numero': {
       const mn = +it.min, mx = +it.max, pos = v => Math.max(0, Math.min(100, (v - mn) / ((mx - mn) || 1) * 100));
       h += `<p style="font-size:1.5rem">Entre ${mn} y ${mx} ${esc(it.unidad)}</p>`;
@@ -788,17 +1136,24 @@ function nube() {
   return `<div class="nube">${e.map(([k, n], i) => `<span style="font-size:${1.2 + 3.3 * n / max}rem;color:${cols[i % cols.length]}">${esc(orig[k])}</span>`).join('')}</div>`;
 }
 function hostRanking() {
+  if (H.eq.length) {
+    const rk = rankingEquipos(), max = Math.max(1, rk[0].score);
+    return `<h1>🏆 Ranking por equipos</h1><div class="rank">${rk.map((e, k) => `<div class="rk" style="background:linear-gradient(90deg,#fff ${e.score / max * 100}%,#ffffffcc 0)"><span class="pos">${k + 1}</span><span class="eqc" style="background:${COLORES[e.i % 6]}"></span>
+      <span class="nm">${esc(e.nombre)} <small>(${e.n})</small></span>${e.plus ? `<span class="plus">+${e.plus}</span>` : ''}<span>${e.score}</span></div>`).join('')}</div>`;
+  }
   const rk = ranking().slice(0, 8), max = Math.max(1, rk[0]?.score || 1);
   return `<h1>🏆 Ranking</h1><div class="rank">${rk.map((p, k) => `<div class="rk" style="background:linear-gradient(90deg,#fff ${p.score / max * 100}%,#ffffffcc 0)"><span class="pos">${k + 1}</span><span>${esc(p.avatar)}</span><span class="nm">${esc(p.name)}</span>
     ${H.ult[p.pid]?.pts ? `<span class="plus">+${H.ult[p.pid].pts}</span>` : ''}<span>${p.score}</span></div>`).join('')}</div>`;
 }
 function hostFin() {
-  const rk = ranking();
-  if (!rk.length) return `<h1>¡Fin! 🎉</h1><p>${esc(quiz.config.titulo)}</p><button class="big" data-a="inicio">Volver al inicio</button>`;
+  const rk = H.eq.length
+    ? rankingEquipos().map(e => ({ av: `<span class="eqc big" style="background:${COLORES[e.i % 6]}"></span>`, name: e.nombre, score: e.score }))
+    : ranking().map(p => ({ av: esc(p.avatar), name: p.name, score: p.score }));
+  if (!Object.keys(H.players).length) return `<h1>¡Fin! 🎉</h1><p>${esc(quiz.config.titulo)}</p><button class="big" data-a="inicio">Volver al inicio</button>`;
   const orden = [rk[1], rk[0], rk[2]], alt = [180, 250, 130], med = ['🥈', '🥇', '🥉'];
   return `<h1>🎉 ¡Felicitaciones! 🎉</h1>
-    <div class="podio">${orden.map((p, k) => p ? `<div class="col"><span class="av">${esc(p.avatar)}</span><span>${esc(p.name)}</span><span>${p.score} pts</span><div class="blk" style="height:${alt[k]}px">${med[k]}</div></div>` : '<div class="col"></div>').join('')}</div>
-    ${rk.length > 3 ? `<div class="rank" style="max-width:600px">${rk.slice(3, 10).map((p, k) => `<div class="rk"><span class="pos">${k + 4}</span><span>${esc(p.avatar)}</span><span class="nm">${esc(p.name)}</span><span>${p.score}</span></div>`).join('')}</div>` : ''}
+    <div class="podio">${orden.map((p, k) => p ? `<div class="col"><span class="av">${p.av}</span><span>${esc(p.name)}</span><span>${p.score} pts</span><div class="blk" style="height:${alt[k]}px">${med[k]}</div></div>` : '<div class="col"></div>').join('')}</div>
+    ${rk.length > 3 ? `<div class="rank" style="max-width:600px">${rk.slice(3, 10).map((p, k) => `<div class="rk"><span class="pos">${k + 4}</span><span>${p.av}</span><span class="nm">${esc(p.name)}</span><span>${p.score}</span></div>`).join('')}</div>` : ''}
     <div style="display:flex;gap:10px"><button class="big" data-a="csv">📥 Descargar resultados</button><button class="big" data-a="inicio">Volver al inicio</button></div>`;
 }
 
@@ -817,8 +1172,12 @@ function vistaJugador(code) {
     },
     jv: el => responder(el.dataset.v),
     jenviar: () => {
-      const q = P.q;
-      if (q.tipo === 'completar' || q.tipo === 'nube') { const v = $('#jtxt').value.trim(); if (v) responder(v.slice(0, 40)); }
+      const q = P.q; if (!q) return;
+      if (['completar', 'nube', 'quiensoy'].includes(q.tipo)) { const v = $('#jtxt').value.trim(); if (v) responder(v.slice(0, 40)); }
+      else if (q.tipo === 'parejas') responder(q.izq.map((_, k) => { const s = $(`[data-jp="${k}"]`).value; return s === '' ? -1 : Number(s); }));
+      else if (q.tipo === 'versiculo') { if (P.armado.length) responder(P.armado.map(i => q.palabras[i])); }
+      else if (q.tipo === 'clasificar') responder(Object.entries(P.clas).map(([i, c]) => [+i, +c]));
+      else if (q.tipo === 'error' || q.tipo === 'linea') { if (P.sel != null) responder(P.sel); }
       else if (q.tipo === 'numero') responder(Number($('#jrange').value));
       else if (q.tipo === 'pin') { if (P.pin) responder(P.pin); }
       else if (q.tipo === 'ordenar') responder(P.orden.map(x => x.i));
@@ -826,6 +1185,12 @@ function vistaJugador(code) {
     jpin: (el, e) => { const r = el.getBoundingClientRect(); P.pin = { x: +((e.clientX - r.left) / r.width * 100).toFixed(1), y: +((e.clientY - r.top) / r.height * 100).toFixed(1) }; const m = $('#jm'); m.style.left = P.pin.x + '%'; m.style.top = P.pin.y + '%'; m.style.display = ''; $('#jsend').disabled = false; },
     jmov: el => { const i = +el.dataset.i, j = i + (+el.dataset.d); if (j < 0 || j >= P.orden.length) return; [P.orden[i], P.orden[j]] = [P.orden[j], P.orden[i]]; renderJPregunta(true); },
     reintentar: () => location.reload(),
+    jvp: el => { P.armado.push(+el.dataset.i); renderArmado(); },
+    jvq: el => { P.armado.splice(+el.dataset.k, 1); renderArmado(); },
+    jcl: el => { P.clas[el.dataset.i] = +el.dataset.c; el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); },
+    jerr: el => { P.sel = +el.dataset.k; app.querySelectorAll('.jerr button').forEach(b => b.classList.toggle('on', b === el)); $('#jsend').disabled = false; },
+    jslot: el => { P.sel = +el.dataset.k; app.querySelectorAll('.jlinea .slot').forEach(b => b.classList.toggle('on', b === el)); $('#jsend').disabled = false; },
+    jeq: el => { P.eq = +el.dataset.i; P.conn.send({ t: 'team', eq: P.eq }); renderEquipos(); },
   };
   app.innerHTML = `<div class="jug"><div class="cuerpo"><div class="card">
     <h2>Unirse a la sala ${esc(code)}</h2>
@@ -835,7 +1200,7 @@ function vistaJugador(code) {
 }
 function marcoJ(cuerpo, bg) {
   app.innerHTML = `<div class="jug" style="--bg:${bg || 'var(--c,#3b2a7a)'};--c:${esc(P.color || '#6c3ce0')}">
-    <div class="top"><span>${esc(P.avatar)} ${esc(P.name)}</span><span id="jt"></span><span>${P.score} pts</span></div><div class="cuerpo">${cuerpo}</div></div>`;
+    <div class="top"><span>${esc(P.avatar)} ${esc(P.name)}${P.equipos && P.equipos[P.eq] ? ` · ${esc(P.equipos[P.eq])}` : ''}</span><span id="jt"></span><span>${P.score} pts</span></div><div class="cuerpo">${cuerpo}</div></div>`;
 }
 function pantallaJ(icono, msg, bg, extra = '') { clearInterval(P.tInt); marcoJ(`<div class="estado-big">${icono}</div><h2>${msg}</h2>${extra}`, bg); }
 function conectarJugador() {
@@ -863,26 +1228,28 @@ function alRecibirJ(d) {
   if (!d) return;
   if (d.score != null) P.score = d.score;
   switch (d.t) {
-    case 'welcome': P.color = d.color; P.titulo = d.titulo; break;
+    case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; break;
+    case 'equipos': P.equipos = d.equipos; P.eq = d.eq; renderEquipos(); break;
     case 'msg': pantallaJ(d.icono || '👀', esc(d.msg)); break;
-    case 'q': P.q = d; P.pin = null; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
+    case 'q': P.q = d; P.pin = null; P.sel = null; P.armado = []; P.clas = {}; P.orden = d.elementos ? d.elementos.slice() : null; P.limite = Date.now() + (d.restante || d.tiempo) * 1000; renderJPregunta(); break;
     case 'recibido': pantallaJ('⏳', '¡Respuesta enviada!<br><small>Espera a los demás…</small>'); break;
     case 'res': {
       const corr = d.correcta ? `<p>Respuesta: <b>${esc(d.correcta)}</b></p>` : '';
-      const pos = `<p>Vas en el lugar <b>${d.rank}</b> de ${d.n}</p>`;
+      const pos = d.equipo ? `<p>Tu equipo <b>${esc(d.equipo)}</b> va en el lugar <b>${d.rank}</b> de ${d.n}</p>` : `<p>Vas en el lugar <b>${d.rank}</b> de ${d.n}</p>`;
       if (d.ok === null) pantallaJ('🙌', '¡Gracias por participar!', '#864cbf');
       else if (!d.resp) pantallaJ('⏰', 'Se acabó el tiempo', '#555', corr + pos);
       else if (d.ok) pantallaJ('🎉', `¡Correcto!<br>+${d.pts}`, '#26890c', pos);
+      else if (d.fr > 0) pantallaJ('👍', `¡Casi! ${Math.round(d.fr * 100)} % bien<br>+${d.pts}`, '#d89e00', corr + pos);
       else pantallaJ('😮', 'Incorrecto', '#e21b3c', corr + pos);
       break;
     }
-    case 'fin': P.fin = true; pantallaJ(d.rank <= 3 ? ['🥇', '🥈', '🥉'][d.rank - 1] : '🎉', `¡Terminó!<br>Quedaste en el lugar ${d.rank} de ${d.n}`, 'var(--c)', `<p>${d.score} puntos</p>`); break;
+    case 'fin': P.fin = true; pantallaJ(d.rank <= 3 ? ['🥇', '🥈', '🥉'][d.rank - 1] : '🎉', d.equipo ? `¡Terminó!<br>Tu equipo ${esc(d.equipo)} quedó en el lugar ${d.rank} de ${d.n}` : `¡Terminó!<br>Quedaste en el lugar ${d.rank} de ${d.n}`, 'var(--c)', `<p>${d.score} puntos</p>`); break;
     case 'kick': P.kicked = true; pantallaJ('🚪', 'El presentador te sacó de la sala.', '#555'); try { P.peer.destroy(); } catch (e) { } break;
   }
 }
 function responder(v) {
   const q = P.q; if (!q) return;
-  if (q.tipo === 'alternativas' || q.tipo === 'encuesta') v = Number(v);
+  if (CON_OPCIONES.includes(q.tipo) || q.tipo === 'escala') v = Number(v);
   if (q.tipo === 'vf') v = v === 'true';
   P.conn.send({ t: 'ans', idx: q.idx, val: v });
   P.q = null;
@@ -893,7 +1260,9 @@ function renderJPregunta(soloLista) {
   if (soloLista) { $('#jord').innerHTML = filasOrden(); return; }
   let h = `<div class="jq">${esc(q.pregunta)}</div>`;
   switch (q.tipo) {
-    case 'alternativas': case 'encuesta':
+    case 'alternativas': case 'encuesta': case 'emoji': case 'revela':
+      if (q.emojis) h += `<div class="jemojis">${esc(q.emojis)}</div>`;
+      if (q.tipo === 'revela') h += '<p>👀 Mira la imagen en la pantalla</p>';
       h += `<div class="jopts">${q.opciones.map(({ o, i }) => `<button data-a="jv" data-v="${i}" style="background:${COLORES[i % 6]}"><span class="f">${FORMAS[i % 6]}</span>${esc(o)}</button>`).join('')}</div>`; break;
     case 'vf':
       h += `<div class="jopts"><button data-a="jv" data-v="true" style="background:${COLORES[1]}"><span class="f">◆</span>Verdadero</button><button data-a="jv" data-v="false" style="background:${COLORES[0]}"><span class="f">▲</span>Falso</button></div>`; break;
@@ -909,13 +1278,50 @@ function renderJPregunta(soloLista) {
         <button class="pri big" id="jsend" data-a="jenviar" disabled style="background:#fff;color:#1d1b2b">Confirmar</button>`; break;
     case 'ordenar':
       h += `<div class="jord" id="jord">${filasOrden()}</div><button class="pri big" data-a="jenviar" style="background:#fff;color:#1d1b2b">Enviar orden</button>`; break;
+    case 'parejas':
+      h += `<div class="jpar">${q.izq.map((a, k) => `<label><span>${esc(a)}</span><select data-jp="${k}"><option value="">Elige…</option>${q.der.map(d => `<option value="${d.k}">${esc(d.t)}</option>`).join('')}</select></label>`).join('')}</div>
+        <button class="pri big" data-a="jenviar" style="background:#fff;color:#1d1b2b">Enviar</button>`; break;
+    case 'versiculo':
+      h += `<div class="jarm" id="jarm"></div><div class="jbanco" id="jbanco"></div><button class="pri big" data-a="jenviar" style="background:#fff;color:#1d1b2b">Enviar</button>`; break;
+    case 'quiensoy':
+      h += `<ol class="jpistas" id="jpistas">${q.pistas.map(t => `<li class="off">${esc(t)}</li>`).join('')}</ol>
+        <input id="jtxt" maxlength="40" autocomplete="off" placeholder="¿Quién es?" style="max-width:420px;font-size:1.3rem"><button class="pri big" data-a="jenviar" style="background:#fff;color:#1d1b2b">Enviar</button>`; break;
+    case 'clasificar':
+      h += `<div class="jclas">${q.items.map(e => `<div><span>${esc(e.t)}</span><div>${q.categorias.map((c, ci) => `<button data-a="jcl" data-i="${e.i}" data-c="${ci}" style="--cc:${COLORES[ci % 6]}">${esc(c)}</button>`).join('')}</div></div>`).join('')}</div>
+        <button class="pri big" data-a="jenviar" style="background:#fff;color:#1d1b2b">Enviar</button>`; break;
+    case 'error':
+      h += `<p>Toca la palabra equivocada:</p><div class="jerr">${q.tokens.map((w, k) => `<button data-a="jerr" data-k="${k}">${esc(w)}</button>`).join('')}</div>
+        <button class="pri big" id="jsend" data-a="jenviar" disabled style="background:#fff;color:#1d1b2b">Confirmar</button>`; break;
+    case 'linea':
+      h += `<div class="jq" style="background:#fff2">❓ ${esc(q.hecho)}</div><div class="jlinea">${q.fijos.map((f, k) => `<button class="slot" data-a="jslot" data-k="${k}">⬇ Aquí</button><div class="fijo">${esc(f)}</div>`).join('')}
+        <button class="slot" data-a="jslot" data-k="${q.fijos.length}">⬇ Aquí</button></div>
+        <button class="pri big" id="jsend" data-a="jenviar" disabled style="background:#fff;color:#1d1b2b">Confirmar</button>`; break;
+    case 'escala':
+      h += `<div class="jescala">${[1, 2, 3, 4, 5].map(v => `<button data-a="jv" data-v="${v}" style="background:${ESCALA[v - 1]}">${v}</button>`).join('')}</div>
+        <div class="jescala-et"><span>1 = ${esc(q.min)}</span><span>5 = ${esc(q.max)}</span></div>`; break;
   }
   marcoJ(h);
   const r = $('#jrange'); if (r) r.oninput = () => $('#jval').textContent = r.value;
+  if (q.tipo === 'versiculo') renderArmado();
   const t = $('#jtxt'); if (t) { t.focus(); t.onkeydown = e => { if (e.key === 'Enter') ACC.jenviar(); }; }
   clearInterval(P.tInt);
-  const tick = () => { const s = Math.max(0, Math.ceil((P.limite - Date.now()) / 1000)); const el = $('#jt'); if (el) el.textContent = '⏱ ' + s; if (s <= 0) { clearInterval(P.tInt); } };
+  const tick = () => {
+    const s = Math.max(0, Math.ceil((P.limite - Date.now()) / 1000)); const el = $('#jt'); if (el) el.textContent = '⏱ ' + s;
+    if (q.tipo === 'quiensoy') { const T = q.tiempo * 1000, k = pistasVisibles(q.pistas.length, T - (P.limite - Date.now()), T); app.querySelectorAll('#jpistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
+    if (s <= 0) { clearInterval(P.tInt); }
+  };
   tick(); P.tInt = setInterval(tick, 250);
+}
+function renderArmado() {
+  const q = P.q; if (!q) return;
+  $('#jarm').innerHTML = P.armado.length ? P.armado.map((i, k) => `<button data-a="jvq" data-k="${k}">${esc(q.palabras[i])}</button>`).join('') : '<span class="ph">Toca las palabras en orden…</span>';
+  $('#jbanco').innerHTML = q.palabras.map((w, i) => P.armado.includes(i) ? '' : `<button data-a="jvp" data-i="${i}">${esc(w)}</button>`).join('');
+}
+function renderEquipos() {
+  clearInterval(P.tInt);
+  marcoJ(`<div class="estado-big">✅</div><h2>¡Estás dentro!</h2><p>Elige tu equipo:</p>
+    <div class="jeq">${P.equipos.map((n, i) => `<button data-a="jeq" data-i="${i}" class="${P.eq === i ? 'on' : ''}" style="background:${COLORES[i % 6]}">${P.eq === i ? '✔ ' : ''}${esc(n)}</button>`).join('')}</div>
+    <p>Espera a que comience.</p>`);
 }
 function filasOrden() {
   return P.orden.map((x, k) => `<div><b>${k + 1}</b><span>${esc(x.o)}</span><button data-a="jmov" data-i="${k}" data-d="-1">▲</button><button data-a="jmov" data-i="${k}" data-d="1">▼</button></div>`).join('');

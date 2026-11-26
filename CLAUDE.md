@@ -16,14 +16,24 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Vistas: Inicio, Editor, Presentar (host), Jugador (`?join=CODIGO`).
 - ID del host en PeerJS: `quiziglesia-<código>`.
 - Autoguardado en localStorage + Descargar/Abrir archivo `.quiz.json`.
-- Tipos implementados: diapositiva, alternativas, vf, completar, pin, ordenar, numero, encuesta, nube.
+- Tipos implementados: diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, encuesta, nube, escala.
+  - `emoji` y `revela` reutilizan opciones de colores (`CON_OPCIONES` / `CON_CORRECTAS`).
+  - `error`: la palabra equivocada se marca entre *asteriscos* en el texto.
+  - `versiculo`: se corta por palabras, o por trozos si el texto tiene "/".
+  - `linea`: lista cronológica + índice `ubicar` del hecho que hay que ubicar.
+  - Sin puntaje: encuesta, nube, escala.
 - Puntaje: puntos base × multiplicador (normal/doble/sin puntos), bonus por velocidad opcional (hasta −50 %).
+  - `fraccion(it, v)` devuelve 0–1: parejas y clasificar dan puntaje parcial ("¡Casi!" en el teléfono).
+  - ¿Quién soy?: el puntaje depende de cuántas pistas había visibles (no del tiempo). Imagen que se revela: siempre con bonus por velocidad.
+- Modo equipos (config `modoEquipos` + `nombresEquipos`): se elige equipo en el lobby desde el teléfono; ranking, podio y CSV por equipo (suma de integrantes).
+- Al presentar, `problemasQuiz()` avisa de preguntas incompletas.
 - Host: lobby con QR, sacar jugadores, ranking cada N preguntas, podio final, exportar resultados CSV, modo solo pantalla si no hay conexión.
 - Jugador: nombre + avatar emoji, reconexión conservando puntaje (pid en localStorage).
 
 ## Probado
-- Editor y presentación completos, con 5 jugadores simulados (Playwright).
+- Editor y presentación completos, con jugadores simulados (Playwright, puente directo en vez de PeerJS): todos los tipos, puntaje parcial y modo equipos.
+- Editor usable en teléfono (≤ 760 px: lista o formulario, uno a la vez).
 - Pendiente: probar conexión real con teléfonos (PeerJS) una vez publicado.
 
 ## Ideas siguientes
-Unir parejas, ordenar el versículo, ¿Quién soy? (pistas progresivas), imagen que se revela, clasificar (AT/NT), encontrar el error, emoji-historia, línea de tiempo, modo equipos, escala 1–5; sonidos y música de cuenta regresiva.
+Sonidos y música de cuenta regresiva.
