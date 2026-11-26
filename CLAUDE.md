@@ -19,7 +19,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - ID del host en PeerJS: `quiziglesia-<código>`.
 - Autoguardado en localStorage + Descargar/Abrir archivo `.quiz.json`.
 - Diapositivas tipo PowerPoint: lienzo 16:9 (`it.fondo` + `it.els`). Elementos texto/imagen/forma con x, y, w, h en % del lienzo; tamaño de letra `fs` en px de un lienzo de 1280 px (CSS con `cqw`). Fondo: color, degradado ("combinar colores", 2–3 colores, lineal/radial, `COMBINACIONES`) o imagen con oscurecer. Diseños predefinidos en `DISENOS`. Las diapositivas del formato antiguo (titulo/texto/imagen/fondo) se convierten con `migrarDiapo()`.
-- Galería de fondos: carpeta `fondos/` (imágenes 1920×1080 + `mini/` de miniaturas) listada en `fondos/lista.json`. Prompts de Google Flow para los 20 fondos en `fondos/PROMPTS.md`.
+- Galería de fondos: carpeta `fondos/` con 20 imágenes 16:9 generadas en Google Flow (`fondo-01.jpg` … `fondo-20.jpg`, 1365×768, ~100 KB) + `mini/` de miniaturas 384×216, listadas en `fondos/lista.json`. Los prompts están en `fondos/PROMPTS.md` (mismo número que el archivo). El quiz de ejemplo usa fondo-17, 10, 18 y 20. Las rutas son relativas (`fondos/...`): funcionan desde GitHub Pages o con la carpeta junto a index.html.
 - Tipos implementados: diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, encuesta, nube, escala.
   - `emoji` y `revela` reutilizan opciones de colores (`CON_OPCIONES` / `CON_CORRECTAS`).
   - `error`: la palabra equivocada se marca entre *asteriscos* en el texto.

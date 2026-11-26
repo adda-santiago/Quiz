@@ -1,1 +1,102 @@
-[]
+[
+ {
+  "archivo": "fondo-01.jpg",
+  "mini": "mini/fondo-01.jpg",
+  "nombre": "La creación"
+ },
+ {
+  "archivo": "fondo-02.jpg",
+  "mini": "mini/fondo-02.jpg",
+  "nombre": "El jardín del Edén"
+ },
+ {
+  "archivo": "fondo-03.jpg",
+  "mini": "mini/fondo-03.jpg",
+  "nombre": "El arca y el arcoíris"
+ },
+ {
+  "archivo": "fondo-04.jpg",
+  "mini": "mini/fondo-04.jpg",
+  "nombre": "El mar Rojo abierto"
+ },
+ {
+  "archivo": "fondo-05.jpg",
+  "mini": "mini/fondo-05.jpg",
+  "nombre": "Cielo estrellado del desierto"
+ },
+ {
+  "archivo": "fondo-06.jpg",
+  "mini": "mini/fondo-06.jpg",
+  "nombre": "Monte Sinaí al amanecer"
+ },
+ {
+  "archivo": "fondo-07.jpg",
+  "mini": "mini/fondo-07.jpg",
+  "nombre": "Jerusalén antigua"
+ },
+ {
+  "archivo": "fondo-08.jpg",
+  "mini": "mini/fondo-08.jpg",
+  "nombre": "Belén y la estrella"
+ },
+ {
+  "archivo": "fondo-09.jpg",
+  "mini": "mini/fondo-09.jpg",
+  "nombre": "El mar de Galilea"
+ },
+ {
+  "archivo": "fondo-10.jpg",
+  "mini": "mini/fondo-10.jpg",
+  "nombre": "El buen pastor"
+ },
+ {
+  "archivo": "fondo-11.jpg",
+  "mini": "mini/fondo-11.jpg",
+  "nombre": "La tumba vacía"
+ },
+ {
+  "archivo": "fondo-12.jpg",
+  "mini": "mini/fondo-12.jpg",
+  "nombre": "El sembrador"
+ },
+ {
+  "archivo": "fondo-13.jpg",
+  "mini": "mini/fondo-13.jpg",
+  "nombre": "Pergamino y lámpara"
+ },
+ {
+  "archivo": "fondo-14.jpg",
+  "mini": "mini/fondo-14.jpg",
+  "nombre": "Rayos de luz"
+ },
+ {
+  "archivo": "fondo-15.jpg",
+  "mini": "mini/fondo-15.jpg",
+  "nombre": "Noche de oración"
+ },
+ {
+  "archivo": "fondo-16.jpg",
+  "mini": "mini/fondo-16.jpg",
+  "nombre": "Ciudad sobre el monte"
+ },
+ {
+  "archivo": "fondo-17.jpg",
+  "mini": "mini/fondo-17.jpg",
+  "nombre": "Portada del quiz"
+ },
+ {
+  "archivo": "fondo-18.jpg",
+  "mini": "mini/fondo-18.jpg",
+  "nombre": "Ronda de preguntas"
+ },
+ {
+  "archivo": "fondo-19.jpg",
+  "mini": "mini/fondo-19.jpg",
+  "nombre": "Celebración"
+ },
+ {
+  "archivo": "fondo-20.jpg",
+  "mini": "mini/fondo-20.jpg",
+  "nombre": "Despedida"
+ }
+]

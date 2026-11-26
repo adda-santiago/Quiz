@@ -7,8 +7,11 @@ Esta carpeta guarda los fondos que aparecen en la **galería** del editor de dia
 
 1. Genera las imágenes en **Google Flow** con los prompts de abajo.
 2. Descárgalas en la mayor resolución disponible.
-3. Pásalas a Claude en el chat. Claude las deja en 1920 × 1080, las comprime, crea una miniatura
+3. Pásalas a Claude en el chat (sueltas o en un .zip). Claude las recorta a 16:9 exacto (Flow entrega
+   1376 × 768, queda 1365 × 768), las comprime (~100 KB), crea una miniatura de 384 × 216 en `mini/`
    y las agrega a `lista.json`, que es lo que lee la galería.
+
+Los 20 fondos actuales (`fondo-01.jpg` … `fondo-20.jpg`) corresponden a los prompts 01 a 20 de abajo.
 
 Formato de cada entrada de `lista.json`:
 
