@@ -16,7 +16,7 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Diseño visual: sistema "Sanctuary Tech" del proyecto de Google Stitch "Interactive Church Quiz Redesign" (pantallas Inicio y Pregunta, escritorio y celular). Tokens como variables CSS en `:root` (primario índigo #180157, cian #006780, magenta #A21CAF, dorado #F59E0B, fondo #FDF8FF). Fuentes de Google Fonts: Instrument Serif (títulos y preguntas), Instrument Sans (texto), Source Code Pro (códigos y números) e íconos Material Symbols Outlined (helper `ic(nombre)`). Sin Tailwind: CSS propio.
 - Alternativas con letras A–F (`LETRAS`) y los colores de `COLORES`; V/F con V verde y F roja. En el teléfono se responde con un solo toque.
 - Vistas: Inicio, Editor, Presentar (host), Jugador (`?join=CODIGO`).
-- ID del host en PeerJS: `quiziglesia-<código>`.
+- ID del host en PeerJS: `quiziglesia-<código>`. Servidores ICE en `opcionesPeer()`: STUN de Google + TURN público Open Relay (sin garantía) + TURN propio opcional (config `turnUrl/turnUsuario/turnClave`, sección "Conexión (avanzado)"). Latido: el host envía `ping` cada 5 s, el teléfono responde `pong`; 20 s sin noticias = desconectado (host) / reconexión automática (teléfono). El lobby muestra conectados, "por servidor de respaldo" y "sin señal". El teléfono pide mantener la pantalla encendida (Wake Lock).
 - Autoguardado en IndexedDB (`IDB`, clave `actual`; guardado con espera de 400 ms en `guardarLocal()` / inmediato en `guardarAhora()`; localStorage solo como respaldo) + Descargar/Abrir archivo `.quiz.json`. Indicador "Guardado" en la barra del editor y aviso (`aviso()`) si falla.
 - Deshacer/rehacer en el editor (`HIST`, hasta 60 pasos, Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z y botones en la barra).
 - Filtro de palabras (`tieneGroseria`, `FILTRO_BASE` + `palabrasBloqueadas` de la config): se revisa en el teléfono antes de enviar y otra vez en el host (nombres rechazados con `rechazo`, respuestas groseras quedan vacías). Opción `aprobarNombres` (barra "Por aprobar" en el host). El host puede tocar respuestas de nube y listas para ocultarlas.
@@ -39,7 +39,8 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 ## Probado
 - Editor y presentación completos, con jugadores simulados (Playwright, puente directo en vez de PeerJS): todos los tipos, puntaje parcial y modo equipos.
 - Editor usable en teléfono (≤ 760 px: lista o formulario, uno a la vez).
-- Pendiente: probar conexión real con teléfonos (PeerJS) una vez publicado.
+- Conexión real por PeerJS probada entre dos páginas del navegador (señalización por 0.peerjs.com).
+- Pendiente: probar con teléfonos reales en la red de la iglesia y con datos móviles.
 
 ## Ideas siguientes
 Sonidos y música de cuenta regresiva.

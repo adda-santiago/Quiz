@@ -342,6 +342,12 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .tops div[data-a]:hover,.nube span[data-a]:hover{text-decoration:line-through}
 .jug .aviso{margin:0;color:var(--error);font-weight:600}
 .jug.est .aviso{color:#fff}
+.conex{font-size:.85rem;color:var(--on-s-var)}
+.conex .ms{color:var(--secondary)}
+.ayuda-red{background:#ffffff1f;border-radius:var(--r-lg);padding:12px 16px;text-align:left;max-width:420px;font-size:.92rem}
+.ayuda-red ul{margin:6px 0 0;padding-left:18px}
+details.avanzado{margin:16px 0;padding:10px 14px;border:1px solid var(--outline-var);border-radius:var(--r-lg);background:var(--s-lowest)}
+details.avanzado summary{cursor:pointer;font-weight:600;color:var(--c)}
 /* ---------- Diapositivas (lienzo 16:9) ---------- */
 .lienzo{position:relative;width:100%;aspect-ratio:16/9;container-type:size;overflow:hidden;border-radius:var(--r-lg);box-shadow:var(--sombra);background:#180157;user-select:none;-webkit-user-select:none}
 .stage .lienzo{width:min(100%,calc((100vh - 200px) * 16 / 9));width:min(100%,calc((100dvh - 200px) * 16 / 9));border-radius:var(--r-xl);text-align:initial}
@@ -526,7 +532,7 @@ function configDefecto() {
   return { titulo: 'Mi quiz', organizacion: '', color: '#180157', tiempo: 20, puntos: 1000,
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas',
-    filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false };
+    filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '' };
 }
 function nuevoItem(tipo) {
   const b = { tipo };
@@ -1310,6 +1316,12 @@ function renderFormCampos() {
       ${fChk('Filtrar palabras inapropiadas en nombres y respuestas escritas', 'filtroActivo', c.filtroActivo)}
       ${fTxt('Palabras bloqueadas adicionales (separadas por coma)', 'palabrasBloqueadas', c.palabrasBloqueadas, 'Ej: apodos, palabras que no quieras ver')}
       ${fChk('Aprobar cada nombre antes de que aparezca en pantalla', 'aprobarNombres', c.aprobarNombres)}
+      <details class="avanzado"><summary>${ic('settings_ethernet')} Conexión (avanzado)</summary>
+        <p class="hint">La app ya usa un servidor de respaldo público y gratuito para las redes difíciles. Si en tu iglesia los teléfonos no logran conectarse, puedes crear una cuenta gratis en un servicio TURN (por ejemplo Metered.ca) y pegar aquí sus datos.</p>
+        ${fTxt('Servidor TURN (URL, varias separadas por coma)', 'turnUrl', c.turnUrl, 'turn:ejemplo.metered.live:80')}
+        <div class="fila"><label class="fld sm ancho"><span>Usuario TURN</span><input data-f="turnUsuario" value="${esc(c.turnUsuario)}" autocomplete="off"></label>
+        <label class="fld sm ancho"><span>Clave TURN</span><input data-f="turnClave" type="password" value="${esc(c.turnClave)}" autocomplete="off"></label></div>
+      </details>
       <p class="hint">El filtro ya trae una lista de groserías en español y reconoce trucos como tildes, letras repetidas o números en vez de letras. Durante el juego también puedes tocar una respuesta en la pantalla para ocultarla.</p>
       <p class="hint">Todo se guarda automáticamente en este navegador. Para conservarlo o pasarlo a otro computador usa <b>💾 Guardar archivo</b>.</p>`;
     return;
@@ -1392,7 +1404,14 @@ function actualizarPinMark() {
 
 /* =================== PRESENTAR (pantalla principal) =================== */
 let H = null;
-function detenerHost() { if (H) { clearInterval(H.timer); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
+function detenerHost() { if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
+function latidoHost() {
+  if (!H) return;
+  const ahora = Date.now(); let cambio = false;
+  Object.values(H.players).forEach(p => { if (p.online && p.visto && ahora - p.visto > 20000) { p.online = false; cambio = true; } });
+  difundir({ t: 'ping' });
+  if (cambio) { if (H.fase === 'lobby') renderHost(); else actualizarContador(); }
+}
 function vistaPresentar() {
   if (!quiz.items.length) { alert('El quiz está vacío.'); return; }
   const pr = problemasQuiz();
@@ -1400,6 +1419,7 @@ function vistaPresentar() {
   detenerHost();
   H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(), ocultas: new Set() };
   iniciarPeerHost();
+  H.latido = setInterval(latidoHost, 5000);
   document.onkeydown = e => { if (H && ['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key) && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) { e.preventDefault(); avanzar(); } };
   ACC = {
     next: avanzar,
@@ -1414,9 +1434,31 @@ function vistaPresentar() {
   };
   renderHost();
 }
+/* Servidores para atravesar redes difíciles (wifi con aislamiento, datos móviles con CGNAT):
+   STUN de Google + TURN público de respaldo (Open Relay, sin garantía) + TURN propio opcional de la configuración. */
+const ICE_BASE = [
+  { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] },
+  { urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' },
+];
+function opcionesPeer(cfg) {
+  const ice = ICE_BASE.slice();
+  if (cfg && cfg.turnUrl) ice.unshift({ urls: String(cfg.turnUrl).split(',').map(x => x.trim()).filter(Boolean), username: cfg.turnUsuario, credential: cfg.turnClave });
+  return { config: { iceServers: ice } };
+}
+function tipoConexion(conn) { // 'directa' o 'respaldo' (pasa por el servidor TURN)
+  const pc = conn && conn.peerConnection; if (!pc || !pc.getStats) return Promise.resolve('');
+  return pc.getStats().then(st => {
+    let par = null; const c = {};
+    st.forEach(r => { if (r.type === 'transport' && r.selectedCandidatePairId) par = st.get(r.selectedCandidatePairId); if (r.type === 'local-candidate' || r.type === 'remote-candidate') c[r.id] = r; });
+    if (!par) st.forEach(r => { if (r.type === 'candidate-pair' && r.state === 'succeeded' && (r.nominated || r.selected)) par = par || r; });
+    if (!par) return '';
+    const l = c[par.localCandidateId], r = c[par.remoteCandidateId];
+    return (l && l.candidateType === 'relay') || (r && r.candidateType === 'relay') ? 'respaldo' : 'directa';
+  }).catch(() => '');
+}
 function iniciarPeerHost() {
   if (!window.Peer) { H.estado = 'sinpeer'; return; }
-  const peer = new Peer(PREFIJO + H.code);
+  const peer = new Peer(PREFIJO + H.code, opcionesPeer(quiz.config));
   H.peer = peer;
   peer.on('open', () => { H.estado = 'ok'; if (H.fase === 'lobby') renderHost(); });
   peer.on('error', e => {
@@ -1425,6 +1467,7 @@ function iniciarPeerHost() {
   });
   peer.on('disconnected', () => { try { peer.reconnect(); } catch (e) { } });
   peer.on('connection', conn => {
+    conn.on('open', () => setTimeout(() => tipoConexion(conn).then(t => { const p = H && H.players[conn.pid]; if (p && t) { p.via = t; if (H.fase === 'lobby') renderHost(); } }), 2000));
     conn.on('data', d => alRecibirHost(conn, d));
     conn.on('close', () => { const p = H && H.players[conn.pid]; if (p && p.conn === conn) { p.online = false; if (H.fase === 'lobby') renderHost(); } });
   });
@@ -1451,6 +1494,8 @@ function difundir(msg) { Object.values(H.players).forEach(p => enviar(p, msg)); 
 const conectados = () => Object.values(H.players).filter(p => p.online && !p.pendiente);
 function alRecibirHost(conn, d) {
   if (!H || !d) return;
+  if (conn.pid && H.players[conn.pid]) { const p = H.players[conn.pid]; p.visto = Date.now(); if (!p.online && p.conn === conn) { p.online = true; if (H.fase === 'lobby') renderHost(); } }
+  if (d.t === 'pong') return;
   if (d.t === 'join') {
     let p = H.players[d.pid];
     if (!p) {
@@ -1460,7 +1505,7 @@ function alRecibirHost(conn, d) {
       p = H.players[d.pid] = { pid: d.pid, name: String(d.name || 'Jugador').slice(0, 16), avatar: String(d.avatar || '🐑').slice(0, 4), score: 0, aciertos: 0, pendiente: !!quiz.config.aprobarNombres };
       if (H.eq.length) p.eq = equipoMenor();
     }
-    p.conn = conn; p.online = true; conn.pid = d.pid;
+    p.conn = conn; p.online = true; p.visto = Date.now(); conn.pid = d.pid;
     enviar(p, { t: 'welcome', titulo: quiz.config.titulo, color: quiz.config.color, equipos: H.eq, eq: p.eq, filtro: filtroQuiz() });
     enviarEstado(p);
     if (H.fase === 'lobby') renderHost(); else actualizarContador();
@@ -1621,6 +1666,11 @@ function renderHost() {
       <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div></div>`;
   tickHost();
 }
+function resumenConexion(ps) {
+  const on = ps.filter(p => p.online), off = ps.length - on.length, r = on.filter(p => p.via === 'respaldo').length;
+  if (!ps.length) return '';
+  return `<p class="conex">${ic('wifi')} ${on.length} conectado${on.length === 1 ? '' : 's'}${r ? ` · ${r} por servidor de respaldo` : ''}${off ? ` · <b>${off} sin señal</b>` : ''}</p>`;
+}
 function porAprobar() { // nombres esperando aprobación (en el lobby y si alguien entra tarde)
   const pend = Object.values(H.players).filter(p => p.pendiente && p.online);
   return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} Por aprobar:</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
@@ -1634,12 +1684,12 @@ function hostLobby() {
     : H.estado === 'sinpeer' ? '<div class="warn">⚠️ No se pudo cargar el módulo de conexión (¿sin internet?). Puedes presentar igual, en modo “solo pantalla”.</div>'
       : H.estado === 'error' ? '<div class="warn">⚠️ Problema de conexión. Puedes presentar en modo “solo pantalla” o volver a intentar.</div>' : '';
   const ps = Object.values(H.players);
-  const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="Clic para sacar">${esc(p.avatar)} ${esc(p.name)}</span>`;
+  const chip = p => `<span class="chip ${p.online ? '' : 'off'}" data-a="kick" data-pid="${esc(p.pid)}" title="${p.online ? (p.via === 'respaldo' ? 'Conectado por servidor de respaldo' : 'Conectado') : 'Sin señal'} · clic para sacar">${esc(p.avatar)} ${esc(p.name)}${p.online ? '' : ' 📵'}</span>`;
   ps.splice(0, ps.length, ...ps.filter(p => !p.pendiente));
   return `<h1 class="lobby-t">${esc(quiz.config.titulo)}</h1>${quiz.config.organizacion ? `<p class="muted">${esc(quiz.config.organizacion)}</p>` : ''}
     <div class="join card"><div class="qr">${qr}</div>
       <div><p>Escanea el QR o entra a:</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>y escribe el código</p><div class="code">${H.code}</div>
-      <p>${H.estado === 'ok' ? '<span class="badge cyan"><span class="dot"></span>Sala abierta</span>' : H.estado === 'conectando' ? '⏳ Abriendo sala…' : '🔴 Sin conexión'}</p></div></div>
+      <p>${H.estado === 'ok' ? '<span class="badge cyan"><span class="dot"></span>Sala abierta</span>' : H.estado === 'conectando' ? '⏳ Abriendo sala…' : '🔴 Sin conexión'}</p>${resumenConexion(ps)}</div></div>
     ${aviso}
     ${H.eq.length ? `<div class="equipos-lobby">${H.eq.map((n, i) => {
       const m = ps.filter(p => p.eq === i);
@@ -1847,27 +1897,54 @@ function marcoJ(cuerpo, bg, preg) {
 function pantallaJ(icono, msg, bg, extra = '') { clearInterval(P.tInt); marcoJ(`<div class="estado-big">${icono}</div><h2>${msg}</h2>${extra}`, bg); }
 function conectarJugador() {
   if (!window.Peer) return pantallaJ('📵', 'No se pudo cargar la conexión. Revisa tu internet.', '#484550', '<button data-a="reintentar">Reintentar</button>');
-  P.peer = new Peer();
+  P.peer = new Peer(opcionesPeer());
   P.peer.on('open', conectarConn);
+  pedirPantallaEncendida();
   P.peer.on('error', e => {
     if (e.type === 'peer-unavailable') pantallaJ('🔍', 'No se encontró la sala ' + esc(P.code) + '. Revisa el código.', '#484550', '<button data-a="reintentar">Reintentar</button>');
-    else if (!P.conn || !P.conn.open) pantallaJ('📵', 'Problema de conexión', '#484550', '<button data-a="reintentar">Reintentar</button>');
+    else if (!P.conn || !P.conn.open) pantallaJ('📵', 'Problema de conexión', '#484550', AYUDA_RED);
   });
   P.peer.on('disconnected', () => { try { P.peer.reconnect(); } catch (e) { } });
 }
+const AYUDA_RED = `<div class="ayuda-red"><b>¿No conecta?</b><ul><li>Revisa que el código sea el de la pantalla.</li><li>Prueba cambiando de wifi a datos móviles (o al revés).</li>
+  <li>En el wifi de la iglesia, algunas redes bloquean la conexión entre equipos.</li></ul></div><button class="pri big" data-a="reintentar">Reintentar</button>`;
 function conectarConn() {
+  if (P.kicked || P.fin) return;
   const c = P.peer.connect(PREFIJO + P.code, { reliable: true });
-  P.conn = c;
-  c.on('open', () => c.send({ t: 'join', pid: P.pid, name: P.name, avatar: P.avatar }));
+  P.conn = c; P.visto = Date.now();
+  clearTimeout(P.tCon);
+  P.tCon = setTimeout(() => { if (P.conn === c && !c.open) { P.intentos = (P.intentos || 0) + 1; pantallaJ('📵', 'No se pudo conectar', '#484550', AYUDA_RED); } }, 15000);
+  c.on('open', () => { clearTimeout(P.tCon); P.intentos = 0; P.visto = Date.now(); c.send({ t: 'join', pid: P.pid, name: P.name, avatar: P.avatar }); });
   c.on('data', alRecibirJ);
-  c.on('close', () => {
-    if (P.kicked || P.fin) return;
-    pantallaJ('🔄', 'Reconectando…', '#484550');
-    setTimeout(() => { if (P.peer && !P.peer.destroyed && (!P.conn || !P.conn.open)) conectarConn(); }, 2500);
-  });
+  c.on('error', e => console.warn('conexión', e));
+  c.on('close', () => reconectarJ(c));
+  clearInterval(P.latido);
+  P.latido = setInterval(() => { // si la pantalla no habla en 20 s, reconectar
+    if (P.kicked || P.fin || !P.conn || !P.conn.open) return;
+    if (Date.now() - P.visto > 20000) { try { P.conn.close(); } catch (_) { } reconectarJ(P.conn); }
+  }, 5000);
+}
+function reconectarJ(c) {
+  if (P.kicked || P.fin || c !== P.conn || P.reconectando) return;
+  P.reconectando = true;
+  pantallaJ('🔄', 'Reconectando…', '#484550');
+  setTimeout(() => {
+    P.reconectando = false;
+    if (!P.peer || P.peer.destroyed) return;
+    if (P.peer.disconnected) { try { P.peer.reconnect(); } catch (_) { } }
+    conectarConn();
+  }, 2000);
+}
+function pedirPantallaEncendida() { // evita que el teléfono se apague a mitad del juego
+  if (!('wakeLock' in navigator)) return;
+  const pedir = () => navigator.wakeLock.request('screen').then(w => { P.wake = w; }).catch(() => { });
+  pedir();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && P && !P.fin) pedir(); });
 }
 function alRecibirJ(d) {
   if (!d) return;
+  P.visto = Date.now();
+  if (d.t === 'ping') { try { P.conn.send({ t: 'pong' }); } catch (_) { } return; }
   if (d.score != null) P.score = d.score;
   switch (d.t) {
     case 'welcome': P.color = d.color; P.titulo = d.titulo; P.equipos = d.equipos || []; P.eq = d.eq; P.filtro = d.filtro || null; break;
