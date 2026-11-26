@@ -519,6 +519,11 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .lz-el.t-texto{padding:.6cqw 1.2cqw;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.15;font-size:calc(var(--fs) * 1cqw / 12.8)}
 .lz-el .tx{width:100%;outline:none}
 .lz-el img{width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
+.lz-el.t-video iframe{width:100%;height:100%;border:0;display:block;border-radius:inherit;background:#000}
+.yt-ph{width:100%;height:100%;background:#000 center/cover no-repeat;border-radius:inherit;display:grid;place-items:center}
+.yt-play{width:14cqw;max-width:90px;aspect-ratio:1.4;border-radius:22%;background:#ff0000e6;color:#fff;display:grid;place-items:center;font-size:clamp(14px,4cqw,34px)}
+.aviso-yt{display:flex;gap:8px;align-items:flex-start;background:#FEF3C7;border:1px solid #FCD34D;color:#78350F;border-radius:var(--r-md);padding:10px 12px;font-size:.85rem;margin:6px 0}
+.aviso-yt .ms{color:var(--warning);max-width:none;flex:none}
 .ph-img{width:100%;height:100%;display:grid;place-items:center;text-align:center;border:2px dashed #ffffffaa;border-radius:inherit;color:#fff;background:#ffffff1a;font:600 calc(15 * 1cqw / 12.8)/1.3 var(--sans)}
 .ed-lz .lz-el{cursor:move;touch-action:none}
 .ed-lz .lz-el:hover{outline:1px dashed #ffffffb3}
@@ -783,6 +788,9 @@ function cssRelleno(f) {
 }
 const elTexto = o => ({ id: nid(), t: 'texto', x: 8, y: 10, w: 84, h: 18, rot: 0, texto: 'Texto', fs: 48, font: 'serif', color: '#FFFFFF', b: false, i: false, al: 'center', va: 'middle', fill: rellenoDef(), rad: 0, op: 1, sombra: false, ...o });
 const elImagen = o => ({ id: nid(), t: 'imagen', x: 30, y: 22, w: 40, h: 56, rot: 0, src: '', ajuste: 'cover', rad: 24, op: 1, sombra: true, ...o });
+const elVideo = o => ({ id: nid(), t: 'video', x: 12, y: 10, w: 76, h: 76, rot: 0, url: '', inicio: 0, fin: 0, auto: false, silencio: false, rad: 16, op: 1, sombra: true, ...o });
+const ytId = u => { const m = String(u || '').trim().match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([\w-]{11})/) || String(u || '').trim().match(/^([\w-]{11})$/); return m ? m[1] : ''; };
+const AVISO_YT = 'YouTube puede mostrar anuncios antes o durante el video. La app no se hace responsable de los anuncios ni del contenido que muestre YouTube: revisa el video antes de presentarlo.';
 const elForma = o => ({ id: nid(), t: 'forma', forma: 'rect', x: 38, y: 30, w: 24, h: 40, rot: 0, fill: rellenoDef('color', '#F59E0B'), rad: 0, op: 1, sombra: false, ...o });
 const DISENOS = {
   portada: { n: 'Portada', els: () => [elTexto({ texto: 'Título de la diapositiva', y: 28, h: 26, fs: 96 }), elTexto({ texto: 'Subtítulo', x: 15, y: 56, w: 70, h: 12, fs: 36, font: 'sans' })] },
@@ -818,6 +826,13 @@ function elHTML(e, ed, sel) {
   } else {
     if (e.sombra) st.push('box-shadow:0 .6cqw 2.2cqw rgba(0,0,0,.35)');
     if (e.t === 'forma') st.push(cssRelleno(e.fill));
+    else if (e.t === 'video') {
+      const id = ytId(e.url);
+      if (!id) inner = ed ? '<div class="ph-img">▶️<br>Pega el link de YouTube<br>en el panel de formato</div>' : '';
+      else if (ed) inner = `<div class="yt-ph" style="background-image:url('https://img.youtube.com/vi/${id}/hqdefault.jpg')"><span class="yt-play">▶</span></div>`;
+      else { const q = ['enablejsapi=1', 'rel=0', 'modestbranding=1', 'playsinline=1'].concat(+e.inicio > 0 ? ['start=' + Math.floor(+e.inicio)] : [], +e.fin > 0 ? ['end=' + Math.floor(+e.fin)] : [], e.auto ? ['autoplay=1'] : [], e.silencio ? ['mute=1'] : []);
+        inner = `<iframe class="yt" data-k="${esc(e.id)}" src="https://www.youtube-nocookie.com/embed/${id}?${q.join('&')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Video de YouTube"></iframe>`; }
+    }
     else inner = e.src ? `<img src="${esc(e.src)}" alt="" draggable="false" style="object-fit:${e.ajuste === 'contain' ? 'contain' : 'cover'}">`
       : ed ? '<div class="ph-img">🖼️<br>Doble clic o toca de nuevo<br>para elegir imagen</div>' : '';
   }
@@ -844,7 +859,7 @@ function editorDiapositiva(it) {
   return `<div class="ed-diapo"><div class="ed-col"><div class="s-bar">
       <button data-a="sAdd" data-t="titulo">${ic('title')} Título</button><button data-a="sAdd" data-t="texto">${ic('notes')} Texto</button>
       <button data-a="sAdd" data-t="imagen">${ic('image')} Imagen</button><button data-a="sAdd" data-t="rect">${ic('rectangle')} Forma</button>
-      <button data-a="sAdd" data-t="elipse">${ic('circle')} Círculo</button><button data-a="sAdd" data-t="emoji">${ic('mood')} Emoji</button></div>
+      <button data-a="sAdd" data-t="elipse">${ic('circle')} Círculo</button><button data-a="sAdd" data-t="emoji">${ic('mood')} Emoji</button><button data-a="sAdd" data-t="video">${ic('smart_display')} Video</button></div>
     <div class="s-dis"><span>Diseños:</span>${Object.entries(DISENOS).map(([k, d]) => `<button data-a="sLayout" data-v="${k}">${d.n}</button>`).join('')}</div>
     <div class="lz-wrap">${lienzoHTML(it, true)}</div>
     <p class="hint">Arrastra para mover · tira de los cuadritos para cambiar el tamaño · doble clic (o toca de nuevo) para escribir · flechas para mover fino · Supr para borrar</p></div>
@@ -961,8 +976,15 @@ function renderProps() {
     box.innerHTML = h + '</div><p class="hint">Toca un elemento de la diapositiva para cambiar su formato.</p>';
     return;
   }
-  const N = { texto: 'Texto', imagen: 'Imagen', forma: 'Forma' }[el.t];
-  let h = `<div class="sp-sec"><h3>${ic(el.t === 'texto' ? 'text_fields' : el.t === 'imagen' ? 'image' : 'category')} ${N}</h3>`;
+  const N = { texto: 'Texto', imagen: 'Imagen', forma: 'Forma', video: 'Video de YouTube' }[el.t];
+  let h = `<div class="sp-sec"><h3>${ic({ texto: 'text_fields', imagen: 'image', video: 'smart_display' }[el.t] || 'category')} ${N}</h3>`;
+  if (el.t === 'video') h += `<label class="fld"><span>Link de YouTube</span><input id="ytUrl" data-scope="el" data-sp="url" value="${esc(el.url)}" placeholder="https://www.youtube.com/watch?v=…"></label>
+    <p class="hint ${el.url && !ytId(el.url) ? 'aviso' : ''}">${el.url && !ytId(el.url) ? '⚠️ No reconozco ese link. Copia el link del video desde YouTube (Compartir → Copiar).' : 'Sirven links de videos, Shorts y youtu.be.'}</p>
+    <div class="sp-row"><label>Desde (s) <input type="number" min="0" data-scope="el" data-sp="inicio" value="${+el.inicio || 0}"></label><label>Hasta (s) <input type="number" min="0" data-scope="el" data-sp="fin" value="${+el.fin || 0}"></label></div>
+    <div class="sp-row"><label><input type="checkbox" data-scope="el" data-sp="auto" ${el.auto ? 'checked' : ''}> Empezar solo al mostrar la diapositiva</label></div>
+    <div class="sp-row"><label><input type="checkbox" data-scope="el" data-sp="silencio" ${el.silencio ? 'checked' : ''}> Sin sonido</label></div>
+    <div class="aviso-yt">${ic('info')}<span>${AVISO_YT}</span></div>
+    <p class="hint">En la presentación usa los botones Reproducir y Pausa (o la tecla K, o el control remoto).</p>`;
   if (el.t === 'texto') h += `<div class="sp-row">
       <select data-scope="el" data-sp="font">${[['serif', 'Instrument Serif (títulos)'], ['sans', 'Instrument Sans (texto)'], ['mono', 'Source Code Pro (números)']].map(([v, n]) => `<option value="${v}" ${el.font === v ? 'selected' : ''}>${n}</option>`).join('')}</select>
       <label>Tamaño <input type="number" min="8" max="400" data-scope="el" data-sp="fs" value="${+el.fs}"></label>
@@ -993,9 +1015,10 @@ function accionesDiapositiva() {
     sAdd: el => {
       const it = diapoActual(), t = el.dataset.t; terminarEdicion();
       const n = t === 'titulo' ? elTexto({ texto: 'Título', y: 8, h: 18, fs: 72 }) : t === 'texto' ? elTexto({ texto: 'Escribe aquí…', x: 20, y: 40, w: 60, h: 20, fs: 36, font: 'sans' })
-        : t === 'imagen' ? elImagen() : t === 'emoji' ? elTexto({ texto: '⭐', x: 42, y: 34, w: 16, h: 30, fs: 140, font: 'sans' }) : elForma({ forma: t === 'elipse' ? 'elipse' : 'rect', ...(t === 'elipse' ? { x: 41, y: 27, w: 18, h: 32 } : {}) });
+        : t === 'imagen' ? elImagen() : t === 'video' ? elVideo() : t === 'emoji' ? elTexto({ texto: '⭐', x: 42, y: 34, w: 16, h: 30, fs: 140, font: 'sans' }) : elForma({ forma: t === 'elipse' ? 'elipse' : 'rect', ...(t === 'elipse' ? { x: 41, y: 27, w: 18, h: 32 } : {}) });
       it.els.push(n); sSel = n.id; listo();
       if (t === 'imagen') ACC.sImg(); else if (n.t === 'texto') iniciarEdicion(n.id);
+      else if (t === 'video') { setTimeout(() => $('#ytUrl')?.focus(), 50); aviso('⚠️ ' + AVISO_YT, 7000); }
     },
     sLayout: el => {
       const it = diapoActual();
@@ -1584,8 +1607,10 @@ function vistaEditor() {
     if (el.dataset.cf) { quiz.config.fondoPres[el.dataset.cf] = el.type === 'range' ? Number(el.value) : el.value; guardarLocal(); return; }
     if (el.dataset.sp) { // panel de formato de la diapositiva
       const obj = el.dataset.scope === 'fondo' ? it.fondo : elSel(); if (!obj) return;
-      setRuta(obj, el.dataset.sp, el.type === 'range' || el.type === 'number' ? Number(el.value) : el.value);
-      pintarLienzo(); guardarLocal(); return;
+      setRuta(obj, el.dataset.sp, el.type === 'checkbox' ? el.checked : el.type === 'range' || el.type === 'number' ? Number(el.value) : el.value);
+      pintarLienzo(); guardarLocal();
+      if (el.dataset.sp === 'url') { const hnt = el.closest('.fld')?.nextElementSibling; if (hnt) { const malo = el.value && !ytId(el.value); hnt.classList.toggle('aviso', !!malo); hnt.textContent = malo ? '⚠️ No reconozco ese link. Copia el link del video desde YouTube (Compartir → Copiar).' : 'Sirven links de videos, Shorts y youtu.be.'; } }
+      return;
     }
     if (el.dataset.f) {
       let v = el.type === 'checkbox' ? el.checked : el.value;
@@ -2133,11 +2158,14 @@ function vistaPresentar() {
     else if (e.key.toLowerCase() === 'p') alternarPausa();
     else if (e.key === '+') masTiempo();
     else if (e.key.toLowerCase() === 'm') ACC.sonido();
+    else if (e.key.toLowerCase() === 'k' && H.fase === 'slide' && videosEn(quiz.items[H.idx])) ACC.vid();
     else if (e.key === 'Escape' && H.modal) { H.modal = null; renderHost(); }
   };
   ACC = {
     next: avanzar,
     pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder, mezclar: mezclarEquipos,
+    vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo'),
+    vidIni: () => { document.querySelectorAll('.stage iframe.yt').forEach(f => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*'); } catch (_) { } }); },
     sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
     cerrarModal: () => { H.modal = null; renderHost(); },
@@ -2454,15 +2482,17 @@ function renderHost() {
   const nPreg = quiz.items.filter(esPregunta).length, enPreg = H.fase === 'pregunta' || H.fase === 'revelar';
   const sub = { lobby: 'Sala de espera', slide: `Diapositiva · ${H.idx + 1} de ${quiz.items.length}`, pregunta: `Pregunta ${numPregunta(H.idx)} de ${nPreg}`,
     revelar: `Pregunta ${numPregunta(H.idx)} de ${nPreg} · respuesta`, ranking: 'Ranking', fin: 'Resultados finales' }[H.fase];
-  const ayuda = { lobby: `Los jugadores entran desde el celular con el código ${H.code}.`, slide: 'Presiona Siguiente o la barra espaciadora para avanzar.',
+  const ayuda = { lobby: `Los jugadores entran desde el celular con el código ${H.code}.`, slide: videosEn(quiz.items[H.idx]) ? 'Video de YouTube: los anuncios que muestre YouTube no dependen de esta app.' : 'Presiona Siguiente o la barra espaciadora para avanzar.',
     pregunta: `Los jugadores eligen su respuesta en el celular con el código ${H.code}.`, revelar: 'Respuesta revelada. Sigue cuando todos la hayan visto.',
     ranking: '¡Así va la competencia!', fin: '¡Gracias por jugar!' }[H.fase];
   const pct = H.fase === 'lobby' ? 0 : H.fase === 'fin' ? 100 : (H.idx + 1) / quiz.items.length * 100;
   const clave = H.fase === 'revelar' ? 'pregunta:' + H.idx : H.fase + ':' + H.idx; // la transición se ve solo al cambiar de pantalla
+  const misma = clave === H.ultClave; if (!misma) H.vidPlay = false;
   const it0 = quiz.items[H.idx], trans = clave !== H.ultClave ? ((it0 && it0.tipo === 'diapositiva' && it0.transicion) || quiz.config.transicion || 'ninguna') : '';
   H.ultClave = clave;
   const fp = quiz.config.fondoPres, conFondo = fp && fp.tipo !== 'ninguno' && H.fase !== 'slide';
-  app.innerHTML = `<div class="host${conFondo ? ' con-fondo' : ''}${H.vista ? ' en-vista' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
+  const conVideo = H.fase === 'slide' && videosEn(it0);
+  const html = `<div class="host${conFondo ? ' con-fondo' : ''}${H.vista ? ' en-vista' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
     <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>${sub}</small></div></div>
       <div class="pills"><span class="badge cyan"><span class="dot"></span>Sala ${H.code}</span>
         <span class="badge ind">${ic('group')}<span id="nResp">${enPreg ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`}</span></span>
@@ -2474,9 +2504,22 @@ function renderHost() {
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
       ${H.fase === 'pregunta' ? `<button data-a="pausa" title="Pausar (P)">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="mas" title="Agregar 10 segundos (+)">+10 s</button><button data-a="saltar" title="Saltar sin puntaje">${ic('skip_next')} Saltar</button>` : ''}
       ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="Diapositiva anterior (←)">${ic('arrow_back')}</button>` : ''}
+      ${conVideo ? `<button data-a="vid" title="Reproducir / pausar video (K)">${ic(H.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${H.vidPlay ? 'Pausar video' : 'Reproducir video'}</button><button data-a="vidIni" title="Volver al inicio del video">${ic('replay')}</button>` : ''}
       <button data-a="salir">Salir</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : ''}</div>`;
+  const raiz = app.firstElementChild, stageV = raiz && raiz.classList.contains('host') && raiz.querySelector('.stage');
+  if (misma && stageV && stageV.querySelector('iframe.yt')) { // actualizar todo menos el escenario, para no recargar el video
+    const tmp = document.createElement('div'); tmp.innerHTML = html; const nueva = tmp.firstElementChild;
+    raiz.className = nueva.className; raiz.setAttribute('style', nueva.getAttribute('style') || '');
+    [...raiz.children].forEach(ch => { if (ch !== stageV) ch.remove(); });
+    let antes = true; [...nueva.children].forEach(ch => { if (ch.classList.contains('stage')) { antes = false; return; } antes ? raiz.insertBefore(ch, stageV) : raiz.appendChild(ch); });
+  } else app.innerHTML = html;
   tickHost();
   actualizarRemotos(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente', sub);
+}
+const videosEn = it => it && it.tipo === 'diapositiva' && (it.els || []).some(e => e.t === 'video' && ytId(e.url));
+function comandoVideo(func) { // API de YouTube por postMessage (enablejsapi=1)
+  document.querySelectorAll('.stage iframe.yt').forEach(f => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*'); } catch (_) { } });
+  if (H) { H.vidPlay = func === 'playVideo'; renderHost(); }
 }
 function urlRemoto() { return location.origin + location.pathname + '?remoto=' + H.code + '&k=' + H.token; }
 function modalRemoto() {
@@ -2492,12 +2535,12 @@ function modalRemoto() {
 function actualizarRemotos(btn, sub) {
   if (!H || !H.remotos.size) return;
   const it = quiz.items[H.idx];
-  const st = { t: 'rstate', fase: H.fase, sub, btn, titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0,
+  const st = { t: 'rstate', fase: H.fase, sub, btn, titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0, video: H.fase === 'slide' && videosEn(it), vidPlay: !!H.vidPlay,
     resp: Object.keys(H.resp).length, jug: conectados().length, codigo: H.code };
   H.remotos.forEach(c => { try { c.open && c.send(st); } catch (_) { } });
 }
 function comandoRemoto(cmd) {
-  ({ next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder })[cmd]?.();
+  ({ next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder, vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo') })[cmd]?.();
 }
 function resumenConexion(ps) {
   const on = ps.filter(p => p.online), off = ps.length - on.length, r = on.filter(p => p.via === 'respaldo').length;
@@ -2761,7 +2804,7 @@ function pintarRemoto(msg) {
       <div class="jq"><span class="badge mag">${esc(st.sub || '')}</span><p>${esc(st.titulo || '')}</p></div>
       <p class="muted">${st.fase === 'pregunta' ? `${st.resp} / ${st.jug} respuestas` : `${st.jug} jugador${st.jug === 1 ? '' : 'es'} conectado${st.jug === 1 ? '' : 's'}`}${st.pausa ? ' · <b>en pausa</b>' : ''}</p>
       ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : '<h2>¡Fin del quiz! 🎉</h2>'}
-      <div class="r-fila">${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} Anterior</button>` : ''}
+      <div class="r-fila">${st.video ? `<button data-a="rc" data-c="vid">${ic(st.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${st.vidPlay ? 'Pausar video' : 'Reproducir video'}</button>` : ''}${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} Anterior</button>` : ''}
         ${st.fase === 'pregunta' ? `<button data-a="rc" data-c="pausa">${ic(st.pausa ? 'play_arrow' : 'pause')} ${st.pausa ? 'Seguir' : 'Pausar'}</button><button data-a="rc" data-c="mas">+10 s</button><button data-a="rc" data-c="saltar">${ic('skip_next')} Saltar</button>` : ''}</div>`}
     </div></div>`;
 }
