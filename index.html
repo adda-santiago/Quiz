@@ -519,6 +519,22 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .lz-el.t-texto{padding:.6cqw 1.2cqw;white-space:pre-wrap;overflow-wrap:break-word;line-height:1.15;font-size:calc(var(--fs) * 1cqw / 12.8)}
 .lz-el .tx{width:100%;outline:none}
 .lz-el img{width:100%;height:100%;display:block;border-radius:inherit;pointer-events:none}
+.par-lado{flex:1;display:flex;align-items:center;gap:4px;min-width:0}
+.par-lado input{min-width:0}
+.par-addimg{padding:.45em .5em;flex:none}
+.par-img{width:44px;height:44px;border-radius:10px;background:#eee center/cover;flex:none;position:relative}
+.par-img button{position:absolute;top:-8px;right:-8px;width:22px;height:22px;padding:0;border-radius:50%;font-size:.7rem}
+.pz img{display:block;max-height:13vh;max-width:100%;border-radius:10px;margin-bottom:4px}
+.pz{display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
+.jpar2{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px 44px;width:100%;max-width:520px;touch-action:none;user-select:none;-webkit-user-select:none}
+.jpar2 .col{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.jlineas{position:absolute;left:0;top:0;pointer-events:none;overflow:visible;z-index:2}
+.jlineas line{stroke-width:5;stroke-linecap:round}
+.jlineas line.tmp{stroke:var(--outline);stroke-dasharray:8 8}
+.nodo{background:var(--s-lowest);border:2px solid var(--outline-var);border-radius:var(--r-lg);padding:10px;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:600;text-align:center;cursor:pointer;box-shadow:var(--sombra);position:relative}
+.nodo img{max-width:100%;max-height:80px;border-radius:8px;pointer-events:none}
+.nodo.sel{border-color:var(--gold);background:#FEF3C7}
+.nodo.unido{border-color:var(--uc);background:color-mix(in srgb,var(--uc) 10%,white)}
 .lz-el.t-video iframe{width:100%;height:100%;border:0;display:block;border-radius:inherit;background:#000}
 .yt-ph{width:100%;height:100%;background:#000 center/cover no-repeat;border-radius:inherit;display:grid;place-items:center}
 .yt-play{width:14cqw;max-width:90px;aspect-ratio:1.4;border-radius:22%;background:#ff0000e6;color:#fff;display:grid;place-items:center;font-size:clamp(14px,4cqw,34px)}
@@ -732,7 +748,7 @@ function nuevoItem(tipo) {
     case 'parejas': return { ...b, pregunta: 'Une cada personaje con su historia', pares: [{ a: '', b: '' }, { a: '', b: '' }, { a: '', b: '' }], imagen: '', tiempo: null, mult: 1 };
     case 'versiculo': return { ...b, pregunta: 'Arma el versículo', texto: '', referencia: '', imagen: '', tiempo: null, mult: 1 };
     case 'quiensoy': return { ...b, pregunta: '¿Quién soy?', pistas: ['', '', ''], aceptadas: '', imagen: '', tiempo: 45, mult: 1 };
-    case 'revela': return { ...b, pregunta: '¿Qué muestra la imagen?', imagen: '', opciones: ['', '', '', ''], correctas: [0], tiempo: 30, mult: 1 };
+    case 'revela': return { ...b, pregunta: '¿Qué muestra la imagen?', imagen: '', opciones: ['', '', '', ''], correctas: [0], tiempo: 30, mult: 1, cols: 6, filas: 4, pasos: 0, intervalo: 0 };
     case 'clasificar': return { ...b, pregunta: '¿Antiguo o Nuevo Testamento?', categorias: ['Antiguo Testamento', 'Nuevo Testamento'], elementos: [{ t: '', c: 0 }, { t: '', c: 1 }, { t: '', c: 0 }, { t: '', c: 1 }], imagen: '', tiempo: 40, mult: 1 };
     case 'error': return { ...b, pregunta: 'Toca la palabra que está mal', texto: '', correctaTxt: '', imagen: '', tiempo: null, mult: 1 };
     case 'emoji': return { ...b, pregunta: '¿Qué historia es?', emojis: '', opciones: ['', '', '', ''], correctas: [0], imagen: '', tiempo: null, mult: 1 };
@@ -1046,7 +1062,7 @@ function accionesDiapositiva() {
     sGal: el => { const f = diapoActual().fondo; f.imagen = el.dataset.src; f.tipo = 'imagen'; listo(); },
     sSubirFondo: () => leerImagen(d => { const f = diapoActual().fondo; f.imagen = d; f.tipo = 'imagen'; listo(); }, 1920),
     sQuitarFondo: () => { diapoActual().fondo.imagen = ''; listo(); },
-    sImg: () => leerImagen(d => { const e = elSel(); if (e) { e.src = d; listo(); } }),
+    sImg: () => elegirImagen(d => { const e = elSel(); if (e) { e.src = d; listo(); } }),
     sTrans: el => { diapoActual().transicion = el.dataset.v; guardarLocal(); renderProps(); },
     sAnimProbar: () => {
       const e = elSel(), d = e && $(`#lz .lz-el[data-id="${e.id}"]`); if (!d || !e.anim) return;
@@ -1309,6 +1325,19 @@ function abrirArchivo(cb) {
   };
   i.click();
 }
+function elegirImagen(cb, max = 1200) { // subir desde el equipo o elegir de la galería de fondos
+  $('#capaImg')?.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capaImg"><div class="card imp">
+    <div class="imp-cab"><h2>${ic('image')} Elegir imagen</h2><button data-a="imgCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <button class="pri big" data-a="imgSubir">${ic('upload')} Subir desde este equipo</button>
+    <p class="lbl-sm">O elige una de la galería</p><div class="gal-grid" id="imgGal"><p class="hint">Cargando…</p></div></div></div>`);
+  cargarFondos().then(l => { const g = $('#imgGal'); if (g) g.innerHTML = l.length ? l.map(x => `<button class="gal" data-a="imgGal" data-src="${esc('fondos/' + x.archivo)}" title="${esc(x.nombre || '')}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`).join('') : '<p class="hint">La galería está vacía.</p>'; });
+  Object.assign(GLOBAL, {
+    imgCerrar: () => $('#capaImg')?.remove(),
+    imgSubir: () => { $('#capaImg')?.remove(); leerImagen(cb, max); },
+    imgGal: el => { $('#capaImg')?.remove(); cb(el.dataset.src); },
+  });
+}
 function leerAudio(cb) {
   const i = document.createElement('input'); i.type = 'file'; i.accept = 'audio/*';
   i.onchange = () => {
@@ -1344,7 +1373,8 @@ const tiempoDe = it => Number(it.tiempo) || Number(quiz.config.tiempo) || 20;
 const aceptadas = it => String(it.aceptadas || '').split(',').map(norm).filter(Boolean);
 const opcionesValidas = arr => arr.map((o, i) => ({ o, i })).filter(x => String(x.o).trim());
 const esPregunta = it => it.tipo !== 'diapositiva';
-const paresValidos = it => (it.pares || []).filter(p => String(p.a).trim() && String(p.b).trim());
+const paresValidos = it => (it.pares || []).filter(p => (String(p.a || '').trim() || p.ai) && (String(p.b || '').trim() || p.bi));
+const ladoPar = (t, i) => `${i ? `<img src="${esc(i)}" alt="">` : ''}${t ? `<span>${esc(t)}</span>` : ''}`;
 const clasifValidos = it => (it.elementos || []).map((e, i) => ({ t: e.t, c: +e.c || 0, i })).filter(e => String(e.t).trim());
 const catsDe = it => (it.categorias || []).map((c, i) => String(c).trim() || 'Grupo ' + (i + 1));
 const pistasValidas = it => (it.pistas || []).filter(x => String(x).trim());
@@ -1371,6 +1401,12 @@ const paresMem = it => (it.pares || []).filter(x => String(x.a).trim()).map(x =>
 const aceptadasPalabra = it => [norm(it.palabra)].concat(aceptadas(it)).filter(Boolean);
 const letrasPalabra = w => [...String(w || '').toUpperCase()].map((c, i) => /\p{L}|\p{N}/u.test(c) ? i : -1).filter(i => i >= 0);
 const letrasVisibles = (n, ms, T) => n ? Math.max(0, Math.min(n - 1, Math.floor(Math.max(0, ms) / (T * 0.85) * n))) : 0;
+function gridRevela(it) { // cuadros, pasos y ritmo de "Imagen que se revela"
+  const cols = Math.max(2, Math.min(12, Math.round(+it.cols) || 6)), filas = Math.max(2, Math.min(10, Math.round(+it.filas) || 4)), n = cols * filas;
+  const pasos = Math.max(1, Math.min(n, Math.round(+it.pasos) || n)), porPaso = Math.ceil(n / pasos);
+  return { cols, filas, n, pasos, porPaso, auto: !(+it.intervalo > 0), iv: +it.intervalo > 0 ? +it.intervalo * 1000 : null };
+}
+const cuadrosQuitados = (g, ms, T) => Math.min(g.n, Math.min(g.pasos, Math.floor(Math.max(0, ms) / (g.iv || T * 0.95 / g.pasos))) * g.porPaso);
 const pistasVisibles = (n, ms, T) => n ? Math.min(n, 1 + Math.floor(Math.max(0, ms) / (T / n))) : 0;
 // Fracción correcta de una respuesta (0 a 1). La mayoría es todo o nada; parejas y clasificar dan puntaje parcial.
 function fraccion(it, v) {
@@ -1432,7 +1468,7 @@ function textoCorrecta(it) {
   switch (it.tipo) {
     case 'alternativas': case 'emoji': case 'revela': return it.correctas.map(i => it.opciones[i]).join(' / ');
     case 'quiensoy': return String(it.aceptadas).split(',')[0].trim();
-    case 'parejas': return paresValidos(it).map(p => p.a + ' → ' + p.b).join(' · ');
+    case 'parejas': return paresValidos(it).map(p => (p.a || '🖼️') + ' → ' + (p.b || '🖼️')).join(' · ');
     case 'versiculo': return textoVersiculo(it) + (it.referencia ? ' (' + it.referencia + ')' : '');
     case 'clasificar': return catsDe(it).map((c, ci) => c + ': ' + clasifValidos(it).filter(e => e.c === ci).map(e => e.t).join(', ')).join(' · ');
     case 'error': { const t = tokensError(it); return `«${t.palabra}»` + (it.correctaTxt ? ` debía decir «${it.correctaTxt}»` : ''); }
@@ -1623,6 +1659,7 @@ function vistaEditor() {
     else if (el.dataset.cl != null) it.elementos[+el.dataset.cl].t = el.value;
     else if (el.dataset.rf != null) it.afirmaciones[+el.dataset.rf].t = el.value;
     if (it.tipo === 'error') { const a = $('#avisoErr'); if (a) a.hidden = tokensError(it).idx >= 0; }
+    if (it.tipo === 'revela') { const hr = $('#hintRevela'); if (hr) hr.textContent = textoRevela(it); }
     guardarLocal(); renderLista();
   };
   form.onchange = e => { if (e.target.dataset.f === 'imagen') renderForm(); };
@@ -1673,7 +1710,9 @@ function vistaEditor() {
     vista: () => abrirVistaPrevia(),
     importar: () => abrirImportar(),
     tutorial: () => tour('editor'),
-    imgfile: () => leerImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
+    imgfile: () => elegirImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
+    parImg: el => elegirImagen(d => { objActual().pares[+el.dataset.i][el.dataset.lado + 'i'] = d; guardarLocal(); renderForm(); }, 700),
+    parImgDel: el => { delete objActual().pares[+el.dataset.i][el.dataset.lado + 'i']; guardarLocal(); renderForm(); },
     imgdel: () => { objActual().imagen = ''; guardarLocal(); renderForm(); },
     pinset: (el, e) => {
       const r = el.getBoundingClientRect(), it = objActual();
@@ -1708,7 +1747,7 @@ const fChk = (l, f, v) => `<label class="chkf"><input type="checkbox" data-f="${
 function imgField(it, titulo = 'Imagen (opcional)') {
   return `<div class="fld"><span>${titulo}</span><div class="imgrow">
     <input data-f="imagen" value="${String(it.imagen).startsWith('data:') ? '' : esc(it.imagen)}" placeholder="${String(it.imagen).startsWith('data:') ? 'Imagen subida (guardada dentro del archivo)' : 'Pega la URL de una imagen…'}">
-    <button data-a="imgfile">📁 Subir</button>${it.imagen ? '<button data-a="imgdel">Quitar</button>' : ''}</div>
+    <button data-a="imgfile">${ic('image')} Elegir</button>${it.imagen ? '<button data-a="imgdel">Quitar</button>' : ''}</div>
     ${it.imagen && !['pin', 'zoom'].includes(it.tipo) ? `<img class="thumb" src="${esc(it.imagen)}">` : ''}</div>`;
 }
 function listaEditable(it, arr, conColor, conCorrecta, max, ph, conUbicar) {
@@ -1782,13 +1821,17 @@ function renderFormCampos() {
   switch (it.tipo) {
     case 'alternativas': h += opcAlt(); break;
     case 'emoji': h += fTxt('Emojis de la historia', 'emojis', it.emojis, '🐋👨‍🦰🌊') + '<p class="hint">Se muestran en grande en la pantalla. En el teléfono puedes usar el teclado de emojis.</p>' + opcAlt(); break;
-    case 'revela': h += imgField(it, 'Imagen a revelar') + '<p class="hint">La imagen empieza tapada y se va destapando de a poco. Quien responde antes gana más puntos.</p>' + opcAlt(); break;
+    case 'revela': h += imgField(it, 'Imagen a revelar') + '<p class="hint">La imagen empieza tapada y se va destapando de a poco. Quien responde antes gana más puntos.</p>' +
+      `<div class="fila">${fNum('Columnas (2–12)', 'cols', it.cols)}${fNum('Filas (2–10)', 'filas', it.filas)}${fNum('Pasos', 'pasos', it.pasos || '', 'Uno por cuadro')}${fNum('Cada cuántos segundos', 'intervalo', it.intervalo || '', 'Automático')}</div>
+      <p class="hint" id="hintRevela">${textoRevela(it)}</p>` + opcAlt(); break;
     case 'parejas':
-      h += `<div class="fld"><span>Parejas correctas (la columna derecha se mezcla al jugar)</span>${it.pares.map((p, k) => `<div class="optrow parrow">
-        <input data-par="${k}" data-lado="a" value="${esc(p.a)}" placeholder="${['Noé', 'David', 'Daniel', 'Moisés', 'Jonás', 'Pedro'][k] || 'Izquierda'}"><span>↔</span>
-        <input data-par="${k}" data-lado="b" value="${esc(p.b)}" placeholder="${['El arca', 'Goliat', 'Los leones', 'El mar Rojo', 'El gran pez', 'La pesca'][k] || 'Derecha'}">
+      { const lado = (x, k, l, ph) => `<div class="par-lado">${x[l + 'i'] ? `<span class="par-img" style="background-image:url('${urlCss(x[l + 'i'])}')"><button data-a="parImgDel" data-i="${k}" data-lado="${l}" title="Quitar imagen">✕</button></span>` : `<button class="par-addimg" data-a="parImg" data-i="${k}" data-lado="${l}" title="Agregar imagen">${ic('add_photo_alternate')}</button>`}
+          <input data-par="${k}" data-lado="${l}" value="${esc(x[l])}" placeholder="${x[l + 'i'] ? 'Texto (opcional)' : ph}"></div>`;
+      h += `<div class="fld"><span>Parejas correctas (la columna derecha se mezcla al jugar)</span>${it.pares.map((x, k) => `<div class="optrow parrow">
+        ${lado(x, k, 'a', ['Noé', 'David', 'Daniel', 'Moisés', 'Jonás', 'Pedro'][k] || 'Izquierda')}<span>↔</span>${lado(x, k, 'b', ['El arca', 'Goliat', 'Los leones', 'El mar Rojo', 'El gran pez', 'La pesca'][k] || 'Derecha')}
         ${it.pares.length > 2 ? `<button data-a="pardel" data-i="${k}">✕</button>` : ''}</div>`).join('')}
-        ${it.pares.length < 6 ? '<button data-a="paradd">+ Agregar pareja</button>' : ''}</div><p class="hint">Si aciertan solo algunas parejas, ganan puntos en proporción.</p>`; break;
+        ${it.pares.length < 6 ? '<button data-a="paradd">+ Agregar pareja</button>' : ''}</div>
+        <p class="hint">Cada lado puede ser texto, imagen (${ic('add_photo_alternate')}) o ambos: texto con texto, imagen con texto o imagen con imagen. Los jugadores las unen con el dedo. Si aciertan solo algunas, ganan puntos en proporción.</p>`; } break;
     case 'versiculo':
       h += fArea('Versículo (en el orden correcto)', 'texto', it.texto, 'Todo lo puedo en Cristo que me fortalece') +
         '<p class="hint">Las palabras se mezclan y hay que armarlo. Si es largo, sepáralo en trozos con / (ej: Lámpara es a mis pies / tu palabra, / y lumbrera a mi camino).</p>' +
@@ -1883,6 +1926,11 @@ function renderFormCampos() {
     arrastrarPunto($('#pinprev'), (x, y) => { it.x = x; it.y = y; actualizarPinMark(); });
   }
   if (it.tipo === 'zoom' && it.imagen) arrastrarPunto($('#zprev'), (x, y) => { it.zx = x; it.zy = y; Object.assign($('#zmark').style, { left: x + '%', top: y + '%' }); });
+}
+function textoRevela(it) {
+  const g = gridRevela(it), T = tiempoDe(it), iv = g.iv ? g.iv / 1000 : T * 0.95 / g.pasos, total = iv * g.pasos;
+  const f = x => (Math.round(x * 10) / 10).toString().replace('.', ',');
+  return `${g.cols} × ${g.filas} = ${g.n} cuadros, en ${g.pasos} paso${g.pasos > 1 ? 's' : ''} de ${g.porPaso} cuadro${g.porPaso > 1 ? 's' : ''}: un paso cada ${f(iv)} s. La imagen queda completa a los ${f(total)} s${total > T ? ` ⚠️ (la pregunta dura ${T} s: no alcanza a verse completa)` : ` (la pregunta dura ${T} s)`}.`;
 }
 function arrastrarPunto(cont, mover) { // tocar o arrastrar sobre la imagen para ubicar el punto (mouse o dedo)
   if (!cont) return;
@@ -2329,7 +2377,7 @@ function payload(it, idx) {
   const b = { t: 'q', idx, tipo: it.tipo, pregunta: it.pregunta, tiempo: tiempoDe(it) };
   if (CON_OPCIONES.includes(it.tipo)) b.opciones = opcionesValidas(it.opciones);
   if (it.tipo === 'emoji') b.emojis = it.emojis;
-  if (it.tipo === 'parejas') { const p = paresValidos(it); b.izq = p.map(x => x.a); b.der = H.shuf.map(k => ({ k, t: p[k].b })); }
+  if (it.tipo === 'parejas') { const p = paresValidos(it); b.izq = p.map(x => ({ t: x.a, i: x.ai || '' })); b.der = H.shuf.map(k => ({ k, t: p[k].b, i: p[k].bi || '' })); }
   if (it.tipo === 'versiculo') b.palabras = H.shuf;
   if (it.tipo === 'quiensoy') b.pistas = pistasValidas(it);
   if (it.tipo === 'clasificar') { b.categorias = catsDe(it); b.items = H.shuf.map(e => ({ i: e.i, t: e.t })); }
@@ -2371,7 +2419,7 @@ function irA(i) {
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
   if (!['audio', 'dibujo', 'muro'].includes(it.tipo)) SND.musicaIniciar('pregunta'); else SND.musicaParar();
   H.shuf = barajar(it);
-  H.tiles = it.tipo === 'revela' ? shuffle([...Array(NTILES).keys()]) : null; // orden en que se destapa cada cuadro
+  H.tiles = it.tipo === 'revela' ? shuffle([...Array(gridRevela(it).n).keys()]) : null; // orden en que se destapa cada cuadro
   H.prog = {}; H.cola = []; H.rNo = new Set(); H.ganador = null; H.muroOk = new Set();
   if (it.tipo === 'audio' && it.audio) { SND.musicaParar(0.1); H.audio = new Audio(it.audio); setTimeout(() => H && H.audio && H.audio.play().catch(() => { }), 400); }
   H.payload = payload(it, i);
@@ -2402,7 +2450,7 @@ function barajar(it) { // mezcla evitando, si se puede, que quede igual al orden
 function tickHost() { // animaciones que dependen del tiempo: imagen que se revela y pistas de ¿Quién soy?
   if (!H || H.fase !== 'pregunta') return;
   const it = quiz.items[H.idx], ms = transcurrido(), T = tiempoH() * 1000;
-  if (it.tipo === 'revela') { const n = Math.floor(ms / T * NTILES); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
+  if (it.tipo === 'revela') { const n = cuadrosQuitados(gridRevela(it), ms, T); document.querySelectorAll('.tiles i').forEach(t => t.classList.toggle('off', H.tiles[+t.dataset.k] < n)); }
   if (it.tipo === 'palabra') { const k = letrasVisibles(H.shuf.length, ms, T); document.querySelectorAll('.mascara span[data-o]').forEach(sp => { const on = +sp.dataset.o < k; sp.classList.toggle('on', on); sp.textContent = on ? sp.dataset.l : ''; }); }
   if (it.tipo === 'zoom') { const z = +it.zoom || 6, img = $('#zimg'); if (img) img.style.transform = `scale(${Math.max(1, z - (z - 1) * Math.min(1, ms / (T * 0.9)))})`; }
   if (it.tipo === 'quiensoy') { const k = pistasVisibles(pistasValidas(it).length, ms, T); document.querySelectorAll('.pistas li').forEach((li, j) => li.classList.toggle('off', j >= k)); }
@@ -2589,7 +2637,7 @@ function hostPregunta(rev) {
   if (it.tipo === 'emoji') h += `<div class="emojis">${esc(it.emojis)}</div>`;
   if (it.tipo === 'zoom') h += `<div class="zoomwrap"><img id="zimg" src="${esc(it.imagen)}" style="transform-origin:${+it.zx}% ${+it.zy}%;transform:scale(${rev ? 1 : +it.zoom || 6})"></div>`;
   if (it.tipo === 'audio') h += `<div class="audiobox ${H.audio && !H.audio.paused ? 'sonando' : ''}"><button class="pri big" data-a="audPlay">${ic(H.audio && !H.audio.paused ? 'pause' : 'play_arrow', 'fill')} ${H.audio && !H.audio.paused ? 'Pausar audio' : 'Reproducir audio'}</button><div class="ondas">${'<i></i>'.repeat(12)}</div></div>`;
-  if (it.tipo === 'revela') h += `<div class="revela"><img src="${esc(it.imagen)}">${rev ? '' : `<div class="tiles">${H.tiles.map((_, k) => `<i data-k="${k}"></i>`).join('')}</div>`}</div>`;
+  if (it.tipo === 'revela') h += `<div class="revela"><img src="${esc(it.imagen)}">${rev ? '' : `<div class="tiles" style="grid-template-columns:repeat(${gridRevela(it).cols},1fr);grid-template-rows:repeat(${gridRevela(it).filas},1fr)">${H.tiles.map((_, k) => `<i data-k="${k}"></i>`).join('')}</div>`}</div>`;
   switch (it.tipo) {
     case 'alternativas': case 'encuesta': case 'emoji': case 'revela': case 'zoom': case 'audio': {
       const c = conteo(v => v), max = Math.max(1, ...Object.values(c)), conOk = CON_CORRECTAS.includes(it.tipo);
@@ -2625,8 +2673,8 @@ function hostPregunta(rev) {
       break;
     case 'parejas': {
       const p = paresValidos(it);
-      if (!rev) h += `<div class="parejas"><div>${p.map(x => `<div class="pz">${esc(x.a)}</div>`).join('')}</div><div>${H.shuf.map(k => `<div class="pz der">${esc(p[k].b)}</div>`).join('')}</div></div>`;
-      else h += `<div class="parejas sol">${p.map(x => `<div class="pz">${esc(x.a)}</div><div class="flecha">→</div><div class="pz der">${esc(x.b)}</div>`).join('')}</div>` + resumen('unieron todas bien');
+      if (!rev) h += `<div class="parejas"><div>${p.map(x => `<div class="pz">${ladoPar(x.a, x.ai)}</div>`).join('')}</div><div>${H.shuf.map(k => `<div class="pz der">${ladoPar(p[k].b, p[k].bi)}</div>`).join('')}</div></div>`;
+      else h += `<div class="parejas sol">${p.map(x => `<div class="pz">${ladoPar(x.a, x.ai)}</div><div class="flecha">→</div><div class="pz der">${ladoPar(x.b, x.bi)}</div>`).join('')}</div>` + resumen('unieron todas bien');
       break;
     }
     case 'versiculo':
@@ -2834,7 +2882,7 @@ function vistaJugador(code, error) {
       else if (q.tipo === 'huecos') { if (P.huecos.some(x => x != null)) responder(P.huecos.map(i => i == null ? '' : q.banco[i])); }
       else if (q.tipo === 'multiple') { if (P.multi.size) responder([...P.multi]); }
       else if (q.tipo === 'dibujo') responder(exportarDibujo());
-      else if (q.tipo === 'parejas') responder(q.izq.map((_, k) => { const s = $(`[data-jp="${k}"]`).value; return s === '' ? -1 : Number(s); }));
+      else if (q.tipo === 'parejas') responder(q.izq.map((_, k) => P.uniones[k] == null ? -1 : q.der[P.uniones[k]].k));
       else if (q.tipo === 'versiculo') { if (P.armado.length) responder(P.armado.map(i => q.palabras[i])); }
       else if (q.tipo === 'clasificar') responder(Object.entries(P.clas).map(([i, c]) => [+i, +c]));
       else if (q.tipo === 'error' || q.tipo === 'linea') { if (P.sel != null) responder(P.sel); }
@@ -2991,8 +3039,10 @@ function renderJPregunta(soloLista) {
     case 'ordenar':
       h += `<div class="jord" id="jord">${filasOrden()}</div><button class="pri big jbtn" data-a="jenviar">Enviar orden</button>`; break;
     case 'parejas':
-      h += `<div class="jpar">${q.izq.map((a, k) => `<label><span>${esc(a)}</span><select data-jp="${k}"><option value="">Elige…</option>${q.der.map(d => `<option value="${d.k}">${esc(d.t)}</option>`).join('')}</select></label>`).join('')}</div>
-        <button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
+      h += `<p class="muted">Arrastra (o toca) desde la izquierda hasta su pareja</p><div class="jpar2" id="jpar2"><svg class="jlineas" id="jlineas"></svg>
+        <div class="col">${q.izq.map((x, k) => `<div class="nodo" data-lado="i" data-k="${k}">${ladoPar(x.t, x.i)}</div>`).join('')}</div>
+        <div class="col">${q.der.map((x, j) => `<div class="nodo" data-lado="d" data-k="${j}">${ladoPar(x.t, x.i)}</div>`).join('')}</div></div>
+        <button class="pri big jbtn" id="jsend" data-a="jenviar" disabled>Enviar</button>`; break;
     case 'versiculo':
       h += `<div class="jarm" id="jarm"></div><div class="jbanco" id="jbanco"></div><button class="pri big jbtn" data-a="jenviar">Enviar</button>`; break;
     case 'quiensoy':
@@ -3033,6 +3083,7 @@ function renderJPregunta(soloLista) {
   marcoJ(h, null, true); overlayPausa();
   const r = $('#jrange'); if (r) r.oninput = () => $('#jval').textContent = r.value;
   if (q.tipo === 'versiculo') renderArmado();
+  if (q.tipo === 'parejas') iniciarUniones();
   if (q.tipo === 'huecos') { P.huecos = Array((String(q.frase).match(/_{3,}/g) || []).length).fill(null); renderHuecos(); }
   if (q.tipo === 'multiple') P.multi = new Set();
   if (q.tipo === 'rafaga') { P.raf = []; renderRafaga(); }
@@ -3049,6 +3100,60 @@ function renderJPregunta(soloLista) {
     if (s <= 0) { clearInterval(P.tInt); }
   };
   tick(); P.tInt = setInterval(tick, 250);
+}
+/* ----- Unir parejas con el dedo: arrastrar o tocar izquierda → derecha ----- */
+const COL_UNION = ['#180157', '#006780', '#A21CAF', '#D97706', '#059669', '#7C3AED'];
+function iniciarUniones() {
+  P.uniones = {}; P.selU = null;
+  const cont = $('#jpar2'); if (!cont) return;
+  let drag = null;
+  const centro = n => { const r = n.getBoundingClientRect(), c = cont.getBoundingClientRect(); return [n.dataset.lado === 'i' ? r.right - c.left : r.left - c.left, r.top - c.top + r.height / 2]; };
+  const unir = (a, b) => { // a y b: nodos de lados distintos
+    const iz = a.dataset.lado === 'i' ? +a.dataset.k : +b.dataset.k, de = a.dataset.lado === 'i' ? +b.dataset.k : +a.dataset.k;
+    Object.keys(P.uniones).forEach(k => { if (P.uniones[k] === de) delete P.uniones[k]; });
+    P.uniones[iz] = de; P.selU = null; navigator.vibrate?.(25); pintarUniones();
+  };
+  cont.onpointerdown = e => {
+    const n = e.target.closest('.nodo'); if (!n) return;
+    e.preventDefault(); cont.setPointerCapture(e.pointerId);
+    drag = { n, x0: e.clientX, y0: e.clientY, mov: false };
+  };
+  cont.onpointermove = e => {
+    if (!drag) return;
+    if (!drag.mov && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 8) return;
+    drag.mov = true; const c = cont.getBoundingClientRect(), [x1, y1] = centro(drag.n);
+    pintarUniones(`<line x1="${x1}" y1="${y1}" x2="${e.clientX - c.left}" y2="${e.clientY - c.top}" class="tmp"/>`);
+  };
+  cont.onpointerup = e => {
+    if (!drag) return; const d = drag; drag = null;
+    const n = document.elementFromPoint(e.clientX, e.clientY)?.closest('.nodo');
+    if (d.mov) { if (n && n.dataset.lado !== d.n.dataset.lado) unir(d.n, n); else pintarUniones(); return; }
+    // toque: seleccionar y luego tocar el otro lado; tocar uno unido lo suelta
+    const k = +d.n.dataset.k, lado = d.n.dataset.lado;
+    if (P.selU && P.selU.dataset.lado !== lado) return unir(P.selU, d.n);
+    const unido = lado === 'i' ? P.uniones[k] != null : Object.values(P.uniones).includes(k);
+    if (unido) { if (lado === 'i') delete P.uniones[k]; else Object.keys(P.uniones).forEach(x => { if (P.uniones[x] === k) delete P.uniones[x]; }); }
+    P.selU = P.selU === d.n ? null : d.n; pintarUniones();
+  };
+  cont.onpointercancel = () => { drag = null; pintarUniones(); };
+  window.addEventListener('resize', () => pintarUniones());
+  pintarUniones();
+}
+function pintarUniones(extra = '') {
+  const cont = $('#jpar2'), svg = $('#jlineas'); if (!cont || !svg) return;
+  const c = cont.getBoundingClientRect(); svg.setAttribute('width', c.width); svg.setAttribute('height', c.height);
+  const nodo = (l, k) => cont.querySelector(`.nodo[data-lado="${l}"][data-k="${k}"]`);
+  cont.querySelectorAll('.nodo').forEach(n => { n.style.removeProperty('--uc'); n.classList.remove('unido', 'sel'); });
+  let lineas = '';
+  Object.entries(P.uniones).forEach(([iz, de]) => {
+    const a = nodo('i', iz), b = nodo('d', de); if (!a || !b) return;
+    const col = COL_UNION[iz % COL_UNION.length], ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+    [a, b].forEach(n => { n.classList.add('unido'); n.style.setProperty('--uc', col); });
+    lineas += `<line x1="${ra.right - c.left}" y1="${ra.top - c.top + ra.height / 2}" x2="${rb.left - c.left}" y2="${rb.top - c.top + rb.height / 2}" stroke="${col}"/>`;
+  });
+  if (P.selU) P.selU.classList.add('sel');
+  svg.innerHTML = lineas + extra;
+  const b = $('#jsend'); if (b) b.disabled = !Object.keys(P.uniones).length;
 }
 function renderHuecos() {
   const q = P.q; if (!q) return; let k = 0;

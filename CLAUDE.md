@@ -25,6 +25,9 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Galería de fondos: carpeta `fondos/` con 20 imágenes 16:9 generadas en Google Flow (`fondo-01.jpg` … `fondo-20.jpg`, 1365×768, ~100 KB) + `mini/` de miniaturas 384×216, listadas en `fondos/lista.json`. Los prompts están en `fondos/PROMPTS.md` (mismo número que el archivo). El quiz de ejemplo usa fondo-17, 10, 18 y 20. Las rutas son relativas (`fondos/...`): funcionan desde GitHub Pages o con la carpeta junto a index.html.
 - Tipos implementados (28): diapositiva, alternativas, vf, completar, pin, ordenar, numero, parejas, versiculo, quiensoy, revela, clasificar, error, emoji, linea, huecos, multiple, rafaga, palabra, zoom, audio, memoria, rapido, dibujo, muro, encuesta, nube, escala.
   - `emoji`, `revela`, `zoom` y `audio` reutilizan las opciones A–F (`CON_OPCIONES` / `CON_CORRECTAS`).
+  - `parejas`: cada lado puede tener texto (`a`/`b`) e imagen (`ai`/`bi`); en el teléfono se unen arrastrando o tocando (`iniciarUniones`, líneas SVG). Respuesta: `v[k]` = índice original de la pareja elegida para la izquierda k.
+  - `revela`: matriz configurable (`cols`, `filas`), `pasos` (0 = uno por cuadro) e `intervalo` en s (0 = automático según el tiempo); ver `gridRevela()` / `cuadrosQuitados()`.
+  - Selector de imagen `elegirImagen()`: subir desde el equipo o elegir de la galería de fondos (preguntas, elementos de diapositiva y parejas).
   - `huecos`: frase con varios ___ + banco de palabras (correctas en orden + distractores), puntaje parcial.
   - `multiple`: marcar todas las correctas (cada correcta suma, cada incorrecta resta).
   - `rafaga`: afirmaciones V/F de a una en el teléfono; `palabra`: letras que aparecen de a una (menos letras = más puntos).
