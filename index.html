@@ -123,7 +123,7 @@ input[type=color]{padding:3px;height:44px;width:84px}
   .qbody{padding:20px 22px 22px}
   .qbody p.muted{display:none}
   .fila2.small button{font-size:.88rem;padding:.7em .8em}
-  .larga{display:none}
+  .larga{display:none}.corta{display:inline}
   .top-in{padding:12px 16px}
 }
 /* ---------- Editor ---------- */
@@ -180,7 +180,9 @@ input[type=color]{padding:3px;height:44px;width:84px}
   .bar{gap:6px;padding:8px 10px}
   .bar .lbl{display:none}
   .bar button{padding:.55em .7em}
-  .bar .titulo{flex:1;min-width:0;max-width:none}
+  .bar{flex-wrap:wrap}
+  .bar .titulo{order:10;flex:1 1 100%;min-width:0;max-width:none}
+  .bar .sp{display:none}
   .bar #bUndo,.bar #bRedo{padding:.55em .45em}
   .bar .guardado{display:none}
   .bar .sp{display:none}
@@ -405,6 +407,56 @@ button.hueco.lleno{background:var(--c);color:#fff;border:0;border-radius:10px;fo
 .jdib-bar{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:480px}
 .jdib-bar .sw{width:32px;height:32px}.jdib-bar .sw.on{box-shadow:0 0 0 3px var(--c)}
 .jdib-bar button:not(.sw){padding:.4em .7em}
+/* ---------- Bloque 5: Mis quizzes, vista previa, importar, tutorial, fondo ---------- */
+.misq{margin-top:32px;padding:24px 28px}
+.misq-cab{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.misq-cab h2{display:flex;align-items:center;gap:8px;font-size:1.8rem;margin:0}
+.mq{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--outline-var)}
+.mq-t{flex:1;min-width:0}
+.mq-t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mq-t small{color:var(--on-s-var)}
+.mq button{padding:.5em .7em}
+.mq.act b{color:var(--c)}
+.solo-cel{display:none!important}
+.corta{display:none}
+.menu-mas{position:absolute;right:10px;top:58px;background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:var(--r-lg);box-shadow:var(--sombra);padding:6px;display:flex;flex-direction:column;z-index:10}
+.menu-mas[hidden]{display:none}
+.menu-mas button{justify-content:flex-start;border:0;background:transparent}
+.bar{position:relative}
+.capa{position:fixed;inset:0;z-index:40;background:#0f0e12b3;display:grid;place-items:center;padding:16px;animation:anFundido .2s}
+.vp{width:min(1500px,100%);height:min(900px,100%);background:var(--bg);border-radius:var(--r-xl);display:flex;flex-direction:column;overflow:hidden}
+.vp-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--outline-var);background:var(--s-lowest);flex-wrap:wrap}
+.vp-bar b{display:flex;align-items:center;gap:6px;color:var(--c)}
+.vp-pos{color:var(--on-s-var);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw}
+.vp-cuerpo{flex:1;display:flex;gap:16px;padding:16px;min-height:0}
+.vp-pant{flex:1;position:relative;min-width:0;overflow:hidden}
+.vp-pant iframe{position:absolute;top:0;left:0;width:1280px;height:800px;border:0;transform-origin:0 0;border-radius:12px;box-shadow:var(--sombra);background:#fff}
+.vp-tel{width:330px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.vp-marco{border:10px solid #1C1B20;border-radius:36px;overflow:hidden;background:#fff;box-shadow:var(--sombra)}
+.vp-marco iframe{width:390px;height:800px;border:0;transform-origin:0 0}
+.vp-tel small{color:var(--on-s-var)}
+html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
+.imp{width:min(720px,100%);max-height:100%;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:10px}
+.imp-cab{display:flex;align-items:center;justify-content:space-between}
+.imp-cab h2{display:flex;align-items:center;gap:8px;margin:0}
+.imp textarea{font-family:var(--mono);font-size:.9rem}
+.imp-res{margin:0;font-weight:600}
+.capa.tour{background:transparent;display:block;padding:0}
+.foco{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px #0f0e12b8;transition:all .3s cubic-bezier(.2,0,0,1);pointer-events:none;outline:3px solid var(--gold)}
+.globo{position:fixed;padding:18px 20px;display:flex;flex-direction:column;gap:6px;animation:anZoom .25s cubic-bezier(.2,0,0,1);z-index:41}
+.globo small{color:var(--tertiary);font-weight:600}
+.globo h3{font:400 1.7rem var(--serif);color:var(--c);margin:0}
+.globo p{margin:0;color:var(--on-s-var)}
+.globo .botones{justify-content:flex-end;margin-top:6px}
+.host.con-fondo{background-size:cover;background-attachment:fixed}
+.host.con-fondo .top{background:#FDF8FFEB;backdrop-filter:blur(8px)}
+.host.con-fondo .stage{background:#FDF8FFE6;border-radius:28px;margin:18px auto;width:calc(100% - 48px);box-shadow:0 10px 40px #0004;backdrop-filter:blur(6px)}
+.host.con-fondo .ctl-in{background:#F7F2F9F2}
+@media (max-width:760px){
+  .solo-pc{display:none!important}.solo-cel{display:inline-flex!important}
+  .vp-cuerpo{padding:8px}.vp-tel{display:none;width:100%}.vp-cuerpo.ver-tel .vp-pant{display:none}.vp-cuerpo.ver-tel .vp-tel{display:flex}
+  .misq{padding:18px}
+}
 /* ---------- Transiciones y animaciones ---------- */
 @keyframes anFundido{from{opacity:0}}
 @keyframes anDeslizar{from{opacity:0;transform:translateX(90px)}}
@@ -637,7 +689,8 @@ function configDefecto() {
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas',
     filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
-    sonidos: true, musica: true, transicion: 'fundido' };
+    sonidos: true, musica: true, transicion: 'fundido',
+    fondoPres: { tipo: 'ninguno', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.1 } };
 }
 function nuevoItem(tipo) {
   const b = { tipo };
@@ -674,6 +727,7 @@ function nuevoItem(tipo) {
 }
 function normalizarQuiz(q) {
   q.config = Object.assign(configDefecto(), q.config || {});
+  q.id = q.id || nid() + nid();
   q.items = (q.items || []).map(it => { const t = TIPOS[it.tipo] ? it.tipo : 'diapositiva'; return t === 'diapositiva' ? migrarDiapo({ ...it, tipo: t }) : Object.assign(nuevoItem(t), it); });
   return q;
 }
@@ -1050,14 +1104,29 @@ const IDB = {
   },
   get(k) { return this.abrir().then(db => new Promise((ok, mal) => { const q = db.transaction('datos').objectStore('datos').get(k); q.onsuccess = () => ok(q.result); q.onerror = () => mal(q.error); })); },
   set(k, v) { return this.abrir().then(db => new Promise((ok, mal) => { const tx = db.transaction('datos', 'readwrite'); tx.objectStore('datos').put(v, k); tx.oncomplete = () => ok(); tx.onerror = tx.onabort = () => mal(tx.error); })); },
+  del(k) { return this.abrir().then(db => new Promise((ok, mal) => { const tx = db.transaction('datos', 'readwrite'); tx.objectStore('datos').delete(k); tx.oncomplete = () => ok(); tx.onerror = tx.onabort = () => mal(tx.error); })); },
 };
+/* "Mis quizzes": cada quiz se guarda aparte (q:<id>) y el índice lista título, cantidad y fecha. */
+let INDICE = [];
+function entradaIndice(q) { return { id: q.id, titulo: q.config.titulo || 'Sin título', n: q.items.length, np: q.items.filter(esPregunta).length, fecha: Date.now() }; }
+function guardarEnIndice(q, s) {
+  const e = entradaIndice(q), i = INDICE.findIndex(x => x.id === q.id);
+  if (i >= 0) INDICE[i] = e; else INDICE.push(e);
+  return Promise.all([IDB.set('q:' + q.id, s || JSON.stringify(q)), IDB.set('indice', INDICE)]);
+}
+function cambiarQuiz(q) { // abrir otro quiz como actual (el anterior ya quedó guardado en la lista)
+  if (tGuardar) guardarAhora();
+  quiz = normalizarQuiz(q); edSel = 0; sItem = null; sSel = null;
+  HIST.pila = []; HIST.pos = -1;
+  return guardarAhora();
+}
 let tGuardar = null, errorGuardadoAvisado = false;
 function guardarLocal() { estadoGuardado('guardando'); clearTimeout(tGuardar); tGuardar = setTimeout(guardarAhora, 400); }
 function guardarAhora() {
   clearTimeout(tGuardar); tGuardar = null;
   const s = JSON.stringify(quiz);
   registrarHistorial(s);
-  return IDB.set('actual', s).then(() => { estadoGuardado('ok'); try { localStorage.removeItem(LS); } catch (_) { } })
+  return IDB.set('actual', s).then(() => guardarEnIndice(quiz, s)).then(() => { estadoGuardado('ok'); try { localStorage.removeItem(LS); } catch (_) { } })
     .catch(e => { console.warn(e); try { localStorage.setItem(LS, s); estadoGuardado('ok'); } catch (_) { estadoGuardado('error'); } });
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden && tGuardar) guardarAhora(); });
@@ -1191,7 +1260,7 @@ function abrirArchivo(cb) {
   i.onchange = () => {
     const f = i.files[0]; if (!f) return;
     f.text().then(t => {
-      try { const q = JSON.parse(t); if (!q.items) throw 0; quiz = normalizarQuiz(q); guardarLocal(); cb && cb(); }
+      try { const q = JSON.parse(t); if (!q.items) throw 0; cambiarQuiz(q).then(() => cb && cb()); }
       catch (e) { alert('El archivo no es un quiz válido.'); }
     });
   };
@@ -1344,15 +1413,17 @@ function textoCorrecta(it) {
 /* ---------- Ruteo y acciones ---------- */
 let ACC = {};
 document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (el && ACC[el.dataset.a]) ACC[el.dataset.a](el, e); });
+document.addEventListener('click', e => { const m = $('#menuMas'); if (m && !m.hidden && !e.target.closest('[data-a=menuMas]')) m.hidden = true; }, true); // cerrar el menú ⋮
 
 function iniciar() {
   const qs = new URLSearchParams(location.search), code = qs.get('join');
   if (code) return vistaJugador(code.trim());
   if (qs.get('remoto')) return vistaRemoto(qs.get('remoto').trim(), qs.get('k') || '');
-  IDB.get('actual').then(v => {
+  if (qs.get('vista')) return vistaPrevia(qs.get('vista'));
+  IDB.get('indice').then(l => { INDICE = Array.isArray(l) ? l : []; return IDB.get('actual'); }).then(v => {
     if (v) { const q = JSON.parse(v); if (q && q.items) quiz = normalizarQuiz(q); }
-    else guardarAhora(); // primera vez: pasar a IndexedDB lo que había en localStorage
-  }).catch(e => console.warn('IndexedDB no disponible', e)).finally(() => { registrarHistorial(JSON.stringify(quiz)); vistaInicio(); });
+    return guardarAhora(); // primera vez: pasar a IndexedDB lo que había en localStorage; además deja el quiz en "Mis quizzes"
+  }).catch(e => console.warn('IndexedDB no disponible', e)).finally(() => { vistaInicio(); });
 }
 
 /* =================== INICIO =================== */
@@ -1363,7 +1434,8 @@ function vistaInicio() {
   const org = quiz.config.organizacion;
   app.innerHTML = `<div class="inicio" style="--c:${esc(quiz.config.color)}">
     <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div>
-      <div><b>Quiz Iglesia</b>${org ? `<small>${esc(org)}</small>` : ''}</div></div></div></header>
+      <div><b>Quiz Iglesia</b>${org ? `<small>${esc(org)}</small>` : ''}</div></div><span class="sp"></span>
+      <button class="ibtn" data-a="tutorial" title="Tutorial" aria-label="Tutorial">${ic('help')}</button></div></header>
     <main class="home">
       <div class="hero"><span class="badge mag">${ic('sports_esports', 'fill')} Aprendizaje interactivo en comunidad</span>
         <h1>Aprende la Palabra<br>jugando juntos en vivo</h1>
@@ -1375,8 +1447,8 @@ function vistaInicio() {
           <div class="qbody"><p class="muted">Inicia la presentación en el proyector para mostrar el código de sala, o ajusta las preguntas y diapositivas antes de comenzar.</p>
             <div class="fila2"><button class="pri big" data-a="presentar">${ic('play_circle', 'fill')} Presentar</button><button class="big" data-a="editar">${ic('edit_note')} Editar</button></div>
             <hr class="sep"><p class="lbl-sm">Archivos y plantillas</p>
-            <div class="fila2 small"><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="guardar">${ic('download')} Descargar<span class="larga"> archivo</span></button>
-              <button data-a="nuevo">${ic('note_add')} Quiz en blanco</button><button data-a="ejemplo">${ic('star', 'fill gold')} <span><span class="larga">Cargar </span>Ejemplo</span></button></div></div>
+            <div class="fila2 small"><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="guardar">${ic('download')} <span>Descargar<span class="larga"> archivo</span></span></button>
+              <button data-a="nuevo">${ic('note_add')} Quiz en blanco</button><button data-a="ejemplo">${ic('star', 'fill gold')} <span><span class="larga">Cargar ejemplo</span><span class="corta">Ejemplo</span></span></button></div></div>
         </section>
         <section class="card jcard">
           <div class="cab"><div class="tile">${ic('qr_code_scanner')}</div><span class="badge out">Acceso jugadores</span></div>
@@ -1387,6 +1459,7 @@ function vistaInicio() {
           <div class="nota">${ic('bolt', 'fill')}<span>Sin descargas ni registros: responde directo desde el navegador.</span></div>
         </section>
       </div>
+      ${listaMisQuizzes()}
     </main>
     <footer class="pie"><div class="top-in"><span>Quiz Iglesia · Herramienta interactiva para enseñanza bíblica</span>${org ? `<b>${esc(org)}</b>` : ''}</div></footer>
   </div>`;
@@ -1395,11 +1468,35 @@ function vistaInicio() {
     presentar: () => vistaPresentar(),
     editar: () => vistaEditor(),
     abrir: () => abrirArchivo(vistaInicio),
+
     guardar: descargarQuiz,
-    nuevo: () => { if (confirm('¿Empezar un quiz en blanco? (Descarga antes el actual si lo quieres conservar)')) { quiz = normalizarQuiz({ items: [nuevoItem('diapositiva')] }); guardarLocal(); vistaEditor(); } },
-    ejemplo: () => { if (confirm('¿Reemplazar el quiz actual por el ejemplo?')) { quiz = ejemploQuiz(); guardarLocal(); vistaInicio(); } },
+    nuevo: () => cambiarQuiz({ config: { titulo: 'Quiz nuevo' }, items: [nuevoItem('diapositiva')] }).then(vistaEditor),
+    ejemplo: () => cambiarQuiz(ejemploQuiz()).then(vistaInicio),
+    abrirQ: el => IDB.get('q:' + el.dataset.id).then(v => { if (!v) return aviso('No se encontró ese quiz.'); return cambiarQuiz(JSON.parse(v)).then(vistaInicio); }),
+    dupQ: el => IDB.get('q:' + el.dataset.id).then(v => { if (!v) return; const q = normalizarQuiz(JSON.parse(v)); q.id = nid() + nid(); q.config.titulo += ' (copia)'; return guardarEnIndice(q).then(vistaInicio); }),
+    delQ: el => {
+      const e = INDICE.find(x => x.id === el.dataset.id); if (!e || !confirm(`¿Eliminar «${e.titulo}» de este navegador? (Si lo descargaste, el archivo sigue existiendo.)`)) return;
+      INDICE = INDICE.filter(x => x.id !== e.id);
+      IDB.del('q:' + e.id).then(() => IDB.set('indice', INDICE)).then(() => {
+        if (e.id !== quiz.id) return vistaInicio();
+        const otro = INDICE.slice().sort((a, b) => b.fecha - a.fecha)[0];
+        return (otro ? IDB.get('q:' + otro.id).then(v => cambiarQuiz(JSON.parse(v))) : cambiarQuiz({ config: { titulo: 'Quiz nuevo' }, items: [nuevoItem('diapositiva')] })).then(vistaInicio);
+      });
+    },
+    tutorial: () => tour('inicio'),
     unirme: () => { const c = $('#jcode').value.trim(); if (c) location.search = '?join=' + encodeURIComponent(c); },
   };
+  autoTour('inicio');
+}
+
+function listaMisQuizzes() {
+  const l = INDICE.slice().sort((a, b) => (b.id === quiz.id) - (a.id === quiz.id) || b.fecha - a.fecha);
+  if (!l.length) return '';
+  const f = t => new Date(t).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' });
+  return `<section class="card misq"><div class="misq-cab"><h2>${ic('folder_special')} Mis quizzes</h2><span class="muted">Guardados en este navegador</span></div>
+    ${l.map(e => `<div class="mq ${e.id === quiz.id ? 'act' : ''}"><div class="mq-t"><b>${esc(e.titulo)}</b><small>${e.n} elementos · ${e.np} preguntas · ${f(e.fecha)}</small></div>
+      ${e.id === quiz.id ? '<span class="badge cyan"><span class="dot"></span>Abierto</span>' : `<button data-a="abrirQ" data-id="${esc(e.id)}">${ic('folder_open')}<span class="lbl"> Abrir</span></button>`}
+      <button data-a="dupQ" data-id="${esc(e.id)}" title="Duplicar">${ic('content_copy')}</button><button data-a="delQ" data-id="${esc(e.id)}" title="Eliminar">${ic('delete')}</button></div>`).join('')}</section>`;
 }
 
 /* =================== EDITOR =================== */
@@ -1423,13 +1520,20 @@ function vistaEditor() {
       <button data-a="deshacer" id="bUndo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer">${ic('undo')}</button><button data-a="rehacer" id="bRedo" title="Rehacer (Ctrl+Y)" aria-label="Rehacer">${ic('redo')}</button>
       <span class="guardado ok" id="guardado">${ic('cloud_done')}<span class="lbl">Guardado</span></span>
       <span class="sp"></span>
-      <button data-a="abrir" title="Abrir archivo">${ic('folder_open')}<span class="lbl">Abrir</span></button><button data-a="guardar" title="Guardar archivo">${ic('download')}<span class="lbl">Guardar archivo</span></button>
-      <button class="pri" data-a="presentar" title="Presentar">${ic('play_circle', 'fill')}<span class="lbl">Presentar</span></button></header>
+      <button class="solo-pc" data-a="abrir" title="Abrir archivo">${ic('folder_open')}<span class="lbl">Abrir</span></button>
+      <button class="solo-pc" data-a="importar" title="Importar preguntas">${ic('playlist_add')}<span class="lbl">Importar</span></button>
+      <button class="solo-pc" data-a="tutorial" title="Tutorial">${ic('help')}</button>
+      <button data-a="vista" title="Vista previa">${ic('visibility')}<span class="lbl">Vista previa</span></button>
+      <button class="solo-pc" data-a="guardar" title="Guardar archivo">${ic('download')}<span class="lbl">Guardar archivo</span></button>
+      <button class="pri" data-a="presentar" title="Presentar">${ic('play_circle', 'fill')}<span class="lbl">Presentar</span></button>
+      <button class="solo-cel" data-a="menuMas" title="Más" aria-label="Más opciones">${ic('more_vert')}</button>
+      <div class="menu-mas" id="menuMas" hidden><button data-a="guardar">${ic('download')} Guardar archivo</button><button data-a="abrir">${ic('folder_open')} Abrir archivo</button><button data-a="importar">${ic('playlist_add')} Importar preguntas</button><button data-a="tutorial">${ic('help')} Tutorial</button></div></header>
     <div class="ed-body"><aside id="lista"></aside><main id="form"></main></div></div>`;
   $('#qTitulo').oninput = e => { quiz.config.titulo = e.target.value; guardarLocal(); };
   const form = $('#form');
   form.oninput = e => {
     const el = e.target, it = objActual(); if (!it) return;
+    if (el.dataset.cf) { quiz.config.fondoPres[el.dataset.cf] = el.type === 'range' ? Number(el.value) : el.value; guardarLocal(); return; }
     if (el.dataset.sp) { // panel de formato de la diapositiva
       const obj = el.dataset.scope === 'fondo' ? it.fondo : elSel(); if (!obj) return;
       setRuta(obj, el.dataset.sp, el.type === 'range' || el.type === 'number' ? Number(el.value) : el.value);
@@ -1479,6 +1583,9 @@ function vistaEditor() {
     cldel: el => { objActual().elementos.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
     clcat: el => { objActual().elementos[+el.dataset.i].c = +el.dataset.c; guardarLocal(); renderForm(); },
     ubicar: el => { objActual().ubicar = +el.dataset.i; guardarLocal(); renderForm(); },
+    cfgFondo: el => { quiz.config.fondoPres.tipo = el.dataset.v; if (el.dataset.v === 'imagen' && !FONDOS) cargarFondos().then(renderForm); guardarLocal(); renderForm(); },
+    cfgPreset: el => { Object.assign(quiz.config.fondoPres, { tipo: 'degradado', colores: COMBINACIONES[+el.dataset.i].c.slice() }); guardarLocal(); renderForm(); },
+    cfgGal: el => { Object.assign(quiz.config.fondoPres, { tipo: 'imagen', imagen: el.dataset.src }); guardarLocal(); renderForm(); },
     rfadd: () => { objActual().afirmaciones.push({ t: '', v: true }); guardarLocal(); renderForm(); },
     rfdel: el => { objActual().afirmaciones.splice(+el.dataset.i, 1); guardarLocal(); renderForm(); },
     rfv: el => { objActual().afirmaciones[+el.dataset.i].v = el.dataset.v === '1'; guardarLocal(); renderForm(); },
@@ -1489,6 +1596,10 @@ function vistaEditor() {
     vf: el => { objActual().correcta = el.dataset.v === 'true'; guardarLocal(); renderForm(); },
     ...accionesDiapositiva(),
     deshacer: () => moverHistorial(-1), rehacer: () => moverHistorial(1),
+    menuMas: () => { const m = $('#menuMas'); m.hidden = !m.hidden; },
+    vista: () => abrirVistaPrevia(),
+    importar: () => abrirImportar(),
+    tutorial: () => tour('editor'),
     imgfile: () => leerImagen(d => { objActual().imagen = d; guardarLocal(); renderForm(); }),
     imgdel: () => { objActual().imagen = ''; guardarLocal(); renderForm(); },
     pinset: (el, e) => {
@@ -1499,6 +1610,7 @@ function vistaEditor() {
   };
   document.onkeydown = e => {
     const enTexto = ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName) || e.target.isContentEditable;
+    if ($('#capa')) return; // vista previa, importar o tutorial abiertos
     if ((e.ctrlKey || e.metaKey) && !enTexto) {
       const k = e.key.toLowerCase();
       if (k === 'z') { e.preventDefault(); return moverHistorial(e.shiftKey ? 1 : -1); }
@@ -1507,6 +1619,7 @@ function vistaEditor() {
     teclasDiapositiva(e);
   };
   renderLista(); renderForm(); botonesHistorial();
+  autoTour('editor');
 }
 function mover(i, d) { const j = i + d; if (j < 0 || j >= quiz.items.length) return; [quiz.items[i], quiz.items[j]] = [quiz.items[j], quiz.items[i]]; edSel = j; guardarLocal(); renderLista(); renderForm(); }
 function renderLista() {
@@ -1562,6 +1675,8 @@ function renderFormCampos() {
       </select></label></div>
       ${fChk('Mostrar la respuesta correcta en el teléfono', 'mostrarCorrectaTelefono', c.mostrarCorrectaTelefono)}
       ${fChk('Permitir unirse después de comenzar', 'permitirTarde', c.permitirTarde)}
+      <h3 class="sub-cfg">🖼️ Fondo de la presentación</h3>
+      ${editorFondoPres(c.fondoPres)}
       <h3 class="sub-cfg">🎵 Sonido y efectos</h3>
       ${fChk('Efectos de sonido (cuenta regresiva, revelar, podio…)', 'sonidos', c.sonidos)}
       ${fChk('Música de fondo en la sala de espera y en las preguntas', 'musica', c.musica)}
@@ -1697,6 +1812,233 @@ function actualizarPinMark() {
   m.style.left = it.x + '%'; m.style.top = it.y + '%'; m.style.width = (it.radio * 2) + '%';
 }
 
+function editorFondoPres(f) {
+  let h = `<p class="hint">Se ve detrás de las preguntas, la sala de espera y el ranking (las diapositivas usan su propio fondo).</p>
+    <div class="sp-row"><div class="seg">${[['ninguno', 'Ninguno'], ['color', 'Color'], ['degradado', 'Combinar colores'], ['imagen', 'Imagen']].map(([t, n]) => `<button data-a="cfgFondo" data-v="${t}" class="${f.tipo === t ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
+  if (f.tipo === 'color') h += `<div class="sp-row"><label>Color <input type="color" data-cf="color" value="${esc(colorOk(f.color).slice(0, 7))}"></label></div>`;
+  if (f.tipo === 'degradado') h += `<div class="swatches">${COMBINACIONES.map((x, i) => `<button class="sw ancho" title="${x.n}" style="background:linear-gradient(135deg,${x.c.join(',')})" data-a="cfgPreset" data-i="${i}"></button>`).join('')}</div>`;
+  if (f.tipo === 'imagen') {
+    if (!FONDOS) { cargarFondos().then(() => { if ($('#form') && edSel === -1) renderForm(); }); h += '<p class="hint">Cargando galería…</p>'; }
+    else h += FONDOS.length ? `<div class="gal-grid">${FONDOS.map(x => { const src = 'fondos/' + x.archivo; return `<button class="gal ${f.imagen === src ? 'on' : ''}" title="${esc(x.nombre)}" data-a="cfgGal" data-src="${esc(src)}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`; }).join('')}</div>` : '<p class="hint">La galería está vacía.</p>';
+    h += `<div class="sp-row"><label>Oscurecer <input type="range" min="0" max="0.8" step="0.05" data-cf="oscurecer" value="${+f.oscurecer || 0}"></label></div>`;
+  }
+  return h;
+}
+
+/* =================== VISTA PREVIA (iframes con la misma app) =================== */
+let VP = null;
+function abrirVistaPrevia() {
+  const base = location.pathname;
+  VP = { idx: Math.max(0, edSel), fase: 'pregunta', listos: 0 };
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="vp">
+    <div class="vp-bar"><b>${ic('visibility')} Vista previa</b><span class="vp-pos" id="vpPos"></span><span class="sp"></span>
+      <div class="seg" id="vpFase"><button data-a="vpFase" data-v="pregunta" class="on">Pregunta</button><button data-a="vpFase" data-v="revelar">Respuesta</button></div>
+      <button data-a="vpMover" data-d="-1" title="Anterior">${ic('chevron_left')}</button><button data-a="vpMover" data-d="1" title="Siguiente">${ic('chevron_right')}</button>
+      <button data-a="vpTab" class="solo-cel">${ic('smartphone')}</button><button class="pri" data-a="vpCerrar">Cerrar</button></div>
+    <div class="vp-cuerpo" id="vpCuerpo"><div class="vp-pant" id="vpPant"><iframe id="vfHost" src="${base}?vista=host" title="Pantalla"></iframe></div>
+      <div class="vp-tel" id="vpTel"><div class="vp-marco"><iframe id="vfTel" src="${base}?vista=jugador" title="Teléfono"></iframe></div><small>Así lo ve un jugador</small></div></div></div></div>`);
+  Object.assign(ACC, {
+    vpCerrar: cerrarVistaPrevia,
+    vpMover: el => { VP.idx = Math.max(0, Math.min(quiz.items.length - 1, VP.idx + +el.dataset.d)); enviarVistaPrevia(); },
+    vpFase: el => { VP.fase = el.dataset.v; enviarVistaPrevia(); },
+    vpTab: () => $('#vpCuerpo').classList.toggle('ver-tel'),
+  });
+  window.addEventListener('message', alMensajeVista);
+  window.addEventListener('resize', escalarVistaPrevia);
+  VP.teclas = document.onkeydown;
+  document.onkeydown = e => { if (e.key === 'Escape') cerrarVistaPrevia(); else if (e.key === 'ArrowRight') ACC.vpMover({ dataset: { d: 1 } }); else if (e.key === 'ArrowLeft') ACC.vpMover({ dataset: { d: -1 } }); };
+  escalarVistaPrevia(); enviarVistaPrevia();
+}
+function alMensajeVista(e) { if (e.data && e.data.t === 'vista-lista') enviarVistaPrevia(); }
+function escalarVistaPrevia() {
+  const p = $('#vpPant'), t = $('#vpTel'); if (!p) return;
+  const sP = Math.min(p.clientWidth / 1280, (p.clientHeight || 600) / 800), fh = $('#vfHost');
+  fh.style.transform = `scale(${sP})`; fh.style.left = Math.max(0, (p.clientWidth - 1280 * sP) / 2) + 'px';
+  const m = t.querySelector('.vp-marco'), sT = Math.min(1, (t.clientHeight - 40) / 800, (t.clientWidth - 20) / 390);
+  m.style.width = 390 * sT + 20 + 'px'; m.style.height = 800 * sT + 20 + 'px'; $('#vfTel').style.transform = `scale(${sT})`;
+}
+function enviarVistaPrevia() {
+  if (!VP) return;
+  const it = quiz.items[VP.idx], d = { t: 'vista', quiz: JSON.stringify(quiz), idx: VP.idx, fase: VP.fase };
+  $('#vpPos').textContent = `${VP.idx + 1} / ${quiz.items.length} · ${TIPOS[it.tipo].icono} ${etiqueta(it)}`;
+  $('#vpFase').hidden = !esPregunta(it);
+  $('#vpFase').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === VP.fase));
+  ['vfHost', 'vfTel'].forEach(id => { try { $('#' + id).contentWindow.postMessage(d, '*'); } catch (_) { } });
+}
+function cerrarVistaPrevia() {
+  window.removeEventListener('message', alMensajeVista); window.removeEventListener('resize', escalarVistaPrevia);
+  const c = $('#capa'); if (c) c.remove();
+  if (VP) document.onkeydown = VP.teclas;
+  VP = null;
+}
+function vistaPrevia(modo) { // esta página está dentro de un iframe de la vista previa
+  document.documentElement.classList.add('modo-vista');
+  window.addEventListener('message', e => {
+    const d = e.data; if (!d || d.t !== 'vista' || e.source !== window.parent) return;
+    quiz = normalizarQuiz(JSON.parse(d.quiz)); quiz.config.sonidos = false; quiz.config.musica = false;
+    clearInterval(P && P.tInt);
+    if (modo === 'host') {
+      detenerHost(); H = nuevoH(); H.vista = true; H.estado = 'ok'; ACC = {};
+      const it = quiz.items[d.idx];
+      irA(d.idx);
+      if (esPregunta(it) && d.fase === 'revelar') revelar();
+    } else {
+      vistaJugador('12345');
+      Object.assign(P, { pid: 'vista', name: 'Vista previa', avatar: '🐑', score: 0, color: quiz.config.color, titulo: quiz.config.titulo, equipos: [],
+        conn: { open: true, send: m => { if (m.t === 'ans') setTimeout(() => alRecibirJ({ t: 'recibido' }), 250); } } });
+      const it = quiz.items[d.idx];
+      if (!it || !esPregunta(it)) return pantallaJ('👀', 'Mira la pantalla');
+      if (d.fase === 'revelar') return alRecibirJ({ t: 'res', ok: TIPOS[it.tipo].sinPuntaje ? null : true, pts: 950, fr: 1, resp: true, score: 950, rank: 1, n: 12, correcta: TIPOS[it.tipo].sinPuntaje ? null : textoCorrecta(it) });
+      H = nuevoH(); H.idx = d.idx; H.shuf = barajar(it); H.tiles = null;
+      const pl = payload(it, d.idx); H = null;
+      alRecibirJ({ ...pl, restante: pl.tiempo });
+    }
+  });
+  app.innerHTML = '<div class="jug"><div class="cuerpo"><h2>⏳</h2></div></div>';
+  window.parent.postMessage({ t: 'vista-lista' }, '*');
+}
+
+/* =================== IMPORTAR PREGUNTAS =================== */
+const PROMPT_IA = (tema, edad, n) => `Eres un maestro de escuela dominical. Crea ${n} preguntas sobre «${tema}» para niños de ${edad} años, basadas en la Biblia (versión Reina-Valera). Varía la dificultad y usa un lenguaje simple.
+
+Escribe SOLO las preguntas, separadas por una línea en blanco, con este formato exacto:
+
+Para alternativas (4 opciones, marca la correcta con *):
+¿Quién construyó el arca?
+*Noé
+Moisés
+David
+Abraham
+
+Para verdadero o falso (una línea con V o F):
+Jonás fue tragado por un gran pez.
+V
+
+Para escribir la respuesta (una línea que empieza con =):
+¿En qué ciudad nació Jesús?
+=Belén
+
+Para ordenar (los elementos numerados en el orden correcto):
+Ordena lo que Dios creó
+1. La luz
+2. El cielo
+3. La tierra y las plantas
+
+Mezcla los cuatro formatos. No agregues títulos, explicaciones ni numeración a las preguntas.`;
+function parsearImportacion(txt) {
+  const items = [], errores = [];
+  const t = String(txt || '').trim(); if (!t) return { items, errores };
+  if (/^[\[{]/.test(t)) { // JSON (formato del archivo .quiz.json o lista de elementos)
+    try { const j = JSON.parse(t), l = Array.isArray(j) ? j : j.items || []; l.forEach(it => { if (it && TIPOS[it.tipo]) items.push(it); else errores.push(JSON.stringify(it).slice(0, 60)); }); }
+    catch (e) { errores.push('El JSON no es válido'); }
+    return { items: normalizarQuiz({ items }).items, errores };
+  }
+  const lineas = t.split(/\r?\n/);
+  if (lineas.filter(l => l.includes('\t')).length >= Math.max(1, lineas.filter(l => l.trim()).length * 0.6)) { // pegado desde Excel / Google Sheets
+    lineas.forEach((l, k) => {
+      const c = l.split('\t').map(x => x.trim()); if (!c[0]) return;
+      if (k === 0 && /pregunta/i.test(c[0])) return; // encabezado
+      const [preg, ok, ...otras] = c, op = otras.filter(Boolean);
+      if (!ok) return errores.push(preg);
+      if (!op.length && /^(v|f|verdadero|falso)$/i.test(ok)) items.push(Object.assign(nuevoItem('vf'), { pregunta: preg, correcta: /^v/i.test(ok) }));
+      else if (!op.length) items.push(/_{3,}/.test(preg) ? Object.assign(nuevoItem('completar'), { pregunta: 'Completa la frase', frase: preg, aceptadas: ok }) : Object.assign(nuevoItem('completar'), { pregunta: preg, frase: '___', aceptadas: ok }));
+      else { const todas = shuffle([ok, ...op]).slice(0, 6); items.push(Object.assign(nuevoItem('alternativas'), { pregunta: preg, opciones: todas, correctas: [todas.indexOf(ok)] })); }
+    });
+    return { items, errores };
+  }
+  t.split(/\n\s*\n/).forEach(bloque => { // texto: una pregunta por bloque
+    let ls = bloque.split(/\r?\n/).map(x => x.trim()).filter(Boolean); if (!ls.length) return;
+    let tiempo = null; ls = ls.filter(l => { const m = l.match(/^tiempo\s*:\s*(\d+)/i); if (m) { tiempo = +m[1]; return false; } return true; });
+    const preg = ls[0].replace(/^(\d+[.)]\s+|pregunta\s*:\s*)/i, ''), resto = ls.slice(1).map(l => l.replace(/^[-•]\s*|^[a-f][.)]\s+/i, ''));
+    let it = null;
+    if (resto.some(l => l.startsWith('*'))) {
+      const op = resto.map(l => l.replace(/^\*\s*/, '')).slice(0, 6), cor = resto.map((l, i) => l.startsWith('*') ? i : -1).filter(i => i >= 0 && i < 6);
+      it = Object.assign(nuevoItem(cor.length > 1 ? 'multiple' : 'alternativas'), { pregunta: preg, opciones: op, correctas: cor });
+    } else if (resto.length === 1 && /^(v|f|verdadero|falso)$/i.test(resto[0])) it = Object.assign(nuevoItem('vf'), { pregunta: preg, correcta: /^v/i.test(resto[0]) });
+    else if (resto.length === 1 && resto[0].startsWith('=')) {
+      const r = resto[0].slice(1).trim();
+      it = /_{3,}/.test(preg) ? Object.assign(nuevoItem('completar'), { pregunta: 'Completa la frase', frase: preg, aceptadas: r }) : Object.assign(nuevoItem('completar'), { pregunta: preg, frase: '___', aceptadas: r });
+    } else if (resto.length >= 2 && resto.every(l => /^\d+[.)]\s*/.test(l))) it = Object.assign(nuevoItem('ordenar'), { pregunta: preg, elementos: resto.map(l => l.replace(/^\d+[.)]\s*/, '')).slice(0, 8) });
+    else if (resto.length >= 2) it = Object.assign(nuevoItem('encuesta'), { pregunta: preg, opciones: resto.slice(0, 6) });
+    if (it) { if (tiempo) it.tiempo = tiempo; items.push(it); } else errores.push(preg);
+  });
+  return { items, errores };
+}
+function abrirImportar() {
+  document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capa"><div class="card imp">
+    <div class="imp-cab"><h2>${ic('playlist_add')} Importar preguntas</h2><button data-a="impCerrar" aria-label="Cerrar">${ic('close')}</button></div>
+    <p class="muted">Pega preguntas escritas, una tabla copiada de Excel o Google Sheets (Pregunta · Correcta · Otras opciones…), o un JSON.</p>
+    <textarea id="impTxt" rows="10" placeholder="¿Quién construyó el arca?&#10;*Noé&#10;Moisés&#10;David&#10;&#10;Jonás fue tragado por un gran pez.&#10;V"></textarea>
+    <p class="imp-res" id="impRes">Escribe o pega las preguntas para ver cuántas se detectan.</p>
+    <details class="avanzado"><summary>${ic('auto_awesome')} Pedirle las preguntas a una IA (ChatGPT, Gemini, Claude…)</summary>
+      <div class="fila"><label class="fld sm ancho"><span>Tema</span><input id="iaTema" value="la historia de Noé"></label><label class="fld sm"><span>Edad</span><input id="iaEdad" value="8 a 12"></label><label class="fld sm"><span>Cantidad</span><input id="iaN" type="number" value="10" min="1" max="40"></label></div>
+      <button data-a="impPrompt">${ic('content_copy')} Copiar el prompt</button><p class="hint">Pégalo en la IA, copia lo que responda y pégalo arriba.</p></details>
+    <div class="botones"><button data-a="impCerrar">Cancelar</button><button class="pri" data-a="impAgregar" id="impBtn" disabled>Agregar al quiz</button></div></div></div>`);
+  const ta = $('#impTxt');
+  ta.oninput = () => {
+    const r = parsearImportacion(ta.value), c = {}; r.items.forEach(it => c[it.tipo] = (c[it.tipo] || 0) + 1);
+    $('#impRes').innerHTML = r.items.length ? `✅ ${r.items.length} pregunta${r.items.length > 1 ? 's' : ''}: ${Object.entries(c).map(([k, n]) => `${n} ${TIPOS[k].nombre.toLowerCase()}`).join(', ')}${r.errores.length ? `<br><span class="aviso">⚠️ No se entendieron ${r.errores.length}: ${esc(r.errores.slice(0, 3).join(' · '))}</span>` : ''}` : r.errores.length ? '<span class="aviso">⚠️ No se detectaron preguntas. Revisa el formato.</span>' : 'Escribe o pega las preguntas para ver cuántas se detectan.';
+    $('#impBtn').disabled = !r.items.length; $('#impBtn').textContent = r.items.length ? `Agregar ${r.items.length} al quiz` : 'Agregar al quiz';
+  };
+  ta.focus();
+  Object.assign(ACC, {
+    impCerrar: () => $('#capa').remove(),
+    impPrompt: () => { const txt = PROMPT_IA($('#iaTema').value || 'la Biblia', $('#iaEdad').value || '8 a 12', +$('#iaN').value || 10); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => aviso('📋 Prompt copiado')).catch(() => { ta.value = txt; aviso('Copia el texto del cuadro'); }); },
+    impAgregar: () => {
+      const r = parsearImportacion(ta.value); if (!r.items.length) return;
+      quiz.items.push(...r.items); edSel = quiz.items.length - r.items.length; guardarLocal();
+      $('#capa').remove(); renderLista(); renderForm(); aviso(`✅ Se agregaron ${r.items.length} preguntas`);
+    },
+  });
+}
+
+/* =================== TUTORIAL =================== */
+const TOURS = {
+  inicio: [
+    { sel: '.qcard', t: 'Tu quiz', d: 'Aquí está el quiz que estás preparando. Puedes tener varios: aparecen abajo en «Mis quizzes».' },
+    { sel: '.qcard [data-a=presentar]', t: 'Presentar', d: 'Abre la sala en el proyector. Los niños escanean el QR o escriben el código en su teléfono.' },
+    { sel: '.qcard [data-a=editar]', t: 'Editar', d: 'Crea diapositivas tipo PowerPoint y 28 tipos de pregunta.' },
+    { sel: '.fila2.small', t: 'Archivos', d: 'Descarga el quiz como archivo para guardarlo o pasarlo a otro computador. «Cargar ejemplo» trae un quiz con todos los tipos de pregunta.' },
+    { sel: '.misq', t: 'Mis quizzes', d: 'Todos tus quizzes guardados en este navegador. Puedes abrirlos, duplicarlos o eliminarlos.' },
+    { sel: '.jcard', t: 'Para los jugadores', d: 'Si alguien abre la app en su teléfono, puede entrar desde aquí con el código de la pantalla.' },
+    { sel: '[data-a=tutorial]', t: '¿Dudas?', d: 'Toca este botón cuando quieras volver a ver el tutorial.' },
+  ],
+  editor: [
+    { sel: '#lista', t: 'Tu presentación', d: 'Diapositivas y preguntas en orden. Toca una para editarla; con ↑ ↓ cambias el orden.' },
+    { sel: '.add', t: 'Agregar', d: 'Elige el tipo de diapositiva o pregunta. Se agrega después de la seleccionada.' },
+    { sel: '#form', t: 'Editar', d: 'Aquí cambias el texto, las opciones, el tiempo y el puntaje. En las diapositivas puedes mover y escribir sobre el lienzo, como en PowerPoint.' },
+    { sel: '#bUndo', t: 'Deshacer', d: 'Si te equivocas, deshaz (Ctrl+Z) o rehaz (Ctrl+Y). Todo se guarda solo.' },
+    { sel: '.bar [data-a=vista]', t: 'Vista previa', d: 'Mira cómo se verá en la pantalla grande y en el teléfono de los niños.' },
+    { sel: '.bar [data-a=importar]', t: 'Importar', d: 'Pega muchas preguntas de una vez, desde un texto, una planilla o lo que te dé una IA.' },
+    { sel: '.bar [data-a=guardar]', t: 'Guardar archivo', d: 'Descarga el quiz como archivo .json para tener una copia o abrirlo en otro computador.' },
+    { sel: '.bar [data-a=presentar]', t: '¡A jugar!', d: 'Cuando esté listo, presenta. Durante el juego: P pausa, + agrega tiempo, M silencia y puedes usar tu celular como control remoto.' },
+  ],
+};
+function autoTour(n) { // la primera vez que se abre cada pantalla
+  let visto = true; try { visto = localStorage.getItem('quiziglesia.tour.' + n) === '1' || navigator.webdriver; } catch (_) { }
+  if (!visto) setTimeout(() => { if (!$('#capa')) tour(n); }, 700);
+}
+function tour(n) {
+  const pasos = TOURS[n].filter(p => { const el = $(p.sel); return el && el.getClientRects().length; });
+  if (!pasos.length) return;
+  let k = 0; const prev = document.onkeydown;
+  document.body.insertAdjacentHTML('beforeend', '<div class="capa tour" id="capa"><div class="foco" id="foco"></div><div class="card globo" id="globo"></div></div>');
+  const fin = () => { try { localStorage.setItem('quiziglesia.tour.' + n, '1'); } catch (_) { } $('#capa')?.remove(); window.removeEventListener('resize', pinta); document.onkeydown = prev; };
+  const pinta = () => {
+    const p = pasos[k], el = $(p.sel); if (!el) return fin();
+    el.scrollIntoView({ block: 'nearest' });
+    const r = el.getBoundingClientRect(), f = $('#foco'), g = $('#globo'), m = 6;
+    Object.assign(f.style, { left: r.left - m + 'px', top: r.top - m + 'px', width: r.width + m * 2 + 'px', height: Math.min(r.height, innerHeight - 20) + m * 2 + 'px' });
+    g.innerHTML = `<small>${k + 1} de ${pasos.length}</small><h3>${p.t}</h3><p>${p.d}</p><div class="botones"><button data-a="tSalir">Saltar</button>${k ? '<button data-a="tAnt">Atrás</button>' : ''}<button class="pri" data-a="tSig">${k === pasos.length - 1 ? '¡Listo!' : 'Siguiente'}</button></div>`;
+    const gw = Math.min(340, innerWidth - 24), gh = g.offsetHeight || 200;
+    g.style.width = gw + 'px'; g.style.left = Math.max(12, Math.min(innerWidth - gw - 12, r.left)) + 'px';
+    g.style.top = (r.bottom + gh + 24 < innerHeight ? r.bottom + 14 : r.top - gh - 24 > 0 ? r.top - 14 - gh : innerHeight - gh - 12) + 'px'; // debajo, encima o abajo de la pantalla
+  };
+  Object.assign(ACC, { tSig: () => { if (++k >= pasos.length) fin(); else pinta(); }, tAnt: () => { k = Math.max(0, k - 1); pinta(); }, tSalir: fin });
+  document.onkeydown = e => { if (e.key === 'Escape') fin(); else if (e.key === 'ArrowRight' || e.key === 'Enter') ACC.tSig(); else if (e.key === 'ArrowLeft') ACC.tAnt(); };
+  window.addEventListener('resize', pinta); pinta();
+}
+
 /* =================== PRESENTAR (pantalla principal) =================== */
 let H = null;
 function detenerHost() { SND.musicaParar(0.2); if (H && H.audio) H.audio.pause(); if (H) { clearInterval(H.timer); clearInterval(H.latido); try { H.peer && H.peer.destroy(); } catch (e) { } H = null; } }
@@ -1707,12 +2049,16 @@ function latidoHost() {
   difundir({ t: 'ping' });
   if (cambio) { if (H.fase === 'lobby') renderHost(); else actualizarContador(); }
 }
+function nuevoH() {
+  return { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(),
+    ocultas: new Set(), token: nid() + nid(), remotos: new Set(), modal: null, prog: {}, cola: [], rNo: new Set(), muroOk: new Set() };
+}
 function vistaPresentar() {
   if (!quiz.items.length) { alert('El quiz está vacío.'); return; }
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost();
-  H = { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(), ocultas: new Set(), token: nid() + nid(), remotos: new Set(), modal: null };
+  H = nuevoH();
   iniciarPeerHost();
   SND.musicaIniciar('lobby');
   H.latido = setInterval(latidoHost, 5000);
@@ -2037,7 +2383,8 @@ function renderHost() {
   const clave = H.fase === 'revelar' ? 'pregunta:' + H.idx : H.fase + ':' + H.idx; // la transición se ve solo al cambiar de pantalla
   const it0 = quiz.items[H.idx], trans = clave !== H.ultClave ? ((it0 && it0.tipo === 'diapositiva' && it0.transicion) || quiz.config.transicion || 'ninguna') : '';
   H.ultClave = clave;
-  app.innerHTML = `<div class="host" style="--c:${esc(quiz.config.color)}">
+  const fp = quiz.config.fondoPres, conFondo = fp && fp.tipo !== 'ninguno' && H.fase !== 'slide';
+  app.innerHTML = `<div class="host${conFondo ? ' con-fondo' : ''}${H.vista ? ' en-vista' : ''}" style="--c:${esc(quiz.config.color)};${conFondo ? esc(cssRelleno(fp)) : ''}">
     <header class="top"><div class="top-in"><div class="marca"><div class="logo">${ic('church', 'fill')}</div><div><b>${esc(quiz.config.titulo)}</b><small>${sub}</small></div></div>
       <div class="pills"><span class="badge cyan"><span class="dot"></span>Sala ${H.code}</span>
         <span class="badge ind">${ic('group')}<span id="nResp">${enPreg ? `${Object.keys(H.resp).length} / ${conectados().length} respuestas` : `${conectados().length} jugadores`}</span></span>

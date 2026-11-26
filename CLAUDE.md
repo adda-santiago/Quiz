@@ -45,6 +45,12 @@ App web tipo Kahoot para la iglesia, pensada para niños y adolescentes. Combina
 - Durante la pregunta: pausar (P, congela también los teléfonos), +10 s (+), saltar sin puntaje. Tiempo con `tiempoH()` / `transcurrido()` / `restanteH()`. ← vuelve a la diapositiva anterior (solo diapositivas).
 - Control remoto: `?remoto=CODIGO&k=TOKEN` (QR en el modal del host, botón "Nuevo enlace" invalida los anteriores). El host manda `rstate` y recibe `rcmd`.
 - Transiciones entre pantallas (config `transicion`, o por diapositiva `it.transicion`): fundido, deslizar, zoom, subir. Animaciones de entrada por elemento (`el.anim`, `el.retraso`). El teléfono vibra al recibir el resultado.
+- "Mis quizzes": cada quiz tiene `id`; se guarda en IDB como `q:<id>` + índice `indice` (`INDICE`, `guardarEnIndice`, `cambiarQuiz`). Lista en el Inicio (abrir, duplicar, eliminar). "Quiz en blanco" y "Cargar ejemplo" crean quizzes nuevos sin borrar el actual.
+- Vista previa en el editor: dos iframes de la misma app (`?vista=host` y `?vista=jugador`) que reciben el quiz por `postMessage` (`vistaPrevia()`), con navegación y fase pregunta/respuesta.
+- Importar preguntas (`parsearImportacion`): texto (alternativas con *, V/F, =respuesta, lista numerada para ordenar, varias * → marca todas), tabla pegada de Excel/Sheets (Pregunta · Correcta · Otras) o JSON. `PROMPT_IA()` genera el prompt para pedírselas a una IA.
+- Fondo de la presentación (`config.fondoPres`): color, degradado o imagen de la galería detrás de preguntas, sala de espera y ranking (el contenido va sobre un panel claro).
+- Tutorial guiado (`TOURS`, `tour()`): Inicio y Editor, se abre solo la primera vez (no en navegadores automatizados) y con el botón ❓.
+- Editor en teléfono: barra con ←, deshacer, rehacer, vista previa, presentar y menú ⋮ (guardar, abrir, importar, tutorial); el título va en una segunda fila.
 - Host: lobby con QR, sacar jugadores, ranking cada N preguntas, podio final, exportar resultados CSV, modo solo pantalla si no hay conexión.
 - Jugador: nombre + avatar emoji, reconexión conservando puntaje (pid en localStorage).
 
