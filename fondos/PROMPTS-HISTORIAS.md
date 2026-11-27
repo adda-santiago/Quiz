@@ -30,6 +30,8 @@ necesarias para contarla de principio a fin, como láminas de una clase.
 
 ## 1. La creación (Génesis 1–2) · `creacion`
 
+✅ **Hecha**: las 16 láminas están en la galería (`creacion-01.jpg` … `creacion-16.jpg`; la 11, 12 y 13 también aparecen en «Adán y Eva en el Edén»).
+
 **Personajes**
 - Dios: solo luz dorada radiante (nunca una persona).
 - Adán: hombre joven de piel morena y cabello oscuro corto y rizado.

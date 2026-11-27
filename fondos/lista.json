@@ -547,6 +547,153 @@
    "nombre": "Despedida",
    "tipo": "fondo",
    "categoria": "celebracion"
+  },
+  {
+   "archivo": "creacion-01.jpg",
+   "mini": "mini/creacion-01.jpg",
+   "nombre": "Al principio: oscuridad y aguas",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-02.jpg",
+   "mini": "mini/creacion-02.jpg",
+   "nombre": "Día 1: «Sea la luz»",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-03.jpg",
+   "mini": "mini/creacion-03.jpg",
+   "nombre": "Día 2: el cielo separa las aguas",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-04.jpg",
+   "mini": "mini/creacion-04.jpg",
+   "nombre": "Día 3: aparece la tierra seca",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-05.jpg",
+   "mini": "mini/creacion-05.jpg",
+   "nombre": "Día 3: plantas y árboles con fruto",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-06.jpg",
+   "mini": "mini/creacion-06.jpg",
+   "nombre": "Día 4: sol, luna y estrellas",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-07.jpg",
+   "mini": "mini/creacion-07.jpg",
+   "nombre": "Día 5: los animales del mar",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-08.jpg",
+   "mini": "mini/creacion-08.jpg",
+   "nombre": "Día 5: las aves del cielo",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-09.jpg",
+   "mini": "mini/creacion-09.jpg",
+   "nombre": "Día 6: los animales de la tierra",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-10.jpg",
+   "mini": "mini/creacion-10.jpg",
+   "nombre": "Día 6: Dios forma al hombre",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-11.jpg",
+   "mini": "mini/creacion-11.jpg",
+   "nombre": "Adán en el jardín del Edén",
+   "tipo": "historia",
+   "historias": [
+    "creacion",
+    "eden"
+   ]
+  },
+  {
+   "archivo": "creacion-12.jpg",
+   "mini": "mini/creacion-12.jpg",
+   "nombre": "Adán pone nombre a los animales",
+   "tipo": "historia",
+   "historias": [
+    "creacion",
+    "eden"
+   ]
+  },
+  {
+   "archivo": "creacion-13.jpg",
+   "mini": "mini/creacion-13.jpg",
+   "nombre": "Adán y Eva: la primera familia",
+   "tipo": "historia",
+   "historias": [
+    "creacion",
+    "eden"
+   ]
+  },
+  {
+   "archivo": "creacion-14.jpg",
+   "mini": "mini/creacion-14.jpg",
+   "nombre": "«Todo era bueno en gran manera»",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-15.jpg",
+   "mini": "mini/creacion-15.jpg",
+   "nombre": "Día 7: Dios descansa",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "creacion-16.jpg",
+   "mini": "mini/creacion-16.jpg",
+   "nombre": "Repaso: los siete días",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
   }
  ]
 }

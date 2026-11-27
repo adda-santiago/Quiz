@@ -55,8 +55,8 @@ Para agregar una historia o categoría nueva, se suma al catálogo (`historias` 
 
 | id | Historia | Pasaje | Imágenes |
 |---|---|---|---|
-| `creacion` | La creación | Génesis 1–2 | 1 |
-| `eden` | Adán y Eva en el Edén | Génesis 2–3 | 1 |
+| `creacion` | La creación | Génesis 1–2 | 17 |
+| `eden` | Adán y Eva en el Edén | Génesis 2–3 | 4 |
 | `cain-abel` | Caín y Abel | Génesis 4 | — |
 | `noe` | Noé y el arca | Génesis 6–9 | 1 |
 | `babel` | La torre de Babel | Génesis 11 | — |
@@ -119,7 +119,9 @@ Para agregar una historia o categoría nueva, se suma al catálogo (`historias` 
 | `pablo-conversion` | La conversión de Pablo | Hechos 9 | — |
 | `pablo-viajes` | Los viajes y el naufragio de Pablo | Hechos 13–28 | — |
 
-### Las 20 imágenes actuales
+### Los 20 fondos originales
+
+Las láminas por historia (`creacion-01.jpg` …) están detalladas en `PROMPTS-HISTORIAS.md`.
 
 | Archivo | Nombre | Tipo | Historias |
 |---|---|---|---|
