@@ -13,6 +13,9 @@ Esta carpeta guarda los fondos que aparecen en la **galería** del editor de dia
 
 Los 20 fondos actuales (`fondo-01.jpg` … `fondo-20.jpg`) corresponden a los prompts 01 a 20 de abajo.
 
+> Las imágenes **por historia bíblica** (láminas para contar cada historia) tienen sus propios prompts en
+> [`PROMPTS-HISTORIAS.md`](PROMPTS-HISTORIAS.md).
+
 ## Clasificación (`lista.json`)
 
 La galería del editor tiene filtros: **Todas · Fondos · Historias**. Con «Fondos» se elige una categoría
