@@ -1,102 +1,552 @@
-[
- {
-  "archivo": "fondo-01.jpg",
-  "mini": "mini/fondo-01.jpg",
-  "nombre": "La creación"
+{
+ "version": 2,
+ "tipos": {
+  "fondo": "Fondos",
+  "historia": "Historias bíblicas"
  },
- {
-  "archivo": "fondo-02.jpg",
-  "mini": "mini/fondo-02.jpg",
-  "nombre": "El jardín del Edén"
- },
- {
-  "archivo": "fondo-03.jpg",
-  "mini": "mini/fondo-03.jpg",
-  "nombre": "El arca y el arcoíris"
- },
- {
-  "archivo": "fondo-04.jpg",
-  "mini": "mini/fondo-04.jpg",
-  "nombre": "El mar Rojo abierto"
- },
- {
-  "archivo": "fondo-05.jpg",
-  "mini": "mini/fondo-05.jpg",
-  "nombre": "Cielo estrellado del desierto"
- },
- {
-  "archivo": "fondo-06.jpg",
-  "mini": "mini/fondo-06.jpg",
-  "nombre": "Monte Sinaí al amanecer"
- },
- {
-  "archivo": "fondo-07.jpg",
-  "mini": "mini/fondo-07.jpg",
-  "nombre": "Jerusalén antigua"
- },
- {
-  "archivo": "fondo-08.jpg",
-  "mini": "mini/fondo-08.jpg",
-  "nombre": "Belén y la estrella"
- },
- {
-  "archivo": "fondo-09.jpg",
-  "mini": "mini/fondo-09.jpg",
-  "nombre": "El mar de Galilea"
- },
- {
-  "archivo": "fondo-10.jpg",
-  "mini": "mini/fondo-10.jpg",
-  "nombre": "El buen pastor"
- },
- {
-  "archivo": "fondo-11.jpg",
-  "mini": "mini/fondo-11.jpg",
-  "nombre": "La tumba vacía"
- },
- {
-  "archivo": "fondo-12.jpg",
-  "mini": "mini/fondo-12.jpg",
-  "nombre": "El sembrador"
- },
- {
-  "archivo": "fondo-13.jpg",
-  "mini": "mini/fondo-13.jpg",
-  "nombre": "Pergamino y lámpara"
- },
- {
-  "archivo": "fondo-14.jpg",
-  "mini": "mini/fondo-14.jpg",
-  "nombre": "Rayos de luz"
- },
- {
-  "archivo": "fondo-15.jpg",
-  "mini": "mini/fondo-15.jpg",
-  "nombre": "Noche de oración"
- },
- {
-  "archivo": "fondo-16.jpg",
-  "mini": "mini/fondo-16.jpg",
-  "nombre": "Ciudad sobre el monte"
- },
- {
-  "archivo": "fondo-17.jpg",
-  "mini": "mini/fondo-17.jpg",
-  "nombre": "Portada del quiz"
- },
- {
-  "archivo": "fondo-18.jpg",
-  "mini": "mini/fondo-18.jpg",
-  "nombre": "Ronda de preguntas"
- },
- {
-  "archivo": "fondo-19.jpg",
-  "mini": "mini/fondo-19.jpg",
-  "nombre": "Celebración"
- },
- {
-  "archivo": "fondo-20.jpg",
-  "mini": "mini/fondo-20.jpg",
-  "nombre": "Despedida"
- }
-]
+ "categoriasFondo": [
+  {
+   "id": "portada",
+   "nombre": "Portadas y títulos"
+  },
+  {
+   "id": "preguntas",
+   "nombre": "Rondas de preguntas"
+  },
+  {
+   "id": "celebracion",
+   "nombre": "Celebración y despedida"
+  },
+  {
+   "id": "adoracion",
+   "nombre": "Adoración, oración y Palabra"
+  },
+  {
+   "id": "lugares",
+   "nombre": "Lugares y paisajes"
+  }
+ ],
+ "historias": [
+  {
+   "id": "creacion",
+   "nombre": "La creación",
+   "ref": "Génesis 1–2",
+   "testamento": "AT"
+  },
+  {
+   "id": "eden",
+   "nombre": "Adán y Eva en el Edén",
+   "ref": "Génesis 2–3",
+   "testamento": "AT"
+  },
+  {
+   "id": "cain-abel",
+   "nombre": "Caín y Abel",
+   "ref": "Génesis 4",
+   "testamento": "AT"
+  },
+  {
+   "id": "noe",
+   "nombre": "Noé y el arca",
+   "ref": "Génesis 6–9",
+   "testamento": "AT"
+  },
+  {
+   "id": "babel",
+   "nombre": "La torre de Babel",
+   "ref": "Génesis 11",
+   "testamento": "AT"
+  },
+  {
+   "id": "abraham",
+   "nombre": "Abraham y la promesa",
+   "ref": "Génesis 12–22",
+   "testamento": "AT"
+  },
+  {
+   "id": "isaac-jacob",
+   "nombre": "Isaac, Jacob y Esaú",
+   "ref": "Génesis 25–33",
+   "testamento": "AT"
+  },
+  {
+   "id": "jose",
+   "nombre": "José y sus hermanos",
+   "ref": "Génesis 37–50",
+   "testamento": "AT"
+  },
+  {
+   "id": "moises-bebe",
+   "nombre": "Moisés en el río",
+   "ref": "Éxodo 2",
+   "testamento": "AT"
+  },
+  {
+   "id": "zarza",
+   "nombre": "La zarza ardiente",
+   "ref": "Éxodo 3–4",
+   "testamento": "AT"
+  },
+  {
+   "id": "plagas",
+   "nombre": "Las plagas de Egipto",
+   "ref": "Éxodo 7–12",
+   "testamento": "AT"
+  },
+  {
+   "id": "mar-rojo",
+   "nombre": "El cruce del mar Rojo",
+   "ref": "Éxodo 14",
+   "testamento": "AT"
+  },
+  {
+   "id": "mana",
+   "nombre": "El maná en el desierto",
+   "ref": "Éxodo 16",
+   "testamento": "AT"
+  },
+  {
+   "id": "diez-mandamientos",
+   "nombre": "Los Diez Mandamientos",
+   "ref": "Éxodo 19–20",
+   "testamento": "AT"
+  },
+  {
+   "id": "jerico",
+   "nombre": "Josué y los muros de Jericó",
+   "ref": "Josué 6",
+   "testamento": "AT"
+  },
+  {
+   "id": "gedeon",
+   "nombre": "Gedeón",
+   "ref": "Jueces 6–7",
+   "testamento": "AT"
+  },
+  {
+   "id": "sanson",
+   "nombre": "Sansón",
+   "ref": "Jueces 13–16",
+   "testamento": "AT"
+  },
+  {
+   "id": "rut",
+   "nombre": "Rut y Noemí",
+   "ref": "Rut 1–4",
+   "testamento": "AT"
+  },
+  {
+   "id": "samuel",
+   "nombre": "El niño Samuel",
+   "ref": "1 Samuel 3",
+   "testamento": "AT"
+  },
+  {
+   "id": "david-goliat",
+   "nombre": "David y Goliat",
+   "ref": "1 Samuel 17",
+   "testamento": "AT"
+  },
+  {
+   "id": "david-rey",
+   "nombre": "David, pastor y rey",
+   "ref": "1 Samuel 16; 2 Samuel",
+   "testamento": "AT"
+  },
+  {
+   "id": "salomon",
+   "nombre": "Salomón y el templo",
+   "ref": "1 Reyes 3–8",
+   "testamento": "AT"
+  },
+  {
+   "id": "elias",
+   "nombre": "Elías en el monte Carmelo",
+   "ref": "1 Reyes 18",
+   "testamento": "AT"
+  },
+  {
+   "id": "naaman",
+   "nombre": "Naamán y Eliseo",
+   "ref": "2 Reyes 5",
+   "testamento": "AT"
+  },
+  {
+   "id": "ester",
+   "nombre": "La reina Ester",
+   "ref": "Ester 1–10",
+   "testamento": "AT"
+  },
+  {
+   "id": "nehemias",
+   "nombre": "Nehemías reconstruye el muro",
+   "ref": "Nehemías 1–6",
+   "testamento": "AT"
+  },
+  {
+   "id": "horno-fuego",
+   "nombre": "El horno de fuego",
+   "ref": "Daniel 3",
+   "testamento": "AT"
+  },
+  {
+   "id": "daniel-leones",
+   "nombre": "Daniel en el foso de los leones",
+   "ref": "Daniel 6",
+   "testamento": "AT"
+  },
+  {
+   "id": "jonas",
+   "nombre": "Jonás y el gran pez",
+   "ref": "Jonás 1–4",
+   "testamento": "AT"
+  },
+  {
+   "id": "anunciacion",
+   "nombre": "El ángel visita a María",
+   "ref": "Lucas 1",
+   "testamento": "NT"
+  },
+  {
+   "id": "nacimiento",
+   "nombre": "El nacimiento de Jesús",
+   "ref": "Lucas 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "pastores",
+   "nombre": "Los pastores y los ángeles",
+   "ref": "Lucas 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "magos",
+   "nombre": "Los sabios de Oriente",
+   "ref": "Mateo 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "nino-templo",
+   "nombre": "Jesús niño en el templo",
+   "ref": "Lucas 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "bautismo",
+   "nombre": "El bautismo de Jesús",
+   "ref": "Mateo 3",
+   "testamento": "NT"
+  },
+  {
+   "id": "pescadores",
+   "nombre": "Jesús llama a los pescadores",
+   "ref": "Lucas 5",
+   "testamento": "NT"
+  },
+  {
+   "id": "bodas-cana",
+   "nombre": "Las bodas de Caná",
+   "ref": "Juan 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "sermon-monte",
+   "nombre": "El sermón del monte",
+   "ref": "Mateo 5–7",
+   "testamento": "NT"
+  },
+  {
+   "id": "tempestad",
+   "nombre": "Jesús calma la tempestad",
+   "ref": "Marcos 4",
+   "testamento": "NT"
+  },
+  {
+   "id": "panes-peces",
+   "nombre": "Los panes y los peces",
+   "ref": "Juan 6",
+   "testamento": "NT"
+  },
+  {
+   "id": "camina-agua",
+   "nombre": "Jesús camina sobre el agua",
+   "ref": "Mateo 14",
+   "testamento": "NT"
+  },
+  {
+   "id": "ciego",
+   "nombre": "Jesús sana a un ciego",
+   "ref": "Juan 9; Marcos 10",
+   "testamento": "NT"
+  },
+  {
+   "id": "ninos",
+   "nombre": "Jesús y los niños",
+   "ref": "Marcos 10",
+   "testamento": "NT"
+  },
+  {
+   "id": "sembrador",
+   "nombre": "La parábola del sembrador",
+   "ref": "Mateo 13",
+   "testamento": "NT"
+  },
+  {
+   "id": "oveja-perdida",
+   "nombre": "El buen pastor y la oveja perdida",
+   "ref": "Lucas 15; Juan 10",
+   "testamento": "NT"
+  },
+  {
+   "id": "hijo-prodigo",
+   "nombre": "El hijo pródigo",
+   "ref": "Lucas 15",
+   "testamento": "NT"
+  },
+  {
+   "id": "buen-samaritano",
+   "nombre": "El buen samaritano",
+   "ref": "Lucas 10",
+   "testamento": "NT"
+  },
+  {
+   "id": "zaqueo",
+   "nombre": "Zaqueo",
+   "ref": "Lucas 19",
+   "testamento": "NT"
+  },
+  {
+   "id": "lazaro",
+   "nombre": "La resurrección de Lázaro",
+   "ref": "Juan 11",
+   "testamento": "NT"
+  },
+  {
+   "id": "entrada-jerusalen",
+   "nombre": "La entrada a Jerusalén",
+   "ref": "Mateo 21",
+   "testamento": "NT"
+  },
+  {
+   "id": "ultima-cena",
+   "nombre": "La última cena",
+   "ref": "Lucas 22",
+   "testamento": "NT"
+  },
+  {
+   "id": "getsemani",
+   "nombre": "Jesús ora en Getsemaní",
+   "ref": "Mateo 26",
+   "testamento": "NT"
+  },
+  {
+   "id": "cruz",
+   "nombre": "La cruz",
+   "ref": "Lucas 23",
+   "testamento": "NT"
+  },
+  {
+   "id": "resurreccion",
+   "nombre": "La resurrección",
+   "ref": "Mateo 28; Lucas 24",
+   "testamento": "NT"
+  },
+  {
+   "id": "ascension",
+   "nombre": "La ascensión",
+   "ref": "Hechos 1",
+   "testamento": "NT"
+  },
+  {
+   "id": "pentecostes",
+   "nombre": "Pentecostés",
+   "ref": "Hechos 2",
+   "testamento": "NT"
+  },
+  {
+   "id": "pablo-conversion",
+   "nombre": "La conversión de Pablo",
+   "ref": "Hechos 9",
+   "testamento": "NT"
+  },
+  {
+   "id": "pablo-viajes",
+   "nombre": "Los viajes y el naufragio de Pablo",
+   "ref": "Hechos 13–28",
+   "testamento": "NT"
+  }
+ ],
+ "imagenes": [
+  {
+   "archivo": "fondo-01.jpg",
+   "mini": "mini/fondo-01.jpg",
+   "nombre": "La creación",
+   "tipo": "historia",
+   "historias": [
+    "creacion"
+   ]
+  },
+  {
+   "archivo": "fondo-02.jpg",
+   "mini": "mini/fondo-02.jpg",
+   "nombre": "El jardín del Edén",
+   "tipo": "historia",
+   "historias": [
+    "eden"
+   ]
+  },
+  {
+   "archivo": "fondo-03.jpg",
+   "mini": "mini/fondo-03.jpg",
+   "nombre": "El arca y el arcoíris",
+   "tipo": "historia",
+   "historias": [
+    "noe"
+   ]
+  },
+  {
+   "archivo": "fondo-04.jpg",
+   "mini": "mini/fondo-04.jpg",
+   "nombre": "El mar Rojo abierto",
+   "tipo": "historia",
+   "historias": [
+    "mar-rojo"
+   ]
+  },
+  {
+   "archivo": "fondo-05.jpg",
+   "mini": "mini/fondo-05.jpg",
+   "nombre": "Cielo estrellado del desierto",
+   "tipo": "historia",
+   "historias": [
+    "abraham"
+   ]
+  },
+  {
+   "archivo": "fondo-06.jpg",
+   "mini": "mini/fondo-06.jpg",
+   "nombre": "Monte Sinaí al amanecer",
+   "tipo": "historia",
+   "historias": [
+    "diez-mandamientos"
+   ]
+  },
+  {
+   "archivo": "fondo-07.jpg",
+   "mini": "mini/fondo-07.jpg",
+   "nombre": "Jerusalén antigua",
+   "tipo": "fondo",
+   "categoria": "lugares",
+   "historias": [
+    "entrada-jerusalen"
+   ]
+  },
+  {
+   "archivo": "fondo-08.jpg",
+   "mini": "mini/fondo-08.jpg",
+   "nombre": "Belén y la estrella",
+   "tipo": "historia",
+   "historias": [
+    "nacimiento",
+    "pastores"
+   ]
+  },
+  {
+   "archivo": "fondo-09.jpg",
+   "mini": "mini/fondo-09.jpg",
+   "nombre": "El mar de Galilea",
+   "tipo": "historia",
+   "historias": [
+    "pescadores",
+    "tempestad",
+    "camina-agua"
+   ]
+  },
+  {
+   "archivo": "fondo-10.jpg",
+   "mini": "mini/fondo-10.jpg",
+   "nombre": "El buen pastor",
+   "tipo": "historia",
+   "historias": [
+    "oveja-perdida",
+    "david-rey"
+   ]
+  },
+  {
+   "archivo": "fondo-11.jpg",
+   "mini": "mini/fondo-11.jpg",
+   "nombre": "La tumba vacía",
+   "tipo": "historia",
+   "historias": [
+    "resurreccion"
+   ]
+  },
+  {
+   "archivo": "fondo-12.jpg",
+   "mini": "mini/fondo-12.jpg",
+   "nombre": "El sembrador",
+   "tipo": "historia",
+   "historias": [
+    "sembrador"
+   ]
+  },
+  {
+   "archivo": "fondo-13.jpg",
+   "mini": "mini/fondo-13.jpg",
+   "nombre": "Pergamino y lámpara",
+   "tipo": "fondo",
+   "categoria": "adoracion"
+  },
+  {
+   "archivo": "fondo-14.jpg",
+   "mini": "mini/fondo-14.jpg",
+   "nombre": "Rayos de luz",
+   "tipo": "fondo",
+   "categoria": "adoracion"
+  },
+  {
+   "archivo": "fondo-15.jpg",
+   "mini": "mini/fondo-15.jpg",
+   "nombre": "Noche de oración",
+   "tipo": "fondo",
+   "categoria": "adoracion"
+  },
+  {
+   "archivo": "fondo-16.jpg",
+   "mini": "mini/fondo-16.jpg",
+   "nombre": "Ciudad sobre el monte",
+   "tipo": "historia",
+   "historias": [
+    "sermon-monte"
+   ]
+  },
+  {
+   "archivo": "fondo-17.jpg",
+   "mini": "mini/fondo-17.jpg",
+   "nombre": "Portada del quiz",
+   "tipo": "fondo",
+   "categoria": "portada"
+  },
+  {
+   "archivo": "fondo-18.jpg",
+   "mini": "mini/fondo-18.jpg",
+   "nombre": "Ronda de preguntas",
+   "tipo": "fondo",
+   "categoria": "preguntas"
+  },
+  {
+   "archivo": "fondo-19.jpg",
+   "mini": "mini/fondo-19.jpg",
+   "nombre": "Celebración",
+   "tipo": "fondo",
+   "categoria": "celebracion"
+  },
+  {
+   "archivo": "fondo-20.jpg",
+   "mini": "mini/fondo-20.jpg",
+   "nombre": "Despedida",
+   "tipo": "fondo",
+   "categoria": "celebracion"
+  }
+ ]
+}

@@ -13,11 +13,133 @@ Esta carpeta guarda los fondos que aparecen en la **galería** del editor de dia
 
 Los 20 fondos actuales (`fondo-01.jpg` … `fondo-20.jpg`) corresponden a los prompts 01 a 20 de abajo.
 
-Formato de cada entrada de `lista.json`:
+## Clasificación (`lista.json`)
+
+La galería del editor tiene filtros: **Todas · Fondos · Historias**. Con «Fondos» se elige una categoría
+y con «Historias» una historia bíblica (agrupadas en Antiguo y Nuevo Testamento; solo aparecen las que
+ya tienen imágenes).
+
+Cada imagen tiene un **tipo**:
+
+- `fondo`: imágenes generales para portadas, rondas, celebración, adoración o lugares. Llevan una `categoria`.
+- `historia`: escenas de una historia bíblica. Llevan `historias`: una o más historias del catálogo
+  (por ejemplo, el mar de Galilea sirve para «Jesús llama a los pescadores» y «Jesús calma la tempestad»).
+
+Un fondo también puede tener `historias` (Jerusalén es un lugar, pero sirve para «La entrada a Jerusalén»):
+aparece en los dos filtros.
 
 ```json
-{ "archivo": "fondo-01.jpg", "mini": "mini/fondo-01.jpg", "nombre": "La creación" }
+{ "archivo": "fondo-09.jpg", "mini": "mini/fondo-09.jpg", "nombre": "El mar de Galilea",
+  "tipo": "historia", "historias": ["pescadores", "tempestad", "camina-agua"] }
+{ "archivo": "fondo-17.jpg", "mini": "mini/fondo-17.jpg", "nombre": "Portada del quiz",
+  "tipo": "fondo", "categoria": "portada" }
 ```
+
+Para agregar una historia o categoría nueva, se suma al catálogo (`historias` o `categoriasFondo`) con un
+`id` corto sin espacios.
+
+### Categorías de fondos
+
+| id | Categoría | Imágenes |
+|---|---|---|
+| `portada` | Portadas y títulos | 1 |
+| `preguntas` | Rondas de preguntas | 1 |
+| `celebracion` | Celebración y despedida | 2 |
+| `adoracion` | Adoración, oración y Palabra | 3 |
+| `lugares` | Lugares y paisajes | 1 |
+
+### Historias bíblicas — Antiguo Testamento
+
+| id | Historia | Pasaje | Imágenes |
+|---|---|---|---|
+| `creacion` | La creación | Génesis 1–2 | 1 |
+| `eden` | Adán y Eva en el Edén | Génesis 2–3 | 1 |
+| `cain-abel` | Caín y Abel | Génesis 4 | — |
+| `noe` | Noé y el arca | Génesis 6–9 | 1 |
+| `babel` | La torre de Babel | Génesis 11 | — |
+| `abraham` | Abraham y la promesa | Génesis 12–22 | 1 |
+| `isaac-jacob` | Isaac, Jacob y Esaú | Génesis 25–33 | — |
+| `jose` | José y sus hermanos | Génesis 37–50 | — |
+| `moises-bebe` | Moisés en el río | Éxodo 2 | — |
+| `zarza` | La zarza ardiente | Éxodo 3–4 | — |
+| `plagas` | Las plagas de Egipto | Éxodo 7–12 | — |
+| `mar-rojo` | El cruce del mar Rojo | Éxodo 14 | 1 |
+| `mana` | El maná en el desierto | Éxodo 16 | — |
+| `diez-mandamientos` | Los Diez Mandamientos | Éxodo 19–20 | 1 |
+| `jerico` | Josué y los muros de Jericó | Josué 6 | — |
+| `gedeon` | Gedeón | Jueces 6–7 | — |
+| `sanson` | Sansón | Jueces 13–16 | — |
+| `rut` | Rut y Noemí | Rut 1–4 | — |
+| `samuel` | El niño Samuel | 1 Samuel 3 | — |
+| `david-goliat` | David y Goliat | 1 Samuel 17 | — |
+| `david-rey` | David, pastor y rey | 1 Samuel 16; 2 Samuel | 1 |
+| `salomon` | Salomón y el templo | 1 Reyes 3–8 | — |
+| `elias` | Elías en el monte Carmelo | 1 Reyes 18 | — |
+| `naaman` | Naamán y Eliseo | 2 Reyes 5 | — |
+| `ester` | La reina Ester | Ester 1–10 | — |
+| `nehemias` | Nehemías reconstruye el muro | Nehemías 1–6 | — |
+| `horno-fuego` | El horno de fuego | Daniel 3 | — |
+| `daniel-leones` | Daniel en el foso de los leones | Daniel 6 | — |
+| `jonas` | Jonás y el gran pez | Jonás 1–4 | — |
+
+### Historias bíblicas — Nuevo Testamento
+
+| id | Historia | Pasaje | Imágenes |
+|---|---|---|---|
+| `anunciacion` | El ángel visita a María | Lucas 1 | — |
+| `nacimiento` | El nacimiento de Jesús | Lucas 2 | 1 |
+| `pastores` | Los pastores y los ángeles | Lucas 2 | 1 |
+| `magos` | Los sabios de Oriente | Mateo 2 | — |
+| `nino-templo` | Jesús niño en el templo | Lucas 2 | — |
+| `bautismo` | El bautismo de Jesús | Mateo 3 | — |
+| `pescadores` | Jesús llama a los pescadores | Lucas 5 | 1 |
+| `bodas-cana` | Las bodas de Caná | Juan 2 | — |
+| `sermon-monte` | El sermón del monte | Mateo 5–7 | 1 |
+| `tempestad` | Jesús calma la tempestad | Marcos 4 | 1 |
+| `panes-peces` | Los panes y los peces | Juan 6 | — |
+| `camina-agua` | Jesús camina sobre el agua | Mateo 14 | 1 |
+| `ciego` | Jesús sana a un ciego | Juan 9; Marcos 10 | — |
+| `ninos` | Jesús y los niños | Marcos 10 | — |
+| `sembrador` | La parábola del sembrador | Mateo 13 | 1 |
+| `oveja-perdida` | El buen pastor y la oveja perdida | Lucas 15; Juan 10 | 1 |
+| `hijo-prodigo` | El hijo pródigo | Lucas 15 | — |
+| `buen-samaritano` | El buen samaritano | Lucas 10 | — |
+| `zaqueo` | Zaqueo | Lucas 19 | — |
+| `lazaro` | La resurrección de Lázaro | Juan 11 | — |
+| `entrada-jerusalen` | La entrada a Jerusalén | Mateo 21 | 1 |
+| `ultima-cena` | La última cena | Lucas 22 | — |
+| `getsemani` | Jesús ora en Getsemaní | Mateo 26 | — |
+| `cruz` | La cruz | Lucas 23 | — |
+| `resurreccion` | La resurrección | Mateo 28; Lucas 24 | 1 |
+| `ascension` | La ascensión | Hechos 1 | — |
+| `pentecostes` | Pentecostés | Hechos 2 | — |
+| `pablo-conversion` | La conversión de Pablo | Hechos 9 | — |
+| `pablo-viajes` | Los viajes y el naufragio de Pablo | Hechos 13–28 | — |
+
+### Las 20 imágenes actuales
+
+| Archivo | Nombre | Tipo | Historias |
+|---|---|---|---|
+| fondo-01.jpg | La creación | Historia | La creación |
+| fondo-02.jpg | El jardín del Edén | Historia | Adán y Eva en el Edén |
+| fondo-03.jpg | El arca y el arcoíris | Historia | Noé y el arca |
+| fondo-04.jpg | El mar Rojo abierto | Historia | El cruce del mar Rojo |
+| fondo-05.jpg | Cielo estrellado del desierto | Historia | Abraham y la promesa |
+| fondo-06.jpg | Monte Sinaí al amanecer | Historia | Los Diez Mandamientos |
+| fondo-07.jpg | Jerusalén antigua | Fondo · Lugares y paisajes | La entrada a Jerusalén |
+| fondo-08.jpg | Belén y la estrella | Historia | El nacimiento de Jesús, Los pastores y los ángeles |
+| fondo-09.jpg | El mar de Galilea | Historia | Jesús llama a los pescadores, Jesús calma la tempestad, Jesús camina sobre el agua |
+| fondo-10.jpg | El buen pastor | Historia | El buen pastor y la oveja perdida, David, pastor y rey |
+| fondo-11.jpg | La tumba vacía | Historia | La resurrección |
+| fondo-12.jpg | El sembrador | Historia | La parábola del sembrador |
+| fondo-13.jpg | Pergamino y lámpara | Fondo · Adoración, oración y Palabra | — |
+| fondo-14.jpg | Rayos de luz | Fondo · Adoración, oración y Palabra | — |
+| fondo-15.jpg | Noche de oración | Fondo · Adoración, oración y Palabra | — |
+| fondo-16.jpg | Ciudad sobre el monte | Historia | El sermón del monte |
+| fondo-17.jpg | Portada del quiz | Fondo · Portadas y títulos | — |
+| fondo-18.jpg | Ronda de preguntas | Fondo · Rondas de preguntas | — |
+| fondo-19.jpg | Celebración | Fondo · Celebración y despedida | — |
+| fondo-20.jpg | Despedida | Fondo · Celebración y despedida | — |
 
 ## Cómo usar los prompts en Google Flow
 

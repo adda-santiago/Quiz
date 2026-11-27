@@ -635,7 +635,15 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .sw.ancho{width:52px}
 .sw:hover{box-shadow:0 0 0 2px var(--c)}
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:6px 0 12px}
-.gal{aspect-ratio:16/9;padding:0;border-radius:10px;background-size:cover;background-position:center;border:2px solid #fff;box-shadow:0 0 0 1px var(--outline-var)}
+.gal{aspect-ratio:16/9;padding:0;border-radius:10px;background-size:cover;background-position:center;border:2px solid #fff;box-shadow:0 0 0 1px var(--outline-var);position:relative;overflow:hidden;align-items:flex-end;justify-content:flex-start}
+.gal span{display:block;width:100%;padding:10px 6px 3px;font-size:.68rem;font-weight:600;color:#fff;text-align:left;background:linear-gradient(transparent,#000a);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity .15s}
+.gal:hover span,.gal.on span{opacity:1}
+.gal-filtro{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 6px}
+.gal-filtro .seg button{font-size:.8rem;padding:.35em .7em}
+.gal-sel{max-width:100%;font-size:.85rem;padding:.4em .6em;border-radius:10px}
+.gal-ref{display:flex;align-items:center;gap:4px;color:var(--on-s-var);font-size:.78rem}
+.gal-ref .ms{font-size:1rem}
+@media (hover:none){.gal span{opacity:1}}
 .gal.on{box-shadow:0 0 0 3px var(--c)}
 .li .mini{width:30px;height:17px;border-radius:4px;flex:none;box-shadow:0 0 0 1px var(--outline-var)}
 @media (max-width:760px){.sp-row input[type=range]{width:110px}.s-bar button{font-size:.8rem;padding:.45em .6em}}
@@ -1097,11 +1105,45 @@ const lienzoHTML = (it, ed) => `<div class="lienzo${ed ? ' ed-lz' : ''}"${ed ? '
 const textoDiapo = it => { const ts = (it.els || []).filter(e => e.t === 'texto' && String(e.texto).trim()), t = ts.find(e => /\p{L}/u.test(e.texto)) || ts[0]; return t ? String(t.texto).split('\n')[0] : ''; };
 
 /* ----- Galería de fondos (carpeta fondos/ del repositorio) ----- */
-let FONDOS = null;
+/* lista.json: { categoriasFondo, historias (catálogo AT/NT), imagenes: [{ archivo, mini, nombre, tipo: 'fondo'|'historia', categoria?, historias? }] }
+   (también acepta el formato antiguo: un arreglo de imágenes sin clasificar). */
+let FONDOS = null, GALCAT = { categoriasFondo: [], historias: [] };
+const GAL = { tipo: 'todos', id: '' }; // filtro de la galería (se recuerda mientras la página está abierta)
 function cargarFondos() {
   if (FONDOS) return Promise.resolve(FONDOS);
-  return fetch('fondos/lista.json', { cache: 'no-cache' }).then(r => r.json()).then(l => (FONDOS = Array.isArray(l) ? l : [])).catch(() => (FONDOS = []));
+  return fetch('fondos/lista.json', { cache: 'no-cache' }).then(r => r.json()).then(l => {
+    if (Array.isArray(l)) return (FONDOS = l);
+    GALCAT = { categoriasFondo: l.categoriasFondo || [], historias: l.historias || [] };
+    return (FONDOS = Array.isArray(l.imagenes) ? l.imagenes : []);
+  }).catch(() => (FONDOS = []));
 }
+const deHistoria = (x, id) => (x.historias || []).includes(id);
+function galeriaHTML(accion, actual) { // filtros (todas / fondos / historias) + miniaturas; accion = data-a de cada miniatura
+  return `<div class="gal-wrap" data-acc="${esc(accion)}" data-actual="${esc(actual || '')}">${galeriaInterior(accion, actual)}</div>`;
+}
+function galeriaInterior(accion, actual) {
+  if (!FONDOS) return '<p class="hint">Cargando galería…</p>';
+  if (!FONDOS.length) return '<p class="hint">La galería está vacía.</p>';
+  const nF = FONDOS.filter(x => x.tipo === 'fondo').length, nH = FONDOS.filter(x => x.tipo === 'historia' || (x.historias || []).length).length;
+  let lista = FONDOS, sel = '';
+  if (GAL.tipo === 'fondo') {
+    const cats = GALCAT.categoriasFondo.map(c => ({ ...c, n: FONDOS.filter(x => x.tipo === 'fondo' && x.categoria === c.id).length })).filter(c => c.n);
+    sel = `<select class="gal-sel"><option value="">Todas las categorías (${nF})</option>${cats.map(c => `<option value="${esc(c.id)}" ${GAL.id === c.id ? 'selected' : ''}>${esc(c.nombre)} (${c.n})</option>`).join('')}</select>`;
+    lista = FONDOS.filter(x => x.tipo === 'fondo' && (!GAL.id || x.categoria === GAL.id));
+  } else if (GAL.tipo === 'historia') {
+    const hs = GALCAT.historias.map(h => ({ ...h, n: FONDOS.filter(x => deHistoria(x, h.id)).length })).filter(h => h.n);
+    const grupo = (t, nom) => { const g = hs.filter(h => h.testamento === t); return g.length ? `<optgroup label="${nom}">${g.map(h => `<option value="${esc(h.id)}" ${GAL.id === h.id ? 'selected' : ''}>${esc(h.nombre)} (${h.n})</option>`).join('')}</optgroup>` : ''; };
+    sel = `<select class="gal-sel"><option value="">Todas las historias (${nH})</option>${grupo('AT', 'Antiguo Testamento')}${grupo('NT', 'Nuevo Testamento')}</select>`;
+    lista = FONDOS.filter(x => GAL.id ? deHistoria(x, GAL.id) : x.tipo === 'historia' || (x.historias || []).length);
+    const h = GALCAT.historias.find(h => h.id === GAL.id); if (h && h.ref) sel += `<small class="gal-ref">${ic('menu_book')} ${esc(h.ref)}</small>`;
+  }
+  const chip = (t, n) => `<button class="${GAL.tipo === t ? 'on' : ''}" data-a="galTipo" data-v="${t}">${n}</button>`;
+  return `<div class="gal-filtro"><div class="seg">${chip('todos', `Todas (${FONDOS.length})`)}${nF ? chip('fondo', `Fondos (${nF})`) : ''}${nH ? chip('historia', `Historias (${nH})`) : ''}</div>${sel}</div>
+    <div class="gal-grid">${lista.map(x => { const src = 'fondos/' + x.archivo;
+      return `<button class="gal ${actual === src ? 'on' : ''}" title="${esc(x.nombre || x.archivo)}" data-a="${esc(accion)}" data-src="${esc(src)}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"><span>${esc(x.nombre || '')}</span></button>`; }).join('') || '<p class="hint">No hay imágenes en este grupo todavía.</p>'}</div>`;
+}
+function refrescarGalerias() { document.querySelectorAll('.gal-wrap').forEach(w => w.innerHTML = galeriaInterior(w.dataset.acc, w.dataset.actual)); }
+document.addEventListener('change', e => { if (e.target.matches('select.gal-sel')) { GAL.id = e.target.value; refrescarGalerias(); } });
 
 /* ----- Editor del lienzo ----- */
 let sSel = null, sEdit = false, sItem = null;
@@ -1219,9 +1261,7 @@ function renderProps() {
       <div class="sp-row"><div class="seg">${[['color', 'Color'], ['degradado', 'Combinar colores'], ['imagen', 'Imagen']].map(([t, n]) => `<button data-a="sRellTipo" data-scope="fondo" data-v="${t}" class="${f.tipo === t ? 'on' : ''}">${n}</button>`).join('')}</div></div>`;
     if (f.tipo === 'imagen') {
       if (!FONDOS) { cargarFondos().then(renderProps); h += '<p class="hint">Cargando galería…</p>'; }
-      else h += FONDOS.length ? `<p class="lbl-sm">Galería de fondos 16:9</p><div class="gal-grid">${FONDOS.map(x => {
-        const src = 'fondos/' + x.archivo; return `<button class="gal ${f.imagen === src ? 'on' : ''}" title="${esc(x.nombre || x.archivo)}" data-a="sGal" data-src="${esc(src)}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`;
-      }).join('')}</div>` : '<p class="hint">La galería de fondos todavía está vacía. Puedes subir tu propia imagen 16:9.</p>';
+      else h += FONDOS.length ? `<p class="lbl-sm">Galería de imágenes 16:9</p>${galeriaHTML('sGal', f.imagen)}` : '<p class="hint">La galería de fondos todavía está vacía. Puedes subir tu propia imagen 16:9.</p>';
       h += `<div class="sp-row"><button data-a="sSubirFondo">${ic('upload')} Subir imagen</button>${f.imagen ? `<button data-a="sQuitarFondo">Quitar imagen</button>` : ''}
         <label>Oscurecer <input type="range" min="0" max="0.8" step="0.05" data-scope="fondo" data-sp="oscurecer" value="${+f.oscurecer || 0}"></label></div>`;
     } else h += editorRelleno('fondo', f, '', false, true);
@@ -1567,8 +1607,8 @@ function elegirImagen(cb, max = 1200) { // subir desde el equipo o elegir de la 
   document.body.insertAdjacentHTML('beforeend', `<div class="capa" id="capaImg"><div class="card imp">
     <div class="imp-cab"><h2>${ic('image')} Elegir imagen</h2><button data-a="imgCerrar" aria-label="Cerrar">${ic('close')}</button></div>
     <button class="pri big" data-a="imgSubir">${ic('upload')} Subir desde este equipo</button>
-    <p class="lbl-sm">O elige una de la galería</p><div class="gal-grid" id="imgGal"><p class="hint">Cargando…</p></div></div></div>`);
-  cargarFondos().then(l => { const g = $('#imgGal'); if (g) g.innerHTML = l.length ? l.map(x => `<button class="gal" data-a="imgGal" data-src="${esc('fondos/' + x.archivo)}" title="${esc(x.nombre || '')}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`).join('') : '<p class="hint">La galería está vacía.</p>'; });
+    <p class="lbl-sm">O elige una de la galería</p><div id="imgGal">${galeriaHTML('imgGal', '')}</div></div></div>`);
+  cargarFondos().then(refrescarGalerias);
   Object.assign(GLOBAL, {
     imgCerrar: () => $('#capaImg')?.remove(),
     imgSubir: () => { $('#capaImg')?.remove(); leerImagen(cb, max); },
@@ -1729,6 +1769,7 @@ function textoCorrecta(it) {
 /* ---------- Ruteo y acciones ---------- */
 let ACC = {};
 const GLOBAL = {}; // acciones disponibles en cualquier pantalla (aviso de cookies)
+GLOBAL.galTipo = el => { GAL.tipo = el.dataset.v; GAL.id = ''; refrescarGalerias(); }; // filtro de la galería de imágenes
 document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el) return; const f = ACC[el.dataset.a] || GLOBAL[el.dataset.a]; if (f) f(el, e); });
 let tourPendiente = null;
 function avisoCookies() {
@@ -2216,7 +2257,7 @@ function editorFondoPres(f) {
   if (f.tipo === 'degradado') h += `<div class="swatches">${COMBINACIONES.map((x, i) => `<button class="sw ancho" title="${x.n}" style="background:linear-gradient(135deg,${x.c.join(',')})" data-a="cfgPreset" data-i="${i}"></button>`).join('')}</div>`;
   if (f.tipo === 'imagen') {
     if (!FONDOS) { cargarFondos().then(() => { if ($('#form') && edSel === -1) renderForm(); }); h += '<p class="hint">Cargando galería…</p>'; }
-    else h += FONDOS.length ? `<div class="gal-grid">${FONDOS.map(x => { const src = 'fondos/' + x.archivo; return `<button class="gal ${f.imagen === src ? 'on' : ''}" title="${esc(x.nombre)}" data-a="cfgGal" data-src="${esc(src)}" style="background-image:url('${urlCss('fondos/' + (x.mini || x.archivo))}')"></button>`; }).join('')}</div>` : '<p class="hint">La galería está vacía.</p>';
+    else h += galeriaHTML('cfgGal', f.imagen);
     h += `<div class="sp-row"><label>Oscurecer <input type="range" min="0" max="0.8" step="0.05" data-cf="oscurecer" value="${+f.oscurecer || 0}"></label></div>`;
   }
   return h;
