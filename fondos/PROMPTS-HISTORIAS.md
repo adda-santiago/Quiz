@@ -117,3 +117,66 @@ Seventh day of creation, the day of rest: a very quiet and peaceful evening over
 ```
 Seven round illustrated circles arranged in a gentle arc on a deep indigo starry background that fills the entire frame, each circle showing one day of creation in order: light and darkness, sky over the waters, land with plants and trees, sun moon and stars, fish and birds, land animals with two tiny human figures seen from behind, and a peaceful resting sunset, connected by a soft golden line, clear and simple icons for children, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
 ```
+
+
+---
+
+## 2. Adán y Eva en el Edén (Génesis 2–3) · `eden`
+
+**Personajes** (los mismos de La creación)
+- Dios: solo luz dorada radiante.
+- Adán: hombre joven de piel morena y cabello oscuro corto y rizado.
+- Eva: mujer joven de piel morena y cabello oscuro largo y ondulado.
+- La serpiente: brillante y colorida, astuta pero no aterradora.
+- Vestimenta: antes de la caída, cubiertos por plantas (eden-01 a 03); después, ropa de hojas de higuera (04 a 06) y túnicas de piel (07 a 10).
+- El fruto: la Biblia no dice que sea una manzana; se muestra como un fruto que brilla.
+
+**eden-01 · Dios les da una sola regla (Génesis 2:15-17)**
+```
+In the garden of Eden, a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair seen from behind and from a distance, standing together in front of a beautiful tree full of glowing fruit in the middle of the garden, their bodies modestly hidden by tall plants and flowers, warm radiant golden light from the sky shining over them as God speaks, many other fruit trees all around, calm and attentive mood, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-02 · La serpiente engaña a Eva (Génesis 3:1-5)**
+```
+In the garden of Eden, a shimmering colorful serpent coiled on a branch of the tree with glowing fruit, sly but not scary, cartoon-friendly, leaning toward a young woman with brown skin and long dark wavy hair seen from the side and a little far away, her body modestly hidden by tall leaves and flowers, she looks up at the fruit with curiosity, the light in the garden slightly dimmer and mysterious, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-03 · Eva come del fruto y le da a Adán (Génesis 3:6)**
+```
+In the garden of Eden, a young woman with brown skin and long dark wavy hair holding a glowing fruit taken from the tree and offering it to a young man with brown skin and short dark curly hair, both seen from the side and from a distance, their bodies modestly hidden by tall plants, the serpent watching from the branches, a few clouds starting to cover the golden light, a quiet moment of a wrong choice, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-04 · Se dan cuenta y se cubren con hojas (Génesis 3:7)**
+```
+In the garden of Eden, a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair now dressed in simple clothes sewn from large fig leaves, seen from behind and from a distance, looking down and sad, a fig tree beside them, the sky turning grey and the colors of the garden less bright, feeling of shame and sadness, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-05 · Se esconden entre los árboles (Génesis 3:8-10)**
+```
+In the garden of Eden in the cool of the evening, a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair wearing simple fig leaf clothes, hiding behind the thick trunks and bushes of the garden, seen from a distance, while a soft warm golden light moves gently through the garden as God calls them, long evening shadows, quiet and tense but not scary, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-06 · Ante Dios, cabizbajos (Génesis 3:11-13)**
+```
+In the garden of Eden, a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair wearing simple fig leaf clothes standing with heads bowed in front of a radiant warm golden light, seen from behind, the serpent slithering away on the ground nearby, the garden quiet and dim, feeling of regret and honesty, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-07 · Dios les hace ropa de pieles (Génesis 3:21)**
+```
+In the garden of Eden, a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair now wearing warm simple tunics made of soft animal skins, seen from a distance and from behind, gentle golden light surrounding them like a caring embrace, showing that God still loves and cares for them, tender and hopeful mood, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-08 · Salen del jardín del Edén (Génesis 3:23)**
+```
+a young man with brown skin and short dark curly hair and a young woman with brown skin and long dark wavy hair wearing simple animal skin tunics, walking hand in hand away from the beautiful glowing garden of Eden behind them, seen from behind on a path that leads into a wide rocky and dry land, sunset sky, sad but hopeful, the garden shining softly in the distance, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-09 · Querubines guardan el camino (Génesis 3:24)**
+```
+The eastern entrance of the garden of Eden guarded by two majestic glowing cherubim angels with great wings made of light, standing calmly on each side of the path, a turning sword of bright flame floating between them, the tree of life shining far inside the garden, majestic and holy, not frightening, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**eden-10 · La vida fuera del Edén y la promesa de Dios (Génesis 3:15-19)**
+```
+Outside the garden, a young man with brown skin and short dark curly hair working the soil with a simple wooden tool and a young woman with brown skin and long dark wavy hair planting seeds beside him, both wearing simple animal skin tunics, seen from a distance, a small green sprout growing in the earth, a bright sunrise breaking through the clouds as a sign of God's promise and hope, hardworking and hopeful mood, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
