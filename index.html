@@ -357,6 +357,8 @@ input[type=color]{padding:3px;height:44px;width:84px}
 .chip.pend button{width:30px;height:30px;padding:0;border-radius:50%}
 .chip.pend .ok{background:var(--success);border-color:var(--success);color:#fff}
 .chip.pend .no{background:var(--error-container);border-color:var(--error-container);color:#93000A}
+.pend-bar.rem .chip.pend .ok{width:auto;padding:0 .9em;border-radius:999px;gap:4px}
+.pend-bar.rem{background:#E0F2FE;border-color:#7DD3FC}
 .tops div[data-a],.nube span[data-a]{cursor:pointer}
 .tops div[data-a]:hover,.nube span[data-a]:hover{text-decoration:line-through}
 .jug .aviso{margin:0;color:var(--error);font-weight:600}
@@ -562,6 +564,13 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .r-timer.poco{background:#BA1A1A}
 .r-timer[hidden]{display:none}
 .r-aviso{margin:0;display:flex;gap:8px;align-items:flex-start}
+.r-pin{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px;max-width:360px;width:100%;text-align:center}
+.r-pin>.ms{font-size:2.6rem;color:var(--c);max-width:none}.r-pin h2{margin:0;font-size:1.5rem}
+.r-pin input{font-family:var(--mono);font-size:2rem;text-align:center;letter-spacing:.3em;max-width:240px}
+.rem-lista{list-style:none;margin:0;padding:0;width:100%;display:flex;flex-direction:column;gap:6px}
+.rem-lista li{display:flex;align-items:center;gap:8px;background:var(--s-low);border-radius:10px;padding:6px 10px;text-align:left}
+.rem-lista li button{margin-left:auto;padding:.3em .7em;font-size:.85rem}
+.rem-info{display:flex;gap:6px;align-items:flex-start;text-align:left;font-size:.85rem}
 .pedir-fs{position:fixed;left:50%;top:86px;transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:8px;background:#180157e6;color:#fff;padding:.7em 1.2em;border-radius:999px;font-weight:600;box-shadow:0 8px 24px #0005;cursor:pointer;animation:anFundido .3s}
 .r-estado{margin:0}
 .r-prev{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#180157;box-shadow:var(--sombra);position:relative}
@@ -1031,6 +1040,14 @@ const I18N = { en: {}, me: {} };
   ['Ir a esta hoja', 'Go to this page', 'Idi na ovu stranu'], ['Fin de la presentación', 'End of the presentation', 'Kraj prezentacije'], ['Tiempo de presentación', 'Presentation time', 'Vrijeme prezentacije'],
   ['Letra más pequeña', 'Smaller text', 'Manja slova'], ['Letra más grande', 'Larger text', 'Veća slova'],
   ['Salir de pantalla completa', 'Exit full screen', 'Izađi iz cijelog ekrana'],
+  ['Dispositivo', 'Device', 'Uređaj'], ['Teléfono Android', 'Android phone', 'Android telefon'], ['Tablet Android', 'Android tablet', 'Android tablet'], ['Computador', 'Computer', 'Računar'],
+  ['«{n}» quiere usar el control remoto', '“{n}” wants to use the remote control', '„{n}“ želi da koristi daljinski upravljač'], ['Permitir', 'Allow', 'Dozvoli'], ['Desconectar', 'Disconnect', 'Prekini vezu'],
+  ['Este QR solo empareja mientras está abierto y se cierra solo al conectarse tu dispositivo. Otros dispositivos necesitarán tu permiso en esta pantalla.', 'This QR code only pairs while it is open and closes by itself when your device connects. Other devices will need your permission on this screen.', 'Ovaj QR kod uparuje samo dok je otvoren i zatvara se sam kad se tvoj uređaj poveže. Drugim uređajima će trebati tvoja dozvola na ovom ekranu.'],
+  ['Además pide el PIN.', 'It also asks for the PIN.', 'Takođe traži PIN.'], ['Desconecta todos los controles y olvida los dispositivos recordados', 'Disconnects all remotes and forgets remembered devices', 'Prekida sve upravljače i zaboravlja zapamćene uređaje'],
+  ['⏳ Esperando que el profesor permita este dispositivo en el computador…', '⏳ Waiting for the teacher to allow this device on the computer…', '⏳ Čeka se da nastavnik dozvoli ovaj uređaj na računaru…'],
+  ['🔒 Demasiados intentos con un PIN incorrecto.', '🔒 Too many attempts with a wrong PIN.', '🔒 Previše pokušaja sa pogrešnim PIN-om.'], ['🔌 El computador desconectó este control remoto.', '🔌 The computer disconnected this remote control.', '🔌 Računar je prekinuo vezu sa ovim upravljačem.'],
+  ['🚫 El computador no permitió este dispositivo.', '🚫 The computer did not allow this device.', '🚫 Računar nije dozvolio ovaj uređaj.'], ['Escribe el PIN del control remoto', 'Enter the remote control PIN', 'Unesi PIN daljinskog upravljača'],
+  ['PIN incorrecto. Inténtalo de nuevo.', 'Wrong PIN. Try again.', 'Pogrešan PIN. Pokušaj ponovo.'], ['Entrar', 'Enter', 'Uđi'],
   ['Haz clic o presiona una tecla para pantalla completa', 'Click or press a key for full screen', 'Klikni ili pritisni taster za cijeli ekran'],
   ['El navegador pide un clic o una tecla en el computador para la pantalla completa. Si usas un presentador inalámbrico, presiona cualquier botón.', 'The browser needs a click or a key press on the computer to go full screen. If you use a wireless presenter, press any button.', 'Pregledač traži klik ili taster na računaru za cijeli ekran. Ako koristiš bežični prezenter, pritisni bilo koje dugme.'],
 ].forEach(([es, en, me]) => { I18N.en[es] = en; I18N.me[es] = me; });
@@ -1094,6 +1111,7 @@ function normalizarQuiz(q) {
    (texto, imagen o forma) con posición y tamaño en % del lienzo. El tamaño de letra `fs`
    está en píxeles de un lienzo de 1280 px de ancho, así se ve igual en el editor y proyectado. */
 const nid = () => Math.random().toString(36).slice(2, 9);
+const tokenSeguro = () => { try { return [...crypto.getRandomValues(new Uint8Array(12))].map(b => b.toString(16).padStart(2, '0')).join(''); } catch (_) { return nid() + nid() + nid(); } };
 const FUENTES = { serif: 'var(--serif)', sans: 'var(--sans)', mono: 'var(--mono)' };
 const PALETA = ['#FFFFFF', '#1C1B20', '#180157', '#2D1E6B', '#006780', '#06B6D4', '#A21CAF', '#7C3AED', '#F59E0B', '#059669', '#BA1A1A', '#FEF3C7'];
 const COMBINACIONES = [ // "combinar colores": degradados listos con la paleta del diseño
@@ -2219,6 +2237,9 @@ function renderFormCampos() {
       ${fChk('Filtrar palabras inapropiadas en nombres y respuestas escritas', 'filtroActivo', c.filtroActivo)}
       ${fTxt('Palabras bloqueadas adicionales (separadas por coma)', 'palabrasBloqueadas', c.palabrasBloqueadas, 'Ej: apodos, palabras que no quieras ver')}
       ${fChk('Aprobar cada nombre antes de que aparezca en pantalla', 'aprobarNombres', c.aprobarNombres)}
+      <h3 class="sub-cfg">🔒 Control remoto del profesor</h3>
+      <p class="muted" style="margin-top:-4px">Un teléfono o tablet nuevo solo puede usar el control remoto si lo apruebas en el computador (o mientras tienes abierto el QR del control remoto). Tus dispositivos quedan recordados en este computador.</p>
+      ${fTxt('PIN del control remoto (opcional, de 4 a 8 números)', 'pinRemoto', c.pinRemoto || '', 'Ej: 2580')}
       <details class="avanzado"><summary>${ic('settings_ethernet')} Conexión (avanzado)</summary>
         <p class="hint">La app ya usa un servidor de respaldo público y gratuito para las redes difíciles. Si en tu iglesia los teléfonos no logran conectarse, puedes crear una cuenta gratis en un servicio TURN (por ejemplo Metered.ca) y pegar aquí sus datos.</p>
         ${fTxt('Servidor TURN (URL, varias separadas por coma)', 'turnUrl', c.turnUrl, 'turn:ejemplo.metered.live:80')}
@@ -3211,7 +3232,7 @@ function latidoHost() {
 }
 function nuevoH() {
   return { code: String(Math.floor(10000 + Math.random() * 90000)), players: {}, idx: -1, fase: 'lobby', resp: {}, t0: 0, timer: null, peer: null, estado: 'conectando', ult: {}, eq: equiposDe(),
-    ocultas: new Set(), token: nid() + nid(), remotos: new Set(), modal: null, prog: {}, cola: [], rNo: new Set(), muroOk: new Set() };
+    ocultas: new Set(), token: tokenSeguro(), remotos: new Set(), remPend: {}, remOk: new Set(), modal: null, prog: {}, cola: [], rNo: new Set(), muroOk: new Set() };
 }
 function vistaPresentar() {
   if (!quiz.items.length) { alert('El quiz está vacío.'); return; }
@@ -3242,8 +3263,12 @@ function vistaPresentar() {
     sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
     qrBtn: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
+    remSi: el => { const c = H.remPend[el.dataset.dev]; if (c) aceptarRemoto(c); },
+    remNo: el => { const c = H.remPend[el.dataset.dev]; if (!c) return; delete H.remPend[el.dataset.dev]; try { c.send({ t: 'rrechazo' }); setTimeout(() => c.close(), 300); } catch (_) { } renderHost(); },
+    remQuitar: el => { const c = [...H.remotos][+el.dataset.k]; if (!c) return; if (c.dev) { H.remOk.delete(c.dev); try { localStorage.setItem('quiziglesia.remConfiables', JSON.stringify(leerConfiables().filter(x => x !== c.dev))); } catch (_) { } }
+      H.remotos.delete(c); try { c.send({ t: 'rrechazo', motivo: 'quitado' }); setTimeout(() => c.close(), 300); } catch (_) { } renderHost(); },
     cerrarModal: () => { H.modal = null; renderHost(); },
-    nuevoEnlace: () => { H.token = nid() + nid(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
+    nuevoEnlace: () => { H.token = tokenSeguro(); H.remOk.clear(); olvidarRemotos(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
     salir: () => { if (confirm(tr('¿Salir de la presentación? Se perderá el puntaje.'))) vistaInicio(); },
     fs: () => alternarPantallaCompleta(),
     kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm(tr('¿Sacar a {n} de la sala?', { n: p.name }))) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
@@ -3334,11 +3359,7 @@ function alRecibirHost(conn, d) {
   if (!H || !d) return;
   if (conn.pid && H.players[conn.pid]) { const p = H.players[conn.pid]; p.visto = Date.now(); if (!p.online && p.conn === conn) { p.online = true; if (H.fase === 'lobby') renderHost(); } }
   if (d.t === 'pong') return;
-  if (d.t === 'remoto') {
-    if (d.k !== H.token) { conn.send({ t: 'rerror' }); return; }
-    conn.esRemoto = true; H.remotos.add(conn); conn.on('close', () => { if (H) { H.remotos.delete(conn); if (H.modal) renderHost(); } });
-    renderHost(); return;
-  }
+  if (d.t === 'remoto') { recibirRemoto(conn, d); return; }
   if (conn.esRemoto) { if (d.t === 'rcmd') comandoRemoto(d.c, d); return; }
   if (d.t === 'join') {
     let p = H.players[d.pid];
@@ -3577,7 +3598,7 @@ function renderHost() {
         ${H.fase !== 'lobby' ? `<button class="ibtn ${H.modal === 'qr' ? 'on' : ''}" data-a="qrBtn" title="${tr('Mostrar QR para unirse')}" aria-label="${tr('Mostrar QR para unirse')}">${ic('qr_code_2')}</button>` : ''}
         <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic(document.fullscreenElement ? 'fullscreen_exit' : 'fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
-    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
+    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${pendRemotos()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
       ${H.fase === 'pregunta' ? `<button data-a="pausa" title="${tr('Pausar (P)')}">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="mas" title="${tr('Agregar 10 segundos (+)')}">+10 s</button><button data-a="saltar" title="${tr('Saltar sin puntaje')}">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}
       ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="${tr('Diapositiva anterior (←)')}">${ic('arrow_back')}</button>` : ''}
@@ -3600,6 +3621,42 @@ function comandoVideo(func) { // API de YouTube por postMessage (enablejsapi=1)
   if (H) { H.vidPlay = func === 'playVideo'; renderHost(); }
 }
 function urlRemoto() { return location.origin + location.pathname + '?remoto=' + H.code + '&k=' + H.token + (IDIOMA !== 'es' ? '&l=' + IDIOMA : ''); }
+/* ----- Seguridad del control remoto ----- *
+   1) enlace con token secreto (cambia con «Nuevo enlace»); 2) PIN opcional (config.pinRemoto, máx. 5 intentos por conexión);
+   3) un dispositivo nuevo queda esperando hasta que el profesor lo aprueba en el computador, salvo mientras el QR del control
+   remoto está abierto (emparejamiento); 4) los dispositivos aprobados se recuerdan en este computador y se reconectan solos. */
+const leerConfiables = () => { try { return JSON.parse(localStorage.getItem('quiziglesia.remConfiables') || '[]'); } catch (_) { return []; } };
+function recordarRemoto(dev) { if (!dev) return; try { const l = leerConfiables().filter(x => x !== dev); l.unshift(dev); localStorage.setItem('quiziglesia.remConfiables', JSON.stringify(l.slice(0, 10))); } catch (_) { } }
+function olvidarRemotos() { try { localStorage.removeItem('quiziglesia.remConfiables'); } catch (_) { } }
+function recibirRemoto(conn, d) {
+  if (d.k !== H.token) { conn.send({ t: 'rerror' }); return; }
+  const pin = String(quiz.config.pinRemoto || '').trim();
+  if (pin) {
+    if (String(d.pin || '') !== pin) {
+      conn.intentos = (conn.intentos || 0) + 1;
+      if (conn.intentos > 5) { conn.send({ t: 'rrechazo', motivo: 'pin' }); setTimeout(() => { try { conn.close(); } catch (_) { } }, 300); return; }
+      conn.send({ t: 'rpin', error: !!d.pin }); return;
+    }
+  }
+  const dev = String(d.dev || '').slice(0, 40), nombre = String(d.nombre || tr('Dispositivo')).slice(0, 30);
+  conn.dev = dev; conn.nombreDisp = nombre;
+  if (H.remOk.has(dev) || leerConfiables().includes(dev) || H.modal === 'remoto') return aceptarRemoto(conn);
+  H.remPend[dev] = conn; conn.send({ t: 'respera' });
+  conn.on('close', () => { if (H && H.remPend[dev] === conn) { delete H.remPend[dev]; renderHost(); } });
+  SND.efecto('unir'); renderHost();
+}
+function aceptarRemoto(conn) {
+  if (conn.dev) { H.remOk.add(conn.dev); recordarRemoto(conn.dev); delete H.remPend[conn.dev]; }
+  conn.esRemoto = true; H.remotos.add(conn);
+  conn.on('close', () => { if (H) { H.remotos.delete(conn); if (H.modal) renderHost(); } });
+  if (H.modal === 'remoto') H.modal = null; // el QR del control remoto se cierra apenas se conecta el profesor
+  renderHost();
+}
+function pendRemotos() {
+  const p = Object.entries(H.remPend); if (!p.length) return '';
+  return `<div class="pend-bar rem">${p.map(([dev, c]) => `<span class="chip pend">${ic('settings_remote')} ${tr('«{n}» quiere usar el control remoto', { n: esc(c.nombreDisp) })}
+    <button class="ok" data-a="remSi" data-dev="${esc(dev)}" title="${tr('Permitir')}">${ic('check')} ${tr('Permitir')}</button><button class="no" data-a="remNo" data-dev="${esc(dev)}" title="${tr('Rechazar')}">${ic('close')}</button></span>`).join('')}</div>`;
+}
 function modalRemoto() {
   let qr = '';
   try { const q = qrcode(0, 'M'); q.addData(urlRemoto()); q.make(); qr = q.createSvgTag(5, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
@@ -3608,7 +3665,9 @@ function modalRemoto() {
     <p class="muted">${tr('Escanea este código con <b>tu</b> celular para avanzar, pausar o saltar desde cualquier parte de la sala. No lo dejes a la vista de los jugadores.')}</p>
     <div class="qr">${qr}</div>
     <p class="muted">${H.remotos.size ? `<span class="badge cyan"><span class="dot"></span>${tr('Controles conectados: {n}', { n: H.remotos.size })}</span>` : tr('Ningún control conectado')}</p>
-    <div class="botones"><button data-a="nuevoEnlace">${ic('autorenew')} ${tr('Nuevo enlace')}</button><button class="pri" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
+    ${H.remotos.size ? `<ul class="rem-lista">${[...H.remotos].map((c, k) => `<li>${ic('tablet_android')} ${esc(c.nombreDisp || tr('Dispositivo'))}<button data-a="remQuitar" data-k="${k}">${tr('Desconectar')}</button></li>`).join('')}</ul>` : ''}
+    <p class="muted rem-info">${ic('lock')} ${tr('Este QR solo empareja mientras está abierto y se cierra solo al conectarse tu dispositivo. Otros dispositivos necesitarán tu permiso en esta pantalla.')}${String(quiz.config.pinRemoto || '').trim() ? ' ' + tr('Además pide el PIN.') : ''}</p>
+    <div class="botones"><button data-a="nuevoEnlace" title="${tr('Desconecta todos los controles y olvida los dispositivos recordados')}">${ic('autorenew')} ${tr('Nuevo enlace')}</button><button class="pri" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
 }
 const itemLigero = it => { // para la vista previa del control remoto (sin imágenes enormes)
   if (!it) return null; const j = JSON.stringify(it);
@@ -3909,12 +3968,17 @@ function vistaRemoto(code, k) {
   document.title = tr('Control remoto') + ' · Quiz Iglesia';
   let zoom = 1.15; try { zoom = +localStorage.getItem('quiziglesia.notasZoom') || 1.15; } catch (_) { }
   R = { code, k, st: null, items: [], prev: {}, zoom };
+  let dev = ''; try { dev = localStorage.getItem('quiziglesia.remDev') || ''; if (!dev) { dev = tokenSeguro(); localStorage.setItem('quiziglesia.remDev', dev); } } catch (_) { dev = tokenSeguro(); }
+  const ua = navigator.userAgent, nombre = /iPad|Macintosh/.test(ua) && navigator.maxTouchPoints > 1 ? 'iPad' : /iPhone/.test(ua) ? 'iPhone' : /Android/.test(ua) ? (/Mobile/.test(ua) ? tr('Teléfono Android') : tr('Tablet Android')) : tr('Computador');
+  R.hola = pin => { if (pin != null) { R.pin = pin; try { sessionStorage.setItem('quiziglesia.remPin', pin); } catch (_) { } } try { R.conn.send({ t: 'remoto', k, dev, nombre, pin: R.pin }); } catch (_) { } };
+  try { R.pin = sessionStorage.getItem('quiziglesia.remPin') || ''; } catch (_) { R.pin = ''; }
   const enviar = (c, extra = {}) => { try { R.conn.send({ t: 'rcmd', c, ...extra }); } catch (_) { } navigator.vibrate?.(30); };
   ACC = {
     rc: el => enviar(el.dataset.c),
     rIr: el => { if (R.st && R.st.fase !== 'pregunta') enviar('ir', { i: +el.dataset.i }); },
     rZoom: el => { R.zoom = Math.min(2.2, Math.max(0.8, R.zoom + (+el.dataset.v))); try { localStorage.setItem('quiziglesia.notasZoom', R.zoom); } catch (_) { } const n = $('#rNotas'); if (n) n.style.fontSize = R.zoom + 'rem'; },
     reintentar: () => location.reload(),
+    rPin: () => { const v = ($('#rPin')?.value || '').trim(); if (v) { pintarRemoto(tr('⏳ Conectando…')); R.hola(v); } },
   };
   setTimeout(avisoCookies, 300);
   pintarRemoto(tr('⏳ Conectando con la pantalla…'));
@@ -3922,12 +3986,15 @@ function vistaRemoto(code, k) {
   R.peer = new Peer(opcionesPeer());
   R.peer.on('open', () => {
     const c = R.peer.connect(PREFIJO + code, { reliable: true }); R.conn = c;
-    c.on('open', () => c.send({ t: 'remoto', k }));
+    c.on('open', () => R.hola());
     c.on('data', d => {
       if (d.t === 'rstate') { R.st = d; R.recibido = Date.now(); pintarRemoto(); }
       else if (d.t === 'rlista') { R.items = d.items || []; R.titulo = d.titulo; R.color = d.color; if (d.idioma) ponerIdioma(d.idioma); }
       else if (d.t === 'rprev') R.prev = d;
       else if (d.t === 'rerror') { R.fin = true; pintarRemoto(tr('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.')); }
+      else if (d.t === 'rpin') pintarPin(d.error);
+      else if (d.t === 'respera') pintarRemoto(tr('⏳ Esperando que el profesor permita este dispositivo en el computador…'), true);
+      else if (d.t === 'rrechazo') { R.fin = true; pintarRemoto(tr(d.motivo === 'pin' ? '🔒 Demasiados intentos con un PIN incorrecto.' : d.motivo === 'quitado' ? '🔌 El computador desconectó este control remoto.' : '🚫 El computador no permitió este dispositivo.')); }
     });
     c.on('close', () => { if (!R.fin) { pintarRemoto(tr('🔄 Reconectando…')); setTimeout(() => location.reload(), 2500); } });
   });
@@ -3952,12 +4019,20 @@ function previaRemoto(it, fase) { // miniatura de la hoja (diapositiva o pregunt
     ${ops.length ? `<ol>${ops.map(x => `<li class="${ok(x.i) ? 'ok' : ''}"><i style="background:${COLORES[x.i % 6]}">${LETRAS[x.i % 6]}</i>${esc(x.o)}</li>`).join('')}</ol>` : ''}
     ${!ops.length && !TIPOS[it.tipo].sinPuntaje && textoCorrecta(it) ? `<small class="r-resp">${ic('check_circle', 'fill')} ${esc(textoCorrecta(it))}</small>` : ''}</div>`;
 }
-function pintarRemoto(msg) {
+function pintarPin(error) {
+  try { sessionStorage.removeItem('quiziglesia.remPin'); } catch (_) { } R.pin = '';
+  app.innerHTML = `<div class="jug remoto"><header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>${tr('Control remoto')}</b><small>${tr('Sala {c}', { c: esc(R.code) })}</small></div></div></header>
+    <div class="cuerpo"><div class="card r-pin">${ic('lock', 'fill')}<h2>${tr('Escribe el PIN del control remoto')}</h2>
+      <input id="rPin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••">
+      ${error ? `<p class="aviso">${tr('PIN incorrecto. Inténtalo de nuevo.')}</p>` : ''}<button class="pri big" data-a="rPin">${tr('Entrar')}</button></div></div></div>`;
+  const i = $('#rPin'); i.focus(); i.onkeydown = e => { if (e.key === 'Enter') ACC.rPin(); };
+}
+function pintarRemoto(msg, sinBoton) {
   const st = R.st, notasAntes = $('#rNotas')?.scrollTop || 0, listaAntes = $('#rLista')?.scrollTop;
   const cab = `<header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>${tr('Control remoto')}</b><small>${tr('Sala {c}', { c: esc(R.code) })}${R.titulo ? ' · ' + esc(R.titulo) : ''}</small></div></div>
     ${st && !msg ? `<div class="r-top"><span class="r-reloj" title="${tr('Tiempo de presentación')}">${ic('schedule')}<span id="rReloj">0:00</span></span>
       <button class="ibtn ${st.silencio ? 'on' : ''}" data-a="rc" data-c="mute" title="${st.silencio ? tr('Activar sonido') : tr('Silenciar')}" aria-label="${st.silencio ? tr('Activar sonido') : tr('Silenciar')}">${ic(st.silencio ? 'volume_off' : 'volume_up')}</button></div>` : ''}</header>`;
-  if (msg || !st) { app.innerHTML = `<div class="jug remoto">${cab}<div class="cuerpo"><h2>${esc(msg || tr('⏳ Conectando…'))}</h2><button data-a="reintentar">${tr('Reintentar')}</button></div></div>`; return; }
+  if (msg || !st) { app.innerHTML = `<div class="jug remoto">${cab}<div class="cuerpo"><h2>${esc(msg || tr('⏳ Conectando…'))}</h2>${sinBoton ? '' : `<button data-a="reintentar">${tr('Reintentar')}</button>`}</div></div>`; return; }
   const cur = R.prev.idx === st.idx ? R.prev.cur : null, sig = R.prev.idx === st.idx ? R.prev.sig : null;
   const enPreg = st.fase === 'pregunta', notas = limpiarNotas(st.notas);
   const b = (c, icono, t, cls = '') => `<button class="${cls}" data-a="rc" data-c="${c}">${ic(icono, cls.includes('on') ? 'fill' : '')} ${t}</button>`;
