@@ -561,6 +561,8 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .r-timer{display:inline-flex;align-items:center;gap:4px;background:var(--c);color:#fff;border-radius:999px;padding:.25em .8em;font-family:var(--mono);font-size:1.1rem}
 .r-timer.poco{background:#BA1A1A}
 .r-timer[hidden]{display:none}
+.r-aviso{margin:0;display:flex;gap:8px;align-items:flex-start}
+.pedir-fs{position:fixed;left:50%;top:86px;transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:8px;background:#180157e6;color:#fff;padding:.7em 1.2em;border-radius:999px;font-weight:600;box-shadow:0 8px 24px #0005;cursor:pointer;animation:anFundido .3s}
 .r-estado{margin:0}
 .r-prev{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#180157;box-shadow:var(--sombra);position:relative}
 .r-prev .lienzo{width:100%;height:100%;border-radius:0;box-shadow:none}
@@ -1028,6 +1030,9 @@ const I18N = { en: {}, me: {} };
   ['Notas', 'Notes', 'Bilješke'], ['Sin notas para esta hoja.', 'No notes for this page.', 'Nema bilješki za ovu stranu.'], ['Todas las hojas', 'All pages', 'Sve strane'],
   ['Ir a esta hoja', 'Go to this page', 'Idi na ovu stranu'], ['Fin de la presentación', 'End of the presentation', 'Kraj prezentacije'], ['Tiempo de presentación', 'Presentation time', 'Vrijeme prezentacije'],
   ['Letra más pequeña', 'Smaller text', 'Manja slova'], ['Letra más grande', 'Larger text', 'Veća slova'],
+  ['Salir de pantalla completa', 'Exit full screen', 'Izađi iz cijelog ekrana'],
+  ['Haz clic o presiona una tecla para pantalla completa', 'Click or press a key for full screen', 'Klikni ili pritisni taster za cijeli ekran'],
+  ['El navegador pide un clic o una tecla en el computador para la pantalla completa. Si usas un presentador inalámbrico, presiona cualquier botón.', 'The browser needs a click or a key press on the computer to go full screen. If you use a wireless presenter, press any button.', 'Pregledač traži klik ili taster na računaru za cijeli ekran. Ako koristiš bežični prezenter, pritisni bilo koje dugme.'],
 ].forEach(([es, en, me]) => { I18N.en[es] = en; I18N.me[es] = me; });
 const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela', 'zoom', 'audio']; // se responden tocando una opción
 const CON_CORRECTAS = ['alternativas', 'emoji', 'revela', 'zoom', 'audio'];
@@ -1041,7 +1046,7 @@ function configDefecto() {
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas', asignarEquipos: 'elegir',
     filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
-    sonidos: true, musica: true, transicion: 'fundido', idioma: 'es',
+    sonidos: true, musica: true, transicion: 'fundido', idioma: 'es', pantallaCompleta: true,
     fondoPres: { tipo: 'ninguno', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.1 } };
 }
 function nuevoItem(tipo) {
@@ -2203,6 +2208,7 @@ function renderFormCampos() {
       <h3 class="sub-cfg">🎵 Sonido y efectos</h3>
       ${fChk('Efectos de sonido (cuenta regresiva, revelar, podio…)', 'sonidos', c.sonidos)}
       ${fChk('Música de fondo en la sala de espera y en las preguntas', 'musica', c.musica)}
+      ${fChk('Abrir la presentación en pantalla completa', 'pantallaCompleta', c.pantallaCompleta)}
       <label class="fld sm ancho"><span>Transición entre pantallas</span><select data-f="transicion">${TRANSICIONES.map(([v, n]) => `<option value="${v}" ${c.transicion === v ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
       <p class="hint">En la presentación: <b>P</b> pausa, <b>+</b> agrega 10 segundos, <b>M</b> silencia, <b>←</b> vuelve a la diapositiva anterior. Cada diapositiva puede tener su propia transición y animaciones de entrada.</p>
       ${fChk('Jugar por equipos (el puntaje se suma por equipo)', 'modoEquipos', c.modoEquipos)}
@@ -3213,6 +3219,7 @@ function vistaPresentar() {
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost(); ponerIdioma(quiz.config.idioma);
+  if (quiz.config.pantallaCompleta !== false && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => { });
   H = nuevoH(); H.inicio = Date.now();
   iniciarPeerHost();
   SND.musicaIniciar('lobby');
@@ -3238,7 +3245,7 @@ function vistaPresentar() {
     cerrarModal: () => { H.modal = null; renderHost(); },
     nuevoEnlace: () => { H.token = nid() + nid(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
     salir: () => { if (confirm(tr('¿Salir de la presentación? Se perderá el puntaje.'))) vistaInicio(); },
-    fs: () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(),
+    fs: () => alternarPantallaCompleta(),
     kick: el => { const p = H.players[el.dataset.pid]; if (p && confirm(tr('¿Sacar a {n} de la sala?', { n: p.name }))) { enviar(p, { t: 'kick' }); delete H.players[p.pid]; renderHost(); } },
     csv: descargarResultados,
     rOk: el => marcarRapido(el.dataset.pid, true), rNo: el => marcarRapido(el.dataset.pid, false),
@@ -3568,14 +3575,14 @@ function renderHost() {
         <button class="ibtn" id="bSonido" data-a="sonido" title="${tr('Sonido (M)')}" aria-label="${tr('Sonido (M)')}">${ic(SND.silencio ? 'volume_off' : 'volume_up')}</button>
         <button class="ibtn ${H.remotos.size ? 'on' : ''}" data-a="remoto" title="${tr('Control remoto desde el celular')}" aria-label="${tr('Control remoto')}">${ic('settings_remote')}</button>
         ${H.fase !== 'lobby' ? `<button class="ibtn ${H.modal === 'qr' ? 'on' : ''}" data-a="qrBtn" title="${tr('Mostrar QR para unirse')}" aria-label="${tr('Mostrar QR para unirse')}">${ic('qr_code_2')}</button>` : ''}
-        <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic('fullscreen')}</button></div></div>
+        <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic(document.fullscreenElement ? 'fullscreen_exit' : 'fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
     <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
       ${H.fase === 'pregunta' ? `<button data-a="pausa" title="${tr('Pausar (P)')}">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="mas" title="${tr('Agregar 10 segundos (+)')}">+10 s</button><button data-a="saltar" title="${tr('Saltar sin puntaje')}">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}
       ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="${tr('Diapositiva anterior (←)')}">${ic('arrow_back')}</button>` : ''}
       ${conVideo ? `<button data-a="vid" title="${tr('Reproducir / pausar video (K)')}">${ic(H.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${H.vidPlay ? tr('Pausar video') : tr('Reproducir video')}</button><button data-a="vidIni" title="${tr('Volver al inicio del video')}">${ic('replay')}</button>` : ''}
-      <button data-a="salir">${tr('Salir')}</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : H.modal === 'qr' ? modalQR() : ''}</div>`;
+      <button data-a="salir">${tr('Salir')}</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : H.modal === 'qr' ? modalQR() : ''}${H.pedirFs && !document.fullscreenElement ? `<div class="pedir-fs">${ic('fullscreen')} ${tr('Haz clic o presiona una tecla para pantalla completa')}</div>` : ''}</div>`;
   const raiz = app.firstElementChild, stageV = raiz && raiz.classList.contains('host') && raiz.querySelector('.stage');
   if (misma && stageV && stageV.querySelector('iframe.yt')) { // actualizar todo menos el escenario, para no recargar el video
     const tmp = document.createElement('div'); tmp.innerHTML = html; const nueva = tmp.firstElementChild;
@@ -3612,7 +3619,7 @@ function actualizarRemotos() {
   const it = quiz.items[H.idx];
   const st = { t: 'rstate', fase: H.fase, sub: H.rsub || '', btn: H.rbtn || tr('Siguiente'), titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0,
     video: H.fase === 'slide' && videosEn(it), vidPlay: !!H.vidPlay, resp: Object.keys(H.resp).length, jug: conectados().length, codigo: H.code,
-    idx: H.idx, total: quiz.items.length, notas: H.fase === 'lobby' || H.fase === 'fin' ? '' : (it && it.notas) || '', silencio: !!SND.silencio, qr: H.modal === 'qr',
+    idx: H.idx, total: quiz.items.length, notas: H.fase === 'lobby' || H.fase === 'fin' ? '' : (it && it.notas) || '', silencio: !!SND.silencio, qr: H.modal === 'qr', fs: !!document.fullscreenElement, pedirFs: !!H.pedirFs,
     restante: H.fase === 'pregunta' ? Math.max(0, tiempoH() * 1000 - transcurrido()) : null, tiempo: H.fase === 'pregunta' ? tiempoH() : null, reloj: Date.now() - (H.inicio || Date.now()) };
   H.remotos.forEach(c => {
     try {
@@ -3629,6 +3636,7 @@ function comandoRemoto(cmd, d = {}) {
     vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo'), vidIni: () => ACC.vidIni && ACC.vidIni(),
     mute: () => { ACC.sonido && ACC.sonido(); actualizarRemotos(); },
     qr: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
+    fs: alternarPantallaCompleta,
     ir: () => { const i = Math.floor(+d.i); if (H.fase !== 'pregunta' && i >= 0 && i < quiz.items.length && i !== H.idx) irA(i); },
   })[cmd]?.();
 }
@@ -3642,6 +3650,20 @@ function porAprobar() { // nombres esperando aprobación (en el lobby y si algui
   return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} ${tr('Por aprobar:')}</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
     <button class="ok" data-a="aprobar" data-pid="${esc(p.pid)}" title="${tr('Aprobar')}">${ic('check')}</button><button class="no" data-a="rechazar" data-pid="${esc(p.pid)}" title="${tr('Rechazar')}">${ic('close')}</button></span>`).join('')}</div>` : '';
 }
+/* Pantalla completa: el navegador solo la permite tras un clic o una tecla en el computador. Si se pide desde el
+   control remoto y no se puede, se espera el próximo clic/tecla (también sirve un presentador inalámbrico) y se avisa en pantalla. */
+function alternarPantallaCompleta() {
+  if (document.fullscreenElement) { H.pedirFs = false; document.exitFullscreen().catch(() => { }); return; }
+  const pr = document.documentElement.requestFullscreen?.();
+  if (!pr) return;
+  pr.then(() => { H.pedirFs = false; renderHost(); }).catch(() => { H.pedirFs = true; renderHost(); });
+}
+['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, e => {
+  if (!(H && H.pedirFs && !document.fullscreenElement)) return;
+  document.documentElement.requestFullscreen?.().then(() => { if (H) { H.pedirFs = false; renderHost(); } }).catch(() => { });
+  if (ev === 'keydown') e.stopImmediatePropagation(); // esa tecla solo activa la pantalla completa (no avanza)
+}, true));
+document.addEventListener('fullscreenchange', () => { if (H && !H.vista) { if (document.fullscreenElement) H.pedirFs = false; renderHost(); } });
 function modalQR() { // para los que llegan tarde
   let qr = '';
   try { const q = qrcode(0, 'M'); q.addData(urlUnirse()); q.make(); qr = q.createSvgTag(8, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
@@ -3944,6 +3966,7 @@ function pintarRemoto(msg) {
       <section class="r-actual">
         <div class="r-sub"><span class="badge mag">${esc(st.sub || '')}</span><span class="r-timer" id="rTimer" hidden>${ic('timer')}<b></b></span></div>
         <div class="r-prev">${previaRemoto(cur, st.fase)}</div>
+        ${st.pedirFs && !st.fs ? `<p class="aviso r-aviso">${ic('touch_app')} ${tr('El navegador pide un clic o una tecla en el computador para la pantalla completa. Si usas un presentador inalámbrico, presiona cualquier botón.')}</p>` : ''}
         <p class="muted r-estado">${enPreg || st.fase === 'revelar' ? tr('{a} / {b} respuestas', { a: st.resp, b: st.jug }) : tr('Jugadores conectados: {n}', { n: st.jug })}${st.pausa ? ` · <b>${tr('en pausa')}</b>` : ''}</p>
         ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : `<h2>${tr('¡Fin del quiz! 🎉')}</h2>`}
         <div class="r-fila">
@@ -3951,6 +3974,7 @@ function pintarRemoto(msg) {
           ${enPreg ? b('pausa', st.pausa ? 'play_arrow' : 'pause', st.pausa ? tr('Seguir') : tr('Pausar')) + `<button data-a="rc" data-c="mas">+10 s</button>` + b('saltar', 'skip_next', tr('Saltar')) : ''}
           ${st.video ? b('vid', st.vidPlay ? 'pause' : 'play_arrow', st.vidPlay ? tr('Pausar video') : tr('Reproducir video'), 'r-vid') + b('vidIni', 'replay', tr('Reiniciar video')) : ''}
           ${b('qr', 'qr_code_2', st.qr ? tr('Ocultar QR') : tr('Mostrar QR'), st.qr ? 'on' : '')}
+          ${b('fs', st.fs ? 'fullscreen_exit' : 'fullscreen', st.fs ? tr('Salir de pantalla completa') : tr('Pantalla completa'), st.fs ? 'on' : '')}
           ${b('mute', st.silencio ? 'volume_off' : 'volume_up', st.silencio ? tr('Activar sonido') : tr('Silenciar'), st.silencio ? 'on' : '')}
         </div>
       </section>
