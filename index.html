@@ -549,9 +549,69 @@ html.modo-vista .host .ctl,html.modo-vista .host .pills button{display:none}
 .modal-in h2{display:flex;align-items:center;gap:10px;margin:0}
 .modal-in .qr svg{width:230px;height:230px;display:block}
 .remoto .cuerpo{justify-content:flex-start;gap:16px}
-.r-main{width:100%;max-width:520px;font-size:1.35rem;padding:1.2em}
-.r-fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;width:100%;max-width:520px}
-.r-fila button{padding:1em .6em}
+.r-main{width:100%;font-size:1.35rem;padding:1.1em}
+.r-fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;width:100%}
+.r-fila button{padding:.95em .6em;justify-content:center}
+.r-fila button.on{background:var(--secondary-container);border-color:var(--secondary-container)}
+.remoto .top .r-top{display:flex;align-items:center;gap:10px}
+.r-reloj{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-weight:700;color:var(--on-s-var)}
+.r-grid{display:flex;flex-direction:column;gap:16px;width:100%;max-width:720px;margin:0 auto;padding:12px 16px 32px;box-sizing:border-box}
+.r-actual,.r-lado{display:flex;flex-direction:column;gap:12px;min-width:0}
+.r-sub{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.r-timer{display:inline-flex;align-items:center;gap:4px;background:var(--c);color:#fff;border-radius:999px;padding:.25em .8em;font-family:var(--mono);font-size:1.1rem}
+.r-timer.poco{background:#BA1A1A}
+.r-timer[hidden]{display:none}
+.r-estado{margin:0}
+.r-prev{width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#180157;box-shadow:var(--sombra);position:relative}
+.r-prev .lienzo{width:100%;height:100%;border-radius:0;box-shadow:none}
+.r-prev *{animation:none!important;transition:none!important}
+.r-prev.chica{max-width:340px}
+.r-q{height:100%;box-sizing:border-box;padding:4% 5%;display:flex;flex-direction:column;gap:2%;background:linear-gradient(135deg,var(--c),#2D1E6B);color:#fff;container-type:size;overflow:hidden}
+.r-q .badge{align-self:flex-start;background:#ffffff26;color:#fff;font-size:max(10px,3.4cqh)}
+.r-q p{margin:0;font-family:var(--serif);font-size:max(14px,8.5cqh);line-height:1.1}
+.r-q ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:2.5cqh 2%}
+.r-q li{display:flex;align-items:center;gap:6px;background:#ffffff1f;border-radius:8px;padding:1.6cqh 2%;font-size:max(10px,4.4cqh)}
+.r-q li.ok{background:#05966999;outline:2px solid #6EE7B7}
+.r-q li i{font-style:normal;font-weight:700;width:1.5em;height:1.5em;border-radius:6px;display:grid;place-items:center;flex:none}
+.r-q .r-resp{display:flex;gap:6px;align-items:flex-start;background:#05966966;border-radius:8px;padding:1.5cqh 2%;font-size:max(10px,4.2cqh)}
+.r-q.lobby,.r-q.fin{align-items:center;justify-content:center;text-align:center}
+.r-q.lobby span,.r-q.fin span{font-size:16cqh}.r-q.lobby span .ms{font-size:inherit;max-width:none}
+.r-q.lobby b{font-family:var(--mono);font-size:14cqh;letter-spacing:.15em}
+.r-notas-card{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.r-notas-cab{display:flex;align-items:center;gap:6px}.r-notas-cab b{display:flex;align-items:center;gap:6px}
+.r-notas-cab button{padding:.35em .7em;font-weight:700}
+.r-notas{max-height:42vh;overflow:auto;line-height:1.5;overflow-wrap:anywhere}
+.r-notas>:first-child{margin-top:0}.r-notas ul,.r-notas ol{padding-left:1.3em;margin:.4em 0}
+.r-lista summary{cursor:pointer;font-weight:600;padding:6px 0}
+.r-lista ol{list-style:none;margin:0;padding:0;max-height:40vh;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.r-lista li button{width:100%;display:flex;align-items:center;gap:8px;justify-content:flex-start;text-align:left;padding:.55em .7em;background:var(--s-lowest);font-weight:500}
+.r-lista li.act button{border:2px solid var(--c);background:var(--s-low);font-weight:700}
+.r-lista li.pasada button{opacity:.6}
+.r-lista .n{font-family:var(--mono);font-size:.8rem;color:var(--outline);min-width:1.6em}
+.r-lista .tx{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:860px){
+  .r-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(320px,1fr);max-width:1500px;align-items:start;gap:22px;padding:16px 24px 32px}
+  .r-notas{max-height:none;min-height:180px}
+  .r-lado{position:sticky;top:12px}
+  .r-notas-card{max-height:48vh}.r-notas{overflow:auto}
+}
+/* Notas del presentador en el editor */
+.notas-ed{margin:22px 0 8px;border-top:1px solid var(--outline-var);padding-top:14px}
+.notas-ed h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 8px;font-size:1.05rem}
+.notas-ed h3 small{font-weight:400;color:var(--on-s-var);font-size:.8rem}
+.notas-bar{display:flex;flex-wrap:wrap;gap:4px;align-items:center;padding:6px;background:var(--s-low);border:1px solid var(--outline-var);border-bottom:0;border-radius:var(--r-md) var(--r-md) 0 0}
+.notas-bar button{padding:.35em .6em;min-width:34px;justify-content:center;background:var(--s-lowest)}
+.notas-bar .sep{width:1px;height:22px;background:var(--outline-var);margin:0 4px}
+.notas-bar .nc i{display:block;width:16px;height:16px;border-radius:50%}
+.notas-txt{min-height:110px;max-height:340px;overflow:auto;padding:12px 14px;background:var(--s-lowest);border:1px solid var(--outline-var);border-radius:0 0 var(--r-md) var(--r-md);line-height:1.5;outline:none}
+.notas-txt:focus{border-color:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 25%,transparent)}
+.notas-txt:empty::before{content:attr(data-ph);color:var(--outline)}
+.notas-txt ul,.notas-txt ol{padding-left:1.4em}
+.modal-qr .qr svg{width:min(46vh,400px);height:min(46vh,400px)}
+.modal-qr .code{line-height:1}.modal-qr p{margin:2px 0}
+.modal-qr .code{font-family:var(--mono);font-size:3.2rem;font-weight:700;letter-spacing:.2em;color:var(--c)}
+.modal-qr .url{font-weight:600;color:var(--secondary,#006780);margin:0}
+.modal-in.modal-qr{max-width:560px}
 @media (max-width:760px){.ctl-in{flex-wrap:wrap;justify-content:flex-end}}
 /* ---------- Diapositivas (lienzo 16:9) ---------- */
 .lienzo{position:relative;width:100%;aspect-ratio:16/9;container-type:size;overflow:hidden;border-radius:var(--r-lg);box-shadow:var(--sombra);background:#180157;user-select:none;-webkit-user-select:none}
@@ -962,6 +1022,12 @@ const I18N = { en: {}, me: {} };
   ['<b>unpkg, jsDelivr y cdnjs</b>: entregan las librerías de la app (conexión, QR, lectura de PowerPoint/PDF).', '<b>unpkg, jsDelivr and cdnjs</b>: they deliver the app’s libraries (connection, QR, reading PowerPoint/PDF).', '<b>unpkg, jsDelivr i cdnjs</b>: isporučuju biblioteke aplikacije (veza, QR, čitanje PowerPoint/PDF fajlova).'],
   ['<b>YouTube</b> (modo de privacidad mejorada, youtube-nocookie.com): solo si una diapositiva tiene un video. YouTube puede mostrar anuncios y usar sus propias cookies; <b>la app no se hace responsable de los anuncios ni del contenido que muestre YouTube</b>.', '<b>YouTube</b> (privacy-enhanced mode, youtube-nocookie.com): only if a slide has a video. YouTube may show ads and use its own cookies; <b>the app is not responsible for the ads or content shown by YouTube</b>.', '<b>YouTube</b> (režim poboljšane privatnosti, youtube-nocookie.com): samo ako slajd ima video. YouTube može prikazivati reklame i koristiti sopstvene kolačiće; <b>aplikacija nije odgovorna za reklame ni sadržaj koji prikazuje YouTube</b>.'],
   ['Estos servicios tienen sus propias políticas de privacidad.', 'These services have their own privacy policies.', 'Ovi servisi imaju sopstvene politike privatnosti.'],
+  // control remoto (vista moderador) y QR
+  ['Mostrar QR para unirse', 'Show QR code to join', 'Prikaži QR kod za pridruživanje'], ['Mostrar QR', 'Show QR', 'Prikaži QR'], ['Ocultar QR', 'Hide QR', 'Sakrij QR'],
+  ['Silenciar', 'Mute', 'Isključi zvuk'], ['Activar sonido', 'Unmute', 'Uključi zvuk'], ['Reiniciar video', 'Restart video', 'Pusti video ispočetka'],
+  ['Notas', 'Notes', 'Bilješke'], ['Sin notas para esta hoja.', 'No notes for this page.', 'Nema bilješki za ovu stranu.'], ['Todas las hojas', 'All pages', 'Sve strane'],
+  ['Ir a esta hoja', 'Go to this page', 'Idi na ovu stranu'], ['Fin de la presentación', 'End of the presentation', 'Kraj prezentacije'], ['Tiempo de presentación', 'Presentation time', 'Vrijeme prezentacije'],
+  ['Letra más pequeña', 'Smaller text', 'Manja slova'], ['Letra más grande', 'Larger text', 'Veća slova'],
 ].forEach(([es, en, me]) => { I18N.en[es] = en; I18N.me[es] = me; });
 const CON_OPCIONES = ['alternativas', 'encuesta', 'emoji', 'revela', 'zoom', 'audio']; // se responden tocando una opción
 const CON_CORRECTAS = ['alternativas', 'emoji', 'revela', 'zoom', 'audio'];
@@ -1922,6 +1988,7 @@ function vistaEditor() {
   const form = $('#form');
   form.oninput = e => {
     const el = e.target, it = objActual(); if (!it) return;
+    if (el.id === 'notasEd') { guardarNotas(); return; }
     if (el.dataset.cf) { quiz.config.fondoPres[el.dataset.cf] = el.type === 'range' ? Number(el.value) : el.value; guardarLocal(); return; }
     if (el.dataset.sp) { // panel de formato de la diapositiva
       const obj = el.dataset.scope === 'fondo' ? it.fondo : elSel(); if (!obj) return;
@@ -1949,6 +2016,8 @@ function vistaEditor() {
     home: vistaInicio, guardar: descargarQuiz, presentar: () => vistaPresentar(),
     abrir: () => abrirArchivo(() => { edSel = 0; vistaEditor(); }),
     sel: el => { edSel = +el.dataset.i; renderLista(); renderForm(); verVista('form'); },
+    nFmt: el => { const ed = $('#notasEd'); if (!ed) return; if (document.activeElement !== ed) ed.focus();
+      document.execCommand('styleWithCSS', false, true); document.execCommand(el.dataset.c, false, el.dataset.v || null); guardarNotas(); },
     menuAdd: () => { menuAdd = !menuAdd; $('#tipTipo')?.classList.remove('ver'); renderLista(); if (menuAdd) $('#lista').scrollTop = 0; },
     add: el => { menuAdd = false; $('#tipTipo')?.classList.remove('ver'); const i = edSel + 1; quiz.items.splice(i, 0, nuevoItem(el.dataset.t)); edSel = i; guardarLocal(); renderLista(); renderForm(); verVista('form'); },
     lista: () => verVista('lista'),
@@ -2070,10 +2139,47 @@ function renderForm() {
   form.insertAdjacentHTML('afterbegin', `<div class="mnav"><button data-a="lista">☰ Lista</button><span class="sp"></span>
     <button data-a="prev" ${i <= -1 ? 'disabled' : ''} aria-label="Anterior">‹</button><span class="pos">${i === -1 ? '⚙️' : `${i + 1} / ${n}`}</span>
     <button data-a="next" ${i >= n - 1 ? 'disabled' : ''} aria-label="Siguiente">›</button></div>`);
+  if (i >= 0) form.insertAdjacentHTML('beforeend', notasHTML(quiz.items[i]));
   if (i >= 0) form.insertAdjacentHTML('beforeend', `<div class="macts">
     <button data-a="up" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑ Subir</button><button data-a="down" data-i="${i}" ${i === n - 1 ? 'disabled' : ''}>↓ Bajar</button>
     <button data-a="dup" data-i="${i}">⧉ Duplicar</button><button class="peligro" data-a="del" data-i="${i}">✕ Eliminar</button></div>`);
 }
+/* ----- Notas del presentador (texto enriquecido; se ven en el control remoto) ----- */
+function limpiarNotas(html) {
+  const t = document.createElement('template'); t.innerHTML = String(html || '');
+  const OK = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'S', 'UL', 'OL', 'LI', 'BR', 'P', 'DIV', 'SPAN', 'MARK', 'FONT', 'H3', 'H4', 'BLOCKQUOTE']);
+  const EST = ['color', 'background-color', 'font-weight', 'font-style', 'text-decoration', 'text-decoration-line'];
+  const limpiar = n => [...n.childNodes].forEach(c => {
+    if (c.nodeType === 3) return;
+    if (c.nodeType !== 1 || ['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'TEMPLATE', 'IMG', 'SVG', 'LINK', 'META'].includes(c.tagName)) return c.remove();
+    limpiar(c);
+    if (!OK.has(c.tagName)) { c.replaceWith(...c.childNodes); return; }
+    const estilo = EST.map(k => { const v = c.style ? c.style.getPropertyValue(k) : ''; return v && !/url|expression|[<>]/i.test(v) ? `${k}:${v}` : ''; }).filter(Boolean);
+    if (c.tagName === 'FONT' && /^#?[\w(),. %]+$/.test(c.getAttribute('color') || '')) estilo.push('color:' + c.getAttribute('color'));
+    [...c.attributes].forEach(a => c.removeAttribute(a.name));
+    if (estilo.length) c.setAttribute('style', estilo.join(';'));
+  });
+  limpiar(t.content);
+  const d = document.createElement('div'); d.appendChild(t.content);
+  return d.textContent.trim() || d.querySelector('li') ? d.innerHTML : '';
+}
+const COLORES_NOTA = [['#1C1B20', 'Negro'], ['#BA1A1A', 'Rojo'], ['#006780', 'Azul'], ['#059669', 'Verde'], ['#A21CAF', 'Morado']];
+function notasHTML(it) {
+  const b = (c, icono, t, v) => `<button data-a="nFmt" data-c="${c}"${v ? ` data-v="${v}"` : ''} title="${t}" aria-label="${t}">${icono}</button>`;
+  return `<section class="notas-ed"><h3>${ic('speaker_notes')} Notas del presentador <small>Solo las ves tú, en el control remoto (teléfono o tablet)</small></h3>
+    <div class="notas-bar">${b('bold', '<b>N</b>', 'Negrita')}${b('italic', '<i>K</i>', 'Cursiva')}${b('underline', '<u>S</u>', 'Subrayado')}
+      ${b('insertUnorderedList', ic('format_list_bulleted'), 'Lista con viñetas')}${b('insertOrderedList', ic('format_list_numbered'), 'Lista numerada')}<span class="sep"></span>
+      ${COLORES_NOTA.map(([c, n]) => `<button data-a="nFmt" data-c="foreColor" data-v="${c}" title="Color ${n.toLowerCase()}" aria-label="Color ${n.toLowerCase()}" class="nc"><i style="background:${c}"></i></button>`).join('')}
+      ${b('hiliteColor', `${ic('ink_highlighter')}`, 'Resaltar', '#FEF08A')}${b('removeFormat', ic('format_clear'), 'Quitar formato')}</div>
+    <div class="notas-txt" id="notasEd" contenteditable="true" data-ph="Lo que quieres recordar al presentar esta hoja: qué contar, una pregunta para conversar, el versículo…">${limpiarNotas(it.notas)}</div></section>`;
+}
+function guardarNotas() { const e = $('#notasEd'), it = objActual(); if (!e || !it || edSel < 0) return; it.notas = limpiarNotas(e.innerHTML); guardarLocal(); }
+document.addEventListener('mousedown', e => { if (e.target.closest('.notas-bar button')) e.preventDefault(); }); // no perder la selección del texto
+document.addEventListener('paste', e => {
+  if (!e.target.closest || !e.target.closest('#notasEd')) return;
+  const h = e.clipboardData.getData('text/html'), t = e.clipboardData.getData('text/plain'); e.preventDefault();
+  document.execCommand('insertHTML', false, h ? limpiarNotas(h) : esc(t).replace(/\n/g, '<br>'));
+});
 function renderFormCampos() {
   const form = $('#form'), it = objActual();
   form.classList.toggle('ancho-diapo', !!(it && it.tipo === 'diapositiva'));
@@ -3107,7 +3213,7 @@ function vistaPresentar() {
   const pr = problemasQuiz();
   if (pr.length && !confirm('Hay preguntas incompletas:\n\n' + pr.join('\n') + '\n\n¿Presentar igual?')) return;
   detenerHost(); ponerIdioma(quiz.config.idioma);
-  H = nuevoH();
+  H = nuevoH(); H.inicio = Date.now();
   iniciarPeerHost();
   SND.musicaIniciar('lobby');
   H.latido = setInterval(latidoHost, 5000);
@@ -3128,6 +3234,7 @@ function vistaPresentar() {
     vidIni: () => { document.querySelectorAll('.stage iframe.yt').forEach(f => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*'); } catch (_) { } }); },
     sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
+    qrBtn: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
     cerrarModal: () => { H.modal = null; renderHost(); },
     nuevoEnlace: () => { H.token = nid() + nid(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
     salir: () => { if (confirm(tr('¿Salir de la presentación? Se perderá el puntaje.'))) vistaInicio(); },
@@ -3225,7 +3332,7 @@ function alRecibirHost(conn, d) {
     conn.esRemoto = true; H.remotos.add(conn); conn.on('close', () => { if (H) { H.remotos.delete(conn); if (H.modal) renderHost(); } });
     renderHost(); return;
   }
-  if (conn.esRemoto) { if (d.t === 'rcmd') comandoRemoto(d.c); return; }
+  if (conn.esRemoto) { if (d.t === 'rcmd') comandoRemoto(d.c, d); return; }
   if (d.t === 'join') {
     let p = H.players[d.pid];
     if (!p) {
@@ -3284,7 +3391,7 @@ function enviarEstado(p) {
   else if (H.fase === 'pregunta' && !H.resp[p.pid]) { enviar(p, { ...H.payload, tiempo: tiempoH(), restante: restanteH() }); if (H.pausa) enviar(p, { t: 'pausa', on: true }); }
   else enviar(p, { t: 'msg', icono: '👀', msg: tr('Mira la pantalla'), score: p.score });
 }
-function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = textoContador(); }
+function actualizarContador() { const el = $('#nResp'); if (el) el.textContent = textoContador(); actualizarRemotos(); }
 const textoContador = () => H.fase === 'pregunta' || H.fase === 'revelar' ? tr('{a} / {b} respuestas', { a: Object.keys(H.resp).length, b: conectados().length }) : tr('{n} jugadores', { n: conectados().length });
 function payload(it, idx) {
   const b = { t: 'q', idx, tipo: it.tipo, pregunta: it.pregunta, tiempo: tiempoDe(it) };
@@ -3460,6 +3567,7 @@ function renderHost() {
         <span class="badge ind">${ic('group')}<span id="nResp">${textoContador()}</span></span>
         <button class="ibtn" id="bSonido" data-a="sonido" title="${tr('Sonido (M)')}" aria-label="${tr('Sonido (M)')}">${ic(SND.silencio ? 'volume_off' : 'volume_up')}</button>
         <button class="ibtn ${H.remotos.size ? 'on' : ''}" data-a="remoto" title="${tr('Control remoto desde el celular')}" aria-label="${tr('Control remoto')}">${ic('settings_remote')}</button>
+        ${H.fase !== 'lobby' ? `<button class="ibtn ${H.modal === 'qr' ? 'on' : ''}" data-a="qrBtn" title="${tr('Mostrar QR para unirse')}" aria-label="${tr('Mostrar QR para unirse')}">${ic('qr_code_2')}</button>` : ''}
         <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic('fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
     <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
@@ -3467,7 +3575,7 @@ function renderHost() {
       ${H.fase === 'pregunta' ? `<button data-a="pausa" title="${tr('Pausar (P)')}">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="mas" title="${tr('Agregar 10 segundos (+)')}">+10 s</button><button data-a="saltar" title="${tr('Saltar sin puntaje')}">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}
       ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="${tr('Diapositiva anterior (←)')}">${ic('arrow_back')}</button>` : ''}
       ${conVideo ? `<button data-a="vid" title="${tr('Reproducir / pausar video (K)')}">${ic(H.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${H.vidPlay ? tr('Pausar video') : tr('Reproducir video')}</button><button data-a="vidIni" title="${tr('Volver al inicio del video')}">${ic('replay')}</button>` : ''}
-      <button data-a="salir">${tr('Salir')}</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : ''}</div>`;
+      <button data-a="salir">${tr('Salir')}</button>${H.fase !== 'fin' ? `<button class="pri big" data-a="next">${btn}</button>` : ''}</div></div>${H.modal === 'remoto' ? modalRemoto() : H.modal === 'qr' ? modalQR() : ''}</div>`;
   const raiz = app.firstElementChild, stageV = raiz && raiz.classList.contains('host') && raiz.querySelector('.stage');
   if (misma && stageV && stageV.querySelector('iframe.yt')) { // actualizar todo menos el escenario, para no recargar el video
     const tmp = document.createElement('div'); tmp.innerHTML = html; const nueva = tmp.firstElementChild;
@@ -3476,7 +3584,8 @@ function renderHost() {
     let antes = true; [...nueva.children].forEach(ch => { if (ch.classList.contains('stage')) { antes = false; return; } antes ? raiz.insertBefore(ch, stageV) : raiz.appendChild(ch); });
   } else app.innerHTML = html;
   tickHost();
-  actualizarRemotos(tr(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente'), sub);
+  H.rbtn = tr(H.fase === 'pregunta' ? 'Mostrar respuesta' : H.fase === 'lobby' ? 'Comenzar' : 'Siguiente'); H.rsub = sub;
+  actualizarRemotos();
 }
 const videosEn = it => it && it.tipo === 'diapositiva' && (it.els || []).some(e => e.t === 'video' && ytId(e.url));
 function comandoVideo(func) { // API de YouTube por postMessage (enablejsapi=1)
@@ -3494,15 +3603,34 @@ function modalRemoto() {
     <p class="muted">${H.remotos.size ? `<span class="badge cyan"><span class="dot"></span>${tr('Controles conectados: {n}', { n: H.remotos.size })}</span>` : tr('Ningún control conectado')}</p>
     <div class="botones"><button data-a="nuevoEnlace">${ic('autorenew')} ${tr('Nuevo enlace')}</button><button class="pri" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
 }
-function actualizarRemotos(btn, sub) {
+const itemLigero = it => { // para la vista previa del control remoto (sin imágenes enormes)
+  if (!it) return null; const j = JSON.stringify(it);
+  return JSON.parse(j.length > 1.2e6 ? j.replace(/"data:[^"]{3000,}"/g, '""') : j);
+};
+function actualizarRemotos() {
   if (!H || !H.remotos.size) return;
   const it = quiz.items[H.idx];
-  const st = { t: 'rstate', fase: H.fase, sub, btn, titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0, video: H.fase === 'slide' && videosEn(it), vidPlay: !!H.vidPlay,
-    resp: Object.keys(H.resp).length, jug: conectados().length, codigo: H.code };
-  H.remotos.forEach(c => { try { c.open && c.send(st); } catch (_) { } });
+  const st = { t: 'rstate', fase: H.fase, sub: H.rsub || '', btn: H.rbtn || tr('Siguiente'), titulo: it ? etiqueta(it) : quiz.config.titulo, pausa: !!H.pausa, atras: anteriorDiapo() >= 0,
+    video: H.fase === 'slide' && videosEn(it), vidPlay: !!H.vidPlay, resp: Object.keys(H.resp).length, jug: conectados().length, codigo: H.code,
+    idx: H.idx, total: quiz.items.length, notas: H.fase === 'lobby' || H.fase === 'fin' ? '' : (it && it.notas) || '', silencio: !!SND.silencio, qr: H.modal === 'qr',
+    restante: H.fase === 'pregunta' ? Math.max(0, tiempoH() * 1000 - transcurrido()) : null, tiempo: H.fase === 'pregunta' ? tiempoH() : null, reloj: Date.now() - (H.inicio || Date.now()) };
+  H.remotos.forEach(c => {
+    try {
+      if (!c.open) return;
+      if (!c.listaEnviada) { c.listaEnviada = true; c.send({ t: 'rlista', idioma: IDIOMA, titulo: quiz.config.titulo, color: quiz.config.color, items: quiz.items.map((x, i) => ({ i, tipo: x.tipo, et: etiqueta(x).slice(0, 90), notas: !!x.notas })) }); }
+      if (c.prevIdx !== H.idx) { c.prevIdx = H.idx; c.send({ t: 'rprev', idx: H.idx, cur: itemLigero(it), sig: itemLigero(quiz.items[H.idx + 1]) }); }
+      c.send(st);
+    } catch (_) { }
+  });
 }
-function comandoRemoto(cmd) {
-  ({ next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder, vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo') })[cmd]?.();
+function comandoRemoto(cmd, d = {}) {
+  ({
+    next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder,
+    vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo'), vidIni: () => ACC.vidIni && ACC.vidIni(),
+    mute: () => { ACC.sonido && ACC.sonido(); actualizarRemotos(); },
+    qr: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
+    ir: () => { const i = Math.floor(+d.i); if (H.fase !== 'pregunta' && i >= 0 && i < quiz.items.length && i !== H.idx) irA(i); },
+  })[cmd]?.();
 }
 function resumenConexion(ps) {
   const on = ps.filter(p => p.online), off = ps.length - on.length, r = on.filter(p => p.via === 'respaldo').length;
@@ -3513,6 +3641,14 @@ function porAprobar() { // nombres esperando aprobación (en el lobby y si algui
   const pend = Object.values(H.players).filter(p => p.pendiente && p.online);
   return pend.length ? `<div class="pend-bar"><b>${ic('how_to_reg')} ${tr('Por aprobar:')}</b>${pend.map(p => `<span class="chip pend">${esc(p.avatar)} ${esc(p.name)}
     <button class="ok" data-a="aprobar" data-pid="${esc(p.pid)}" title="${tr('Aprobar')}">${ic('check')}</button><button class="no" data-a="rechazar" data-pid="${esc(p.pid)}" title="${tr('Rechazar')}">${ic('close')}</button></span>`).join('')}</div>` : '';
+}
+function modalQR() { // para los que llegan tarde
+  let qr = '';
+  try { const q = qrcode(0, 'M'); q.addData(urlUnirse()); q.make(); qr = q.createSvgTag(8, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
+  return `<div class="modal" data-a="cerrarModal"><div class="card modal-in modal-qr" data-a="nada">
+    <h2>${tr('¡Únete al juego!')}</h2><div class="qr">${qr}</div>
+    <p>${tr('Escanea el QR o entra a:')}</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>${tr('y escribe el código')}</p><div class="code">${H.code}</div>
+    <div class="botones"><button class="pri big" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
 }
 function urlUnirse() { return location.origin + location.pathname + '?join=' + H.code + (IDIOMA !== 'es' ? '&l=' + IDIOMA : ''); }
 function hostLobby() {
@@ -3749,8 +3885,15 @@ let R = null;
 function vistaRemoto(code, k) {
   ponerIdioma(idiomaInicialTel());
   document.title = tr('Control remoto') + ' · Quiz Iglesia';
-  R = { code, k, st: null };
-  ACC = { rc: el => { try { R.conn.send({ t: 'rcmd', c: el.dataset.c }); } catch (_) { } navigator.vibrate?.(30); }, reintentar: () => location.reload() };
+  let zoom = 1.15; try { zoom = +localStorage.getItem('quiziglesia.notasZoom') || 1.15; } catch (_) { }
+  R = { code, k, st: null, items: [], prev: {}, zoom };
+  const enviar = (c, extra = {}) => { try { R.conn.send({ t: 'rcmd', c, ...extra }); } catch (_) { } navigator.vibrate?.(30); };
+  ACC = {
+    rc: el => enviar(el.dataset.c),
+    rIr: el => { if (R.st && R.st.fase !== 'pregunta') enviar('ir', { i: +el.dataset.i }); },
+    rZoom: el => { R.zoom = Math.min(2.2, Math.max(0.8, R.zoom + (+el.dataset.v))); try { localStorage.setItem('quiziglesia.notasZoom', R.zoom); } catch (_) { } const n = $('#rNotas'); if (n) n.style.fontSize = R.zoom + 'rem'; },
+    reintentar: () => location.reload(),
+  };
   setTimeout(avisoCookies, 300);
   pintarRemoto(tr('⏳ Conectando con la pantalla…'));
   if (!window.Peer) return pintarRemoto(tr('📵 No se pudo cargar la conexión.'));
@@ -3758,22 +3901,72 @@ function vistaRemoto(code, k) {
   R.peer.on('open', () => {
     const c = R.peer.connect(PREFIJO + code, { reliable: true }); R.conn = c;
     c.on('open', () => c.send({ t: 'remoto', k }));
-    c.on('data', d => { if (d.t === 'rstate') { R.st = d; pintarRemoto(); } else if (d.t === 'rerror') { R.fin = true; pintarRemoto(tr('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.')); } });
+    c.on('data', d => {
+      if (d.t === 'rstate') { R.st = d; R.recibido = Date.now(); pintarRemoto(); }
+      else if (d.t === 'rlista') { R.items = d.items || []; R.titulo = d.titulo; R.color = d.color; if (d.idioma) ponerIdioma(d.idioma); }
+      else if (d.t === 'rprev') R.prev = d;
+      else if (d.t === 'rerror') { R.fin = true; pintarRemoto(tr('🔒 Este enlace ya no es válido. Escanea el código nuevo desde la pantalla.')); }
+    });
     c.on('close', () => { if (!R.fin) { pintarRemoto(tr('🔄 Reconectando…')); setTimeout(() => location.reload(), 2500); } });
   });
   R.peer.on('error', e => pintarRemoto(tr(e.type === 'peer-unavailable' ? '🔍 No se encontró la presentación. ¿Sigue abierta?' : '📵 Problema de conexión')));
   if ('wakeLock' in navigator) navigator.wakeLock.request('screen').catch(() => { });
+  clearInterval(R.tic); R.tic = setInterval(relojRemoto, 250);
+}
+const mmss = ms => { const t = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+function relojRemoto() {
+  const st = R && R.st; if (!st) return;
+  const dt = Date.now() - R.recibido, rl = $('#rReloj'), tm = $('#rTimer');
+  if (rl) rl.textContent = mmss(st.reloj + dt);
+  if (tm) { if (st.restante == null) tm.hidden = true; else { const ms = st.pausa ? st.restante : st.restante - dt; tm.hidden = false; tm.querySelector('b').textContent = Math.ceil(Math.max(0, ms) / 1000) + ' s'; tm.classList.toggle('poco', ms < 5500); } }
+}
+function previaRemoto(it, fase) { // miniatura de la hoja (diapositiva o pregunta) para la vista del moderador
+  if (fase === 'lobby') return `<div class="r-q lobby"><span>${ic('qr_code_2')}</span><p>${tr('Sala de espera')}</p><b>${esc(R.st ? R.st.codigo : '')}</b></div>`;
+  if (!it) return `<div class="r-q fin"><span>🏁</span><p>${tr('Fin de la presentación')}</p></div>`;
+  if (it.tipo === 'diapositiva') { const previo = IMPRIMIENDO; IMPRIMIENDO = true; try { return lienzoHTML(migrarDiapo(it), false); } catch (_) { return ''; } finally { IMPRIMIENDO = previo; } }
+  const ops = Array.isArray(it.opciones) && CON_OPCIONES.concat('multiple').includes(it.tipo) ? it.opciones.map((o, i) => ({ o, i })).filter(x => String(x.o).trim()) : [];
+  const ok = i => (it.correctas || []).includes(i);
+  return `<div class="r-q" style="--c:${esc(R.color || '#180157')}"><span class="badge">${(TIPOS[it.tipo] || {}).icono || ''} ${nombreTipo(it.tipo)}</span><p>${esc(it.pregunta || '')}</p>
+    ${ops.length ? `<ol>${ops.map(x => `<li class="${ok(x.i) ? 'ok' : ''}"><i style="background:${COLORES[x.i % 6]}">${LETRAS[x.i % 6]}</i>${esc(x.o)}</li>`).join('')}</ol>` : ''}
+    ${!ops.length && !TIPOS[it.tipo].sinPuntaje && textoCorrecta(it) ? `<small class="r-resp">${ic('check_circle', 'fill')} ${esc(textoCorrecta(it))}</small>` : ''}</div>`;
 }
 function pintarRemoto(msg) {
-  const st = R.st;
-  app.innerHTML = `<div class="jug remoto"><header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>${tr('Control remoto')}</b><small>${tr('Sala {c}', { c: esc(R.code) })}</small></div></div></header>
-    <div class="cuerpo">${msg || !st ? `<h2>${esc(msg || tr('⏳ Conectando…'))}</h2><button data-a="reintentar">${tr('Reintentar')}</button>` : `
-      <div class="jq"><span class="badge mag">${esc(st.sub || '')}</span><p>${esc(st.titulo || '')}</p></div>
-      <p class="muted">${st.fase === 'pregunta' ? tr('{a} / {b} respuestas', { a: st.resp, b: st.jug }) : tr('Jugadores conectados: {n}', { n: st.jug })}${st.pausa ? ` · <b>${tr('en pausa')}</b>` : ''}</p>
-      ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : `<h2>${tr('¡Fin del quiz! 🎉')}</h2>`}
-      <div class="r-fila">${st.video ? `<button data-a="rc" data-c="vid">${ic(st.vidPlay ? 'pause' : 'play_arrow', 'fill')} ${st.vidPlay ? tr('Pausar video') : tr('Reproducir video')}</button>` : ''}${st.atras ? `<button data-a="rc" data-c="atras">${ic('arrow_back')} ${tr('Anterior')}</button>` : ''}
-        ${st.fase === 'pregunta' ? `<button data-a="rc" data-c="pausa">${ic(st.pausa ? 'play_arrow' : 'pause')} ${st.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="rc" data-c="mas">+10 s</button><button data-a="rc" data-c="saltar">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}</div>`}
+  const st = R.st, notasAntes = $('#rNotas')?.scrollTop || 0, listaAntes = $('#rLista')?.scrollTop;
+  const cab = `<header class="top"><div class="marca"><div class="logo">${ic('settings_remote')}</div><div><b>${tr('Control remoto')}</b><small>${tr('Sala {c}', { c: esc(R.code) })}${R.titulo ? ' · ' + esc(R.titulo) : ''}</small></div></div>
+    ${st && !msg ? `<div class="r-top"><span class="r-reloj" title="${tr('Tiempo de presentación')}">${ic('schedule')}<span id="rReloj">0:00</span></span>
+      <button class="ibtn ${st.silencio ? 'on' : ''}" data-a="rc" data-c="mute" title="${st.silencio ? tr('Activar sonido') : tr('Silenciar')}" aria-label="${st.silencio ? tr('Activar sonido') : tr('Silenciar')}">${ic(st.silencio ? 'volume_off' : 'volume_up')}</button></div>` : ''}</header>`;
+  if (msg || !st) { app.innerHTML = `<div class="jug remoto">${cab}<div class="cuerpo"><h2>${esc(msg || tr('⏳ Conectando…'))}</h2><button data-a="reintentar">${tr('Reintentar')}</button></div></div>`; return; }
+  const cur = R.prev.idx === st.idx ? R.prev.cur : null, sig = R.prev.idx === st.idx ? R.prev.sig : null;
+  const enPreg = st.fase === 'pregunta', notas = limpiarNotas(st.notas);
+  const b = (c, icono, t, cls = '') => `<button class="${cls}" data-a="rc" data-c="${c}">${ic(icono, cls.includes('on') ? 'fill' : '')} ${t}</button>`;
+  app.innerHTML = `<div class="jug remoto" style="--c:${esc(R.color || '#180157')}">${cab}
+    <div class="r-grid">
+      <section class="r-actual">
+        <div class="r-sub"><span class="badge mag">${esc(st.sub || '')}</span><span class="r-timer" id="rTimer" hidden>${ic('timer')}<b></b></span></div>
+        <div class="r-prev">${previaRemoto(cur, st.fase)}</div>
+        <p class="muted r-estado">${enPreg || st.fase === 'revelar' ? tr('{a} / {b} respuestas', { a: st.resp, b: st.jug }) : tr('Jugadores conectados: {n}', { n: st.jug })}${st.pausa ? ` · <b>${tr('en pausa')}</b>` : ''}</p>
+        ${st.fase !== 'fin' ? `<button class="pri big r-main" data-a="rc" data-c="next">${esc(st.btn)} ${ic('arrow_forward')}</button>` : `<h2>${tr('¡Fin del quiz! 🎉')}</h2>`}
+        <div class="r-fila">
+          ${st.atras ? b('atras', 'arrow_back', tr('Anterior')) : ''}
+          ${enPreg ? b('pausa', st.pausa ? 'play_arrow' : 'pause', st.pausa ? tr('Seguir') : tr('Pausar')) + `<button data-a="rc" data-c="mas">+10 s</button>` + b('saltar', 'skip_next', tr('Saltar')) : ''}
+          ${st.video ? b('vid', st.vidPlay ? 'pause' : 'play_arrow', st.vidPlay ? tr('Pausar video') : tr('Reproducir video'), 'r-vid') + b('vidIni', 'replay', tr('Reiniciar video')) : ''}
+          ${b('qr', 'qr_code_2', st.qr ? tr('Ocultar QR') : tr('Mostrar QR'), st.qr ? 'on' : '')}
+          ${b('mute', st.silencio ? 'volume_off' : 'volume_up', st.silencio ? tr('Activar sonido') : tr('Silenciar'), st.silencio ? 'on' : '')}
+        </div>
+      </section>
+      <section class="r-lado">
+        <div class="card r-notas-card"><div class="r-notas-cab"><b>${ic('speaker_notes')} ${tr('Notas')}</b><span class="sp"></span>
+          <button data-a="rZoom" data-v="-0.1" aria-label="${tr('Letra más pequeña')}">A−</button><button data-a="rZoom" data-v="0.1" aria-label="${tr('Letra más grande')}">A+</button></div>
+          <div class="r-notas" id="rNotas" style="font-size:${R.zoom}rem">${notas || `<p class="muted">${tr('Sin notas para esta hoja.')}</p>`}</div></div>
+        <div class="r-sig"><p class="lbl-sm">${tr('Siguiente')}</p><div class="r-prev chica">${previaRemoto(sig, '')}</div></div>
+        ${R.items.length ? `<details class="r-lista" ${matchMedia('(min-width:860px)').matches ? 'open' : ''}><summary>${tr('Todas las hojas')} (${R.items.length})</summary>
+          <ol id="rLista">${R.items.map(x => `<li class="${x.i === st.idx ? 'act' : x.i < st.idx ? 'pasada' : ''}"><button data-a="rIr" data-i="${x.i}" ${enPreg ? 'disabled' : ''} title="${tr('Ir a esta hoja')}">
+            <span class="n">${x.i + 1}</span><span>${(TIPOS[x.tipo] || {}).icono || ''}</span><span class="tx">${esc(x.et)}</span>${x.notas ? ic('sticky_note_2') : ''}</button></li>`).join('')}</ol></details>` : ''}
+      </section>
     </div></div>`;
+  const n = $('#rNotas'); if (n) n.scrollTop = notasAntes;
+  const l = $('#rLista'); if (l) { if (listaAntes != null) l.scrollTop = listaAntes; const a = l.querySelector('.act'); if (a && listaAntes == null) a.scrollIntoView({ block: 'center' }); }
+  relojRemoto();
 }
 
 /* =================== JUGADOR (teléfono) =================== */
