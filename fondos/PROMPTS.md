@@ -56,7 +56,7 @@ Para agregar una historia o categoría nueva, se suma al catálogo (`historias` 
 | id | Historia | Pasaje | Imágenes |
 |---|---|---|---|
 | `creacion` | La creación | Génesis 1–2 | 17 |
-| `eden` | Adán y Eva en el Edén | Génesis 2–3 | 4 |
+| `eden` | Adán y Eva en el Edén | Génesis 2–3 | 14 |
 | `cain-abel` | Caín y Abel | Génesis 4 | — |
 | `noe` | Noé y el arca | Génesis 6–9 | 1 |
 | `babel` | La torre de Babel | Génesis 11 | — |

@@ -123,6 +123,8 @@ Seven round illustrated circles arranged in a gentle arc on a deep indigo starry
 
 ## 2. Adán y Eva en el Edén (Génesis 2–3) · `eden`
 
+✅ **Hecha**: las 10 láminas están en la galería (`eden-01.jpg` … `eden-10.jpg`).
+
 **Personajes** (los mismos de La creación)
 - Dios: solo luz dorada radiante.
 - Adán: hombre joven de piel morena y cabello oscuro corto y rizado.
@@ -179,4 +181,56 @@ The eastern entrance of the garden of Eden guarded by two majestic glowing cheru
 **eden-10 · La vida fuera del Edén y la promesa de Dios (Génesis 3:15-19)**
 ```
 Outside the garden, a young man with brown skin and short dark curly hair working the soil with a simple wooden tool and a young woman with brown skin and long dark wavy hair planting seeds beside him, both wearing simple animal skin tunics, seen from a distance, a small green sprout growing in the earth, a bright sunrise breaking through the clouds as a sign of God's promise and hope, hardworking and hopeful mood, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+
+---
+
+## 3. Caín y Abel (Génesis 4) · `cain-abel`
+
+**Personajes**
+- Dios: solo luz dorada radiante.
+- Caín: el hermano mayor, agricultor; robusto, piel morena, cabello oscuro corto y rizado, barba corta, túnica café.
+- Abel: el hermano menor, pastor; delgado, piel morena, cabello oscuro ondulado, sin barba, túnica gris azulada y cayado.
+- Adán y Eva (cain-abel-08): los mismos de las historias anteriores, ya mayores.
+- Pedagogía: la muerte de Abel **no se muestra**; se entiende por su ausencia (el cayado en el suelo, las ovejas solas). El enojo y la advertencia de Dios son el centro de la lección.
+
+**cain-abel-01 · Caín, agricultor, y Abel, pastor (Génesis 4:1-2)**
+```
+Two brothers working outside the garden of Eden: Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic, tending a field of wheat and vegetables with a simple wooden tool, and Abel, a slim younger man with brown skin, wavy dark hair and no beard, wearing a light blue-grey wool tunic and carrying a wooden shepherd's staff, caring for a small flock of white sheep on a green hillside nearby, seen from a distance, peaceful family life, rolling hills and a simple stone house in the background, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-02 · Las ofrendas de los dos hermanos (Génesis 4:3-4)**
+```
+Two simple stone altars side by side on a hill, Abel, a slim younger man with brown skin, wavy dark hair and no beard, wearing a light blue-grey wool tunic and carrying a wooden shepherd's staff kneeling and offering the best little lamb with care, and Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic standing and placing a basket of fruits and grain on the other altar, smoke rising from both altars toward the sky, seen from the side and from a distance, reverent mood, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-03 · Dios acepta la ofrenda de Abel y Caín se enoja (Génesis 4:4-5)**
+```
+Warm radiant golden light shining down from the sky onto the altar of Abel, a slim younger man with brown skin, wavy dark hair and no beard, wearing a light blue-grey wool tunic and carrying a wooden shepherd's staff, who kneels thankfully, while the smoke of the other altar drifts away, Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic turning away with his arms crossed and his head down, angry and jealous, seen from a distance, the contrast of light and shadow between the two brothers, not violent, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-04 · Dios le advierte a Caín (Génesis 4:6-7)**
+```
+Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic sitting alone and upset on a rock near the doorway of a simple stone house at dusk, a soft caring golden light beside him as God speaks to him, and a dark shapeless shadow lurking at the doorway like a crouching animal, a symbol of sin waiting, a choice between light and shadow, gentle and serious mood, not frightening, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-05 · Caín lleva a Abel al campo (Génesis 4:8)**
+```
+Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic walking ahead and Abel, a slim younger man with brown skin, wavy dark hair and no beard, wearing a light blue-grey wool tunic and carrying a wooden shepherd's staff following him into a wide open field far from home, both seen from behind and far away, long shadows, the sky turning heavy and cloudy, a feeling that something sad is about to happen, no violence shown, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-06 · «¿Dónde está tu hermano?» (Génesis 4:9-10)**
+```
+Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic standing alone in an empty field under a grey sky, looking down, a radiant golden light shining on him from above as God asks him a question, a wooden shepherd's staff lying alone on the grass and a few sheep without their shepherd in the distance, sorrowful mood, no violence and no blood shown, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-07 · Caín se va lejos, con la señal de Dios (Génesis 4:11-16)**
+```
+Cain, a sturdy young man with brown skin, short dark curly hair and a short dark beard, wearing a brown wool tunic walking away alone toward the east into a dry and rocky land, seen from behind, a small soft glow of protective golden light resting on him as the sign of God, the green land behind him, sad and lonely but still under God's care, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
+```
+
+**cain-abel-08 · Esperanza: nace Set (Génesis 4:25-26)**
+```
+An older couple, a man with brown skin and short dark curly hair with a little grey and a woman with brown skin and long dark wavy hair, both wearing simple animal skin tunics, sitting outside their stone house holding a newborn baby wrapped in a soft blanket, seen from the side and a little far away, warm sunrise light around them, a family beginning again with hope and gratitude, soft painterly digital illustration for a children's Bible lesson, clear and simple storytelling composition with one main focal point, one continuous scene that fills the entire frame edge to edge with the same level of detail everywhere, friendly and gentle style, warm and hopeful mood, gentle volumetric light, color palette of deep royal indigo, luminous cyan, soft magenta and warm golden light, 16:9 widescreen, no text, no letters, no numbers, no words, no logos, no watermarks
 ```
