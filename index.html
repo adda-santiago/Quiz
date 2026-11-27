@@ -1040,6 +1040,7 @@ const I18N = { en: {}, me: {} };
   ['Ir a esta hoja', 'Go to this page', 'Idi na ovu stranu'], ['Fin de la presentación', 'End of the presentation', 'Kraj prezentacije'], ['Tiempo de presentación', 'Presentation time', 'Vrijeme prezentacije'],
   ['Letra más pequeña', 'Smaller text', 'Manja slova'], ['Letra más grande', 'Larger text', 'Veća slova'],
   ['Salir de pantalla completa', 'Exit full screen', 'Izađi iz cijelog ekrana'],
+  ['El tiempo está en pausa', 'The timer is paused', 'Vrijeme je pauzirano'],
   ['Dispositivo', 'Device', 'Uređaj'], ['Teléfono Android', 'Android phone', 'Android telefon'], ['Tablet Android', 'Android tablet', 'Android tablet'], ['Computador', 'Computer', 'Računar'],
   ['«{n}» quiere usar el control remoto', '“{n}” wants to use the remote control', '„{n}“ želi da koristi daljinski upravljač'], ['Permitir', 'Allow', 'Dozvoli'], ['Desconectar', 'Disconnect', 'Prekini vezu'],
   ['Este QR solo empareja mientras está abierto y se cierra solo al conectarse tu dispositivo. Otros dispositivos necesitarán tu permiso en esta pantalla.', 'This QR code only pairs while it is open and closes by itself when your device connects. Other devices will need your permission on this screen.', 'Ovaj QR kod uparuje samo dok je otvoren i zatvara se sam kad se tvoj uređaj poveže. Drugim uređajima će trebati tvoja dozvola na ovom ekranu.'],
@@ -1063,7 +1064,7 @@ function configDefecto() {
     bonusVelocidad: true, rankingCada: 1, mostrarCorrectaTelefono: true, permitirTarde: true,
     modoEquipos: false, nombresEquipos: 'Leones, Águilas, Corderos, Palomas', asignarEquipos: 'elegir',
     filtroActivo: true, palabrasBloqueadas: '', aprobarNombres: false, turnUrl: '', turnUsuario: '', turnClave: '',
-    sonidos: true, musica: true, transicion: 'fundido', idioma: 'es', pantallaCompleta: true,
+    sonidos: true, musica: true, transicion: 'fundido', idioma: 'es', pantallaCompleta: true, pausarConQR: true,
     fondoPres: { tipo: 'ninguno', color: '#180157', colores: ['#180157', '#A21CAF'], angulo: 135, radial: false, imagen: '', oscurecer: 0.1 } };
 }
 function nuevoItem(tipo) {
@@ -2240,6 +2241,7 @@ function renderFormCampos() {
       <h3 class="sub-cfg">🔒 Control remoto del profesor</h3>
       <p class="muted" style="margin-top:-4px">Un teléfono o tablet nuevo solo puede usar el control remoto si lo apruebas en el computador (o mientras tienes abierto el QR del control remoto). Tus dispositivos quedan recordados en este computador.</p>
       ${fTxt('PIN del control remoto (opcional, de 4 a 8 números)', 'pinRemoto', c.pinRemoto || '', 'Ej: 2580')}
+      ${fChk('Pausar el tiempo de la pregunta mientras se muestra el QR para unirse', 'pausarConQR', c.pausarConQR)}
       <details class="avanzado"><summary>${ic('settings_ethernet')} Conexión (avanzado)</summary>
         <p class="hint">La app ya usa un servidor de respaldo público y gratuito para las redes difíciles. Si en tu iglesia los teléfonos no logran conectarse, puedes crear una cuenta gratis en un servicio TURN (por ejemplo Metered.ca) y pegar aquí sus datos.</p>
         ${fTxt('Servidor TURN (URL, varias separadas por coma)', 'turnUrl', c.turnUrl, 'turn:ejemplo.metered.live:80')}
@@ -3253,7 +3255,7 @@ function vistaPresentar() {
     else if (e.key === '+') masTiempo();
     else if (e.key.toLowerCase() === 'm') ACC.sonido();
     else if (e.key.toLowerCase() === 'k' && H.fase === 'slide' && videosEn(quiz.items[H.idx])) ACC.vid();
-    else if (e.key === 'Escape' && H.modal) { H.modal = null; renderHost(); }
+    else if (e.key === 'Escape' && H.modal) { if (H.modal === 'qr') alternarQR(false); else { H.modal = null; renderHost(); } }
   };
   ACC = {
     next: avanzar,
@@ -3262,12 +3264,12 @@ function vistaPresentar() {
     vidIni: () => { document.querySelectorAll('.stage iframe.yt').forEach(f => { try { f.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'seekTo', args: [0, true] }), '*'); } catch (_) { } }); },
     sonido: () => { SND.alternar(); const b = $('#bSonido'); if (b) b.innerHTML = ic(SND.silencio ? 'volume_off' : 'volume_up'); },
     remoto: () => { H.modal = H.modal === 'remoto' ? null : 'remoto'; renderHost(); },
-    qrBtn: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
+    qrBtn: () => alternarQR(),
     remSi: el => { const c = H.remPend[el.dataset.dev]; if (c) aceptarRemoto(c); },
     remNo: el => { const c = H.remPend[el.dataset.dev]; if (!c) return; delete H.remPend[el.dataset.dev]; try { c.send({ t: 'rrechazo' }); setTimeout(() => c.close(), 300); } catch (_) { } renderHost(); },
     remQuitar: el => { const c = [...H.remotos][+el.dataset.k]; if (!c) return; if (c.dev) { H.remOk.delete(c.dev); try { localStorage.setItem('quiziglesia.remConfiables', JSON.stringify(leerConfiables().filter(x => x !== c.dev))); } catch (_) { } }
       H.remotos.delete(c); try { c.send({ t: 'rrechazo', motivo: 'quitado' }); setTimeout(() => c.close(), 300); } catch (_) { } renderHost(); },
-    cerrarModal: () => { H.modal = null; renderHost(); },
+    cerrarModal: () => { if (H.modal === 'qr') return alternarQR(false); H.modal = null; renderHost(); },
     nuevoEnlace: () => { H.token = tokenSeguro(); H.remOk.clear(); olvidarRemotos(); H.remotos.forEach(c => { try { c.send({ t: 'rerror' }); c.close(); } catch (_) { } }); H.remotos.clear(); renderHost(); },
     salir: () => { if (confirm(tr('¿Salir de la presentación? Se perderá el puntaje.'))) vistaInicio(); },
     fs: () => alternarPantallaCompleta(),
@@ -3461,7 +3463,7 @@ function avanzar() {
 function irA(i) {
   clearInterval(H.timer);
   if (i >= quiz.items.length) return fin();
-  H.idx = i; const it = quiz.items[i]; H.pausa = false; H.extra = 0; H.ultLeft = null;
+  H.idx = i; const it = quiz.items[i]; H.pausa = false; H.qrPauso = false; H.extra = 0; H.ultLeft = null;
   if (H.audio) { H.audio.pause(); H.audio = null; }
   if (!esPregunta(it)) { H.fase = 'slide'; SND.musicaParar(); SND.efecto('transicion'); difundir({ t: 'msg', icono: '👀', msg: tr('Mira la pantalla') }); renderHost(); return; }
   H.fase = 'pregunta'; H.resp = {}; H.t0 = Date.now();
@@ -3507,10 +3509,20 @@ function ranking() { return Object.values(H.players).filter(p => !p.pendiente).s
 const transcurrido = () => (H.pausa ? H.pausaIni : Date.now()) - H.t0;
 const tiempoH = () => tiempoDe(quiz.items[H.idx]) + (H.extra || 0);
 const restanteH = () => Math.max(1, Math.ceil(tiempoH() - transcurrido() / 1000));
+/* QR para los que llegan tarde: si está activo «pausarConQR» y hay una pregunta corriendo, el tiempo se pausa
+   mientras el QR está en pantalla y sigue solo al cerrarlo (si la pausa la puso el QR). */
+function alternarQR(abrir = H.modal !== 'qr') {
+  if (abrir) {
+    H.modal = 'qr';
+    if (quiz.config.pausarConQR !== false && H.fase === 'pregunta' && !H.pausa) { alternarPausa(); H.qrPauso = true; }
+  } else { if (H.modal === 'qr') H.modal = null; seguirTrasQR(); }
+  renderHost();
+}
+function seguirTrasQR() { if (H.qrPauso) { H.qrPauso = false; if (H.fase === 'pregunta' && H.pausa) alternarPausa(); } }
 function alternarPausa() {
   if (!H || H.fase !== 'pregunta') return;
   if (!H.pausa) { H.pausa = true; H.pausaIni = Date.now(); SND.musicaParar(); SND.efecto('pausa'); difundir({ t: 'pausa', on: true }); }
-  else { H.t0 += Date.now() - H.pausaIni; H.pausa = false; SND.musicaIniciar('pregunta'); difundir({ t: 'pausa', on: false, restante: restanteH(), total: tiempoH() }); }
+  else { H.qrPauso = false; H.t0 += Date.now() - H.pausaIni; H.pausa = false; SND.musicaIniciar('pregunta'); difundir({ t: 'pausa', on: false, restante: restanteH(), total: tiempoH() }); }
   renderHost();
 }
 function masTiempo(seg = 10) { if (!H || H.fase !== 'pregunta') return; H.extra = (H.extra || 0) + seg; difundir({ t: 'tiempo', restante: restanteH(), total: tiempoH() }); renderHost(); aviso(`+${seg} segundos`, 1200); }
@@ -3598,7 +3610,7 @@ function renderHost() {
         ${H.fase !== 'lobby' ? `<button class="ibtn ${H.modal === 'qr' ? 'on' : ''}" data-a="qrBtn" title="${tr('Mostrar QR para unirse')}" aria-label="${tr('Mostrar QR para unirse')}">${ic('qr_code_2')}</button>` : ''}
         <button class="ibtn" data-a="fs" title="${tr('Pantalla completa')}" aria-label="${tr('Pantalla completa')}">${ic(document.fullscreenElement ? 'fullscreen_exit' : 'fullscreen')}</button></div></div>
       <div class="prog"><i style="width:${pct}%"></i></div></header>
-    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${pendRemotos()}${H.pausa ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
+    <main class="stage${trans ? ' an-' + trans : ''}">${c}</main>${porAprobar()}${pendRemotos()}${H.pausa && H.modal !== 'qr' ? `<div class="pausa-vel">${ic('pause_circle', 'fill')}<b>${tr('En pausa')}</b><span>${tr('Presiona P o Seguir para continuar')}</span></div>` : ''}
     <div class="ctl"><div class="ctl-in">${ic('smartphone')}<span class="hint-t">${ayuda}</span><span class="sp"></span>
       ${H.fase === 'pregunta' ? `<button data-a="pausa" title="${tr('Pausar (P)')}">${ic(H.pausa ? 'play_arrow' : 'pause')} ${H.pausa ? tr('Seguir') : tr('Pausar')}</button><button data-a="mas" title="${tr('Agregar 10 segundos (+)')}">+10 s</button><button data-a="saltar" title="${tr('Saltar sin puntaje')}">${ic('skip_next')} ${tr('Saltar')}</button>` : ''}
       ${anteriorDiapo() >= 0 ? `<button data-a="atras" title="${tr('Diapositiva anterior (←)')}">${ic('arrow_back')}</button>` : ''}
@@ -3694,7 +3706,7 @@ function comandoRemoto(cmd, d = {}) {
     next: avanzar, pausa: alternarPausa, mas: () => masTiempo(), saltar, atras: retroceder,
     vid: () => comandoVideo(H.vidPlay ? 'pauseVideo' : 'playVideo'), vidIni: () => ACC.vidIni && ACC.vidIni(),
     mute: () => { ACC.sonido && ACC.sonido(); actualizarRemotos(); },
-    qr: () => { H.modal = H.modal === 'qr' ? null : 'qr'; renderHost(); },
+    qr: () => alternarQR(),
     fs: alternarPantallaCompleta,
     ir: () => { const i = Math.floor(+d.i); if (H.fase !== 'pregunta' && i >= 0 && i < quiz.items.length && i !== H.idx) irA(i); },
   })[cmd]?.();
@@ -3727,7 +3739,7 @@ function modalQR() { // para los que llegan tarde
   let qr = '';
   try { const q = qrcode(0, 'M'); q.addData(urlUnirse()); q.make(); qr = q.createSvgTag(8, 2); } catch (e) { qr = `<p>${tr('(QR no disponible)')}</p>`; }
   return `<div class="modal" data-a="cerrarModal"><div class="card modal-in modal-qr" data-a="nada">
-    <h2>${tr('¡Únete al juego!')}</h2><div class="qr">${qr}</div>
+    <h2>${tr('¡Únete al juego!')}</h2>${H.qrPauso ? `<span class="badge mag">${ic('pause_circle', 'fill')} ${tr('El tiempo está en pausa')}</span>` : ''}<div class="qr">${qr}</div>
     <p>${tr('Escanea el QR o entra a:')}</p><p class="url">${esc(urlUnirse().replace(/\?join=.*/, ''))}</p><p>${tr('y escribe el código')}</p><div class="code">${H.code}</div>
     <div class="botones"><button class="pri big" data-a="cerrarModal">${tr('Listo')}</button></div></div></div>`;
 }
